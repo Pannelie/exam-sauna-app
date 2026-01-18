@@ -10,10 +10,10 @@ const dynamo = new AWS.DynamoDB.DocumentClient({
 
 const TABLE_NAME = process.env.TABLE_NAME;
 const adminPassword = process.env.ADMIN_PASSWORD;
-const adminEmail = "admin@bastu.se";
+const adminEmail = process.env.ADMIN_EMAIL;
 
-if (!TABLE_NAME || !adminPassword) {
-    console.error("TABLE_NAME eller ADMIN_PASSWORD saknas i .env");
+if (!TABLE_NAME || !adminPassword || !adminEmail) {
+    console.error("TABLE_NAME, ADMIN_PASSWORD eller ADMIN_EMAIL saknas i .env");
     process.exit(1);
 }
 
