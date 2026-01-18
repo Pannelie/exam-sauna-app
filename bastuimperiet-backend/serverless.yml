@@ -39,6 +39,7 @@ provider:
           Action:
               - s3:PutObject
               - s3:GetObject
+              - s3:PutBucketPolicy
           Resource: "arn:aws:s3:::${env:BUCKET_NAME}/*"
 
 #---------------------------------------------------------------------
@@ -103,3 +104,8 @@ resources:
                             KeyType: RANGE
                       Projection:
                           ProjectionType: ALL
+
+        BastuimperietBucket:
+            Type: AWS::S3::Bucket
+            Properties:
+                BucketName: ${env:BUCKET_NAME}
