@@ -1,3 +1,5 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: annelies
 service: bastuimperiet
 #---------------------------------------------------------------------
 plugins:
@@ -44,6 +46,12 @@ provider:
 
 #---------------------------------------------------------------------
 functions:
+    adminLogin:
+        handler: src/functions/Admin/login.handler
+        events:
+            - httpApi:
+                  path: /admin/login
+                  method: POST
     hello:
         handler: src/functions/GetHello/index.handler
         events:
