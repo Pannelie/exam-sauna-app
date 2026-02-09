@@ -50,6 +50,30 @@ functions:
             - httpApi:
                   path: /hello
                   method: GET
+    getBookings:
+        handler: src/functions/Bookings/getBookings.handler
+        events:
+            - httpApi:
+                  path: /bookings
+                  method: GET
+    getBookingsById:
+        handler: src/functions/Bookings/getBookingById.handler
+        events:
+            - httpApi:
+                  path: /bookings/{id}
+                  method: GET
+    patchBooking:
+        handler: src/functions/Bookings/patchBooking.handler
+        events:
+            - httpApi:
+                  path: /bookings/{id}
+                  method: PATCH
+    postBooking:
+        handler: src/functions/Bookings/postBooking.handler
+        events:
+            - httpApi:
+                  path: /bookings
+                  method: POST
 
 #---------------------------------------------------------------------
 # DynamoDB Single Table Design
