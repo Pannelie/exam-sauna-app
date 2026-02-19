@@ -1,14 +1,14 @@
 import dotenv from "dotenv";
 import middy from "@middy/core";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-import { verifyAdmin } from "../../middlewares/validateAdmin.mjs";
+import { validateAdmin } from "../../middlewares/validateAdmin.mjs";
 import { loginAdmin } from "../../services/adminService.mjs";
 
 dotenv.config();
 
 export const handler = middy(async (event) => {
     try {
-        const { email, password } = JSON.parse(event.body);
+        const { email, password } = event.body;
 
         const result = await loginAdmin(process.env.TABLE_NAME, email, password);
 
@@ -24,4 +24,4 @@ export const handler = middy(async (event) => {
     }
 })
     .use(httpJsonBodyParser())
-    .use(verifyAdmin());
+    .use(validateAdmin());

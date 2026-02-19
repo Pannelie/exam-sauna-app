@@ -52,12 +52,6 @@ functions:
             - httpApi:
                   path: /admin/login
                   method: POST
-    hello:
-        handler: src/functions/GetHello/index.handler
-        events:
-            - httpApi:
-                  path: /hello
-                  method: GET
     getBookings:
         handler: src/functions/Bookings/getBookings.handler
         events:
