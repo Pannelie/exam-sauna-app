@@ -1,7 +1,4 @@
-import dotenv from "dotenv";
 import { getAllBookings } from "../../services/bookingService.mjs";
-
-dotenv.config();
 
 export const handler = async () => {
     try {

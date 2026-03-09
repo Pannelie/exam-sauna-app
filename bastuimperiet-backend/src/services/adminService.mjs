@@ -1,6 +1,7 @@
 import { dynamoClient } from "../clients/dynamodbClient.mjs";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 export async function loginAdmin(tableName, email, password) {
     const params = {
@@ -13,7 +14,7 @@ export async function loginAdmin(tableName, email, password) {
         },
     };
 
-    const result = await dynamoClient.query(params).promise();
+    const result = await dynamoClient.send(new QueryCommand(params));
     const adminItem = result.Items[0];
     if (!adminItem) {
         throw new Error("Felaktiga inloggningsuppgifter");

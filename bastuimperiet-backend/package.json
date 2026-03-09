@@ -27,6 +27,7 @@
         "uuid": "^13.0.0"
     },
     "devDependencies": {
+        "esbuild": "^0.25.1",
         "nodemon": "^3.1.11",
         "serverless-offline": "^14.4.0"
     }

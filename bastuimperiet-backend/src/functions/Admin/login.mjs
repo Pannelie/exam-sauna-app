@@ -1,10 +1,7 @@
-import dotenv from "dotenv";
 import middy from "@middy/core";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { validateAdmin } from "../../middlewares/validateAdmin.mjs";
 import { loginAdmin } from "../../services/adminService.mjs";
-
-dotenv.config();
 
 export const handler = middy(async (event) => {
     try {

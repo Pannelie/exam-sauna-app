@@ -1,7 +1,4 @@
-import dotenv from "dotenv";
 import { getBookingById } from "../../services/bookingService.mjs";
-
-dotenv.config();
 
 export const handler = async (event) => {
     const bookingId = event.pathParameters.id;

@@ -1,9 +1,6 @@
-import dotenv from "dotenv";
 import { getBookingByIdInternal, updateBookingStatus } from "../../services/bookingService.mjs";
 import { createBookingCalendarEvent } from "../../services/googleCalendarService.mjs";
 import { sendBookingConfirmedToGuest, sendBookingDeclinedToGuest } from "../../services/mailerService.mjs";
-
-dotenv.config();
 
 const ALLOWED_STATUSES = new Set(["pending", "confirmed", "declined", "cancelled"]);
 

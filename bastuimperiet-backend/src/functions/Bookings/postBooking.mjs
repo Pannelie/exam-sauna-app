@@ -1,8 +1,5 @@
-import dotenv from "dotenv";
 import { postBooking } from "../../services/bookingService.mjs";
 import { sendNewBookingRequestToAdmin } from "../../services/mailerService.mjs";
-
-dotenv.config();
 
 export const handler = async (event) => {
     try {

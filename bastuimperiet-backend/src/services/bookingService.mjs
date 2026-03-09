@@ -2,6 +2,7 @@ import { formatBookingForFrontend } from "../utils/formatters.js";
 import { dynamoClient as client } from "../clients/dynamodbClient.mjs";
 import { calculateTotalPrice } from "../utils/calculatePrice.js"; // din tidigare logik
 import { v4 as uuidv4 } from "uuid";
+import { GetCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
 function generateShortId(length = 5) {
     return uuidv4().replace(/-/g, "").slice(0, length);
@@ -18,7 +19,7 @@ export async function getAllBookings(tableName) {
         ScanIndexForward: true,
     };
 
-    const result = await client.query(params).promise();
+    const result = await client.send(new QueryCommand(params));
 
     return result.Items.map(formatBookingForFrontend);
 }
@@ -32,7 +33,7 @@ export async function getBookingById(tableName, bookingId) {
         },
     };
 
-    const result = await client.get(params).promise();
+    const result = await client.send(new GetCommand(params));
     if (!result.Item) return null;
 
     return formatBookingForFrontend(result.Item);
@@ -47,7 +48,7 @@ export async function getBookingByIdInternal(tableName, bookingId) {
         },
     };
 
-    const result = await client.get(params).promise();
+    const result = await client.send(new GetCommand(params));
     return result.Item || null;
 }
 
@@ -74,13 +75,13 @@ export async function postBooking(tableName, bookingData) {
         GSI2SK: startDate,
     };
 
-    await client
-        .put({
+    await client.send(
+        new PutCommand({
             TableName: tableName,
             Item: item,
             ConditionExpression: "attribute_not_exists(PK)", // skriv inte över
-        })
-        .promise();
+        }),
+    );
 
     return formatBookingForFrontend(item);
 }
@@ -96,6 +97,6 @@ export async function updateBookingStatus(tableName, bookingId, status) {
         ReturnValues: "ALL_NEW",
     };
 
-    const result = await client.update(params).promise();
+    const result = await client.send(new UpdateCommand(params));
     return formatBookingForFrontend(result.Attributes);
 }
