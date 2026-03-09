@@ -8,6 +8,10 @@ export const handler = async (event) => {
     const bookingId = event.pathParameters.id;
     const { status } = JSON.parse(event.body);
     const normalizedStatus = typeof status === "string" ? status.trim().toLowerCase() : "";
+    let calendarUpdated = null;
+    let guestEmailSent = null;
+    let calendarErrorMessage = null;
+    let guestEmailError = null;
 
     if (!ALLOWED_STATUSES.has(normalizedStatus)) {
         return {
@@ -22,6 +26,8 @@ export const handler = async (event) => {
         const updatedBooking = await updateBookingStatus(process.env.TABLE_NAME, bookingId, normalizedStatus);
 
         if (normalizedStatus === "confirmed") {
+            calendarUpdated = false;
+            guestEmailSent = false;
             const fullBooking = await getBookingByIdInternal(process.env.TABLE_NAME, bookingId);
 
             if (fullBooking) {
@@ -35,8 +41,10 @@ export const handler = async (event) => {
                         endDate: fullBooking.endDate,
                         totalPrice: fullBooking.totalPrice,
                     });
-                } catch (calendarError) {
-                    console.error("Kunde inte uppdatera Google Calendar:", calendarError);
+                    calendarUpdated = true;
+                } catch (calendarErr) {
+                    console.error("Kunde inte uppdatera Google Calendar:", calendarErr);
+                    calendarErrorMessage = calendarErr.message;
                 }
 
                 try {
@@ -47,13 +55,16 @@ export const handler = async (event) => {
                         endDate: fullBooking.endDate,
                         totalPrice: fullBooking.totalPrice,
                     });
+                    guestEmailSent = true;
                 } catch (mailError) {
                     console.error("Kunde inte skicka bekräftelsemail till kund:", mailError);
+                    guestEmailError = mailError.message;
                 }
             }
         }
 
         if (normalizedStatus === "declined" || normalizedStatus === "cancelled") {
+            guestEmailSent = false;
             const fullBooking = await getBookingByIdInternal(process.env.TABLE_NAME, bookingId);
 
             if (fullBooking) {
@@ -64,13 +75,26 @@ export const handler = async (event) => {
                         startDate: fullBooking.startDate,
                         endDate: fullBooking.endDate,
                     });
+                    guestEmailSent = true;
                 } catch (mailError) {
                     console.error("Kunde inte skicka avböjningsmail till kund:", mailError);
+                    guestEmailError = mailError.message;
                 }
             }
         }
 
-        return { statusCode: 200, body: JSON.stringify(updatedBooking) };
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                ...updatedBooking,
+                integrations: {
+                    calendarUpdated,
+                    guestEmailSent,
+                    calendarError: calendarErrorMessage,
+                    guestEmailError,
+                },
+            }),
+        };
     } catch (err) {
         if (err.code === "ConditionalCheckFailedException") {
             return { statusCode: 404, body: JSON.stringify({ message: "Bokning hittades inte" }) };

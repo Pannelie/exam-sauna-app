@@ -19,10 +19,6 @@ build:
         format: esm
     external:
         - aws-sdk
-        - googleapis
-        - google-auth-library
-        - googleapis-common
-        - gcp-metadata
 #---------------------------------------------------------------------
 provider:
     name: aws
