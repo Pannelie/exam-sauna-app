@@ -1,20 +1,29 @@
 import dotenv from "dotenv";
 import { postBooking } from "../../services/bookingService.mjs";
-import { v4 as uuidv4 } from "uuid"; // för att generera unikt id
+import { sendNewBookingRequestToAdmin } from "../../services/mailerService.mjs";
 
 dotenv.config();
 
 export const handler = async (event) => {
     try {
         const data = JSON.parse(event.body);
+        const booking = await postBooking(process.env.TABLE_NAME, data);
 
-        // Generera id om inte frontend skickar
-        const bookingId = data.id || uuidv4();
-
-        const booking = await postBooking(process.env.TABLE_NAME, {
-            ...data,
-            id: bookingId,
-        });
+        try {
+            await sendNewBookingRequestToAdmin({
+                bookingId: booking.id,
+                guestName: data.guestName,
+                email: data.email,
+                phone: data.phone,
+                startDate: data.startDate,
+                endDate: data.endDate,
+                totalPrice: booking.totalPrice,
+                cleaning: data.cleaning,
+                firewood: data.firewood,
+            });
+        } catch (mailError) {
+            console.error("Kunde inte skicka adminmail för bokningsförfrågan:", mailError);
+        }
 
         return {
             statusCode: 201,

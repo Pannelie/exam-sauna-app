@@ -38,6 +38,19 @@ export async function getBookingById(tableName, bookingId) {
     return formatBookingForFrontend(result.Item);
 }
 
+export async function getBookingByIdInternal(tableName, bookingId) {
+    const params = {
+        TableName: tableName,
+        Key: {
+            PK: `BOOKING#${bookingId}`,
+            SK: "BOOKING",
+        },
+    };
+
+    const result = await client.get(params).promise();
+    return result.Item || null;
+}
+
 export async function postBooking(tableName, bookingData) {
     const id = generateShortId(); // Generera id här
     const { guestName, email, phone, startDate, endDate, cleaning = false, firewood = 0 } = bookingData;
@@ -77,6 +90,7 @@ export async function updateBookingStatus(tableName, bookingId, status) {
         TableName: tableName,
         Key: { PK: `BOOKING#${bookingId}`, SK: "BOOKING" },
         UpdateExpression: "SET #s = :status",
+        ConditionExpression: "attribute_exists(PK)",
         ExpressionAttributeNames: { "#s": "status" },
         ExpressionAttributeValues: { ":status": status },
         ReturnValues: "ALL_NEW",
