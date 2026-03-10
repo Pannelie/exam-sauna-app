@@ -13,6 +13,7 @@
     "license": "ISC",
     "type": "module",
     "dependencies": {
+        "@aws-sdk/client-ses": "^3.971.0",
         "@aws-sdk/client-dynamodb": "^3.971.0",
         "@aws-sdk/lib-dynamodb": "^3.971.0",
         "@middy/core": "^7.0.2",
@@ -26,6 +27,7 @@
         "uuid": "^13.0.0"
     },
     "devDependencies": {
+        "esbuild": "^0.25.1",
         "nodemon": "^3.1.11",
         "serverless-offline": "^14.4.0"
     }
