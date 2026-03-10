@@ -11,11 +11,11 @@ export default function App() {
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
-                {/* 
-            <Route element={<ProtectedRoute />}> */}
-                <Route path="/bookings" element={<BookingsPage />} />
-                <Route path="/bookings/:id" element={<BookingDetailsPage />} />
-                {/* </Route> */}
+
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/bookings" element={<BookingsPage />} />
+                    <Route path="/bookings/:id" element={<BookingDetailsPage />} />
+                </Route>
 
                 <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
