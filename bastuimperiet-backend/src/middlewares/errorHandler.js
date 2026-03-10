@@ -6,4 +6,3 @@ export const errorHandler = () => ({
         handler.response = sendResponse(statusCode, { message: handler.error.message || "Something went wrong" });
     },
 });
-s;
