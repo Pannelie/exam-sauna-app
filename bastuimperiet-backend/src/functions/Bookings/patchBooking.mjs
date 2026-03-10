@@ -1,6 +1,6 @@
 import { getBookingByIdInternal, updateBookingStatus } from "../../services/bookingService.mjs";
 import { createBookingCalendarEvent } from "../../services/googleCalendarService.mjs";
-import { sendBookingConfirmedToGuest, sendBookingDeclinedToGuest } from "../../services/mailerService.mjs";
+import { sendBookingConfirmedToGuest, sendBookingDeclinedToGuest, sendBookingCancelledToGuest } from "../../services/mailerService.mjs";
 
 const ALLOWED_STATUSES = new Set(["pending", "confirmed", "declined", "cancelled"]);
 
@@ -67,7 +67,7 @@ export const handler = async (event) => {
             }
         }
 
-        if (normalizedStatus === "declined" || normalizedStatus === "cancelled") {
+        if (normalizedStatus === "declined") {
             guestEmailSent = false;
             const fullBooking = await getBookingByIdInternal(process.env.TABLE_NAME, bookingId);
 
@@ -87,6 +87,30 @@ export const handler = async (event) => {
                     });
                 } catch (mailError) {
                     console.error("Kunde inte skicka avböjningsmail till kund:", mailError);
+                    guestEmailError = mailError.message;
+                }
+            }
+        }
+        if (normalizedStatus === "cancelled") {
+            guestEmailSent = false;
+            const fullBooking = await getBookingByIdInternal(process.env.TABLE_NAME, bookingId);
+
+            if (fullBooking) {
+                try {
+                    await sendBookingCancelledToGuest({
+                        guestName: fullBooking.guestName,
+                        email: fullBooking.email,
+                        startDate: fullBooking.startDate,
+                        endDate: fullBooking.endDate,
+                    });
+                    guestEmailSent = true;
+                    console.log("Booking cancelled email sent", {
+                        bookingId: fullBooking.id,
+                        to: fullBooking.email,
+                        status: normalizedStatus,
+                    });
+                } catch (mailError) {
+                    console.error("Kunde inte skicka avbokningsmail till kund:", mailError);
                     guestEmailError = mailError.message;
                 }
             }
