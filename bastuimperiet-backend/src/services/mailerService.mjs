@@ -125,3 +125,17 @@ export async function sendBookingDeclinedToGuest({ guestName, email, startDate, 
 
     await sendMail({ to: email, subject, html, text });
 }
+
+export async function sendBookingCancelledToGuest({ guestName, email, startDate, endDate }) {
+    const subject = "Din bokning hos Bastuimperiet har avbokats";
+    const html = `
+        <h2>Bokning avbokad</h2>
+        <p>Hej ${escapeHtml(guestName)}!</p>
+        <p>Din bokning för perioden ${escapeHtml(startDate)} till ${escapeHtml(endDate)} har avbokats.</p>
+        <p>Kontakta oss gärna om du har några frågor.</p>
+    `;
+
+    const text = `Hej ${guestName}! Din bokning för perioden ${startDate} till ${endDate} har avbokats. Kontakta oss gärna om du har några frågor.`;
+
+    await sendMail({ to: email, subject, html, text });
+}
