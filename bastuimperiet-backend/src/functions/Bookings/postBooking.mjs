@@ -18,6 +18,10 @@ export const handler = async (event) => {
                 cleaning: data.cleaning,
                 firewood: data.firewood,
             });
+            console.log("Admin booking request email sent", {
+                bookingId: booking.id,
+                to: process.env.ADMIN_EMAIL,
+            });
         } catch (mailError) {
             console.error("Kunde inte skicka adminmail för bokningsförfrågan:", mailError);
         }

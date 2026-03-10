@@ -56,6 +56,10 @@ export const handler = async (event) => {
                         totalPrice: fullBooking.totalPrice,
                     });
                     guestEmailSent = true;
+                    console.log("Booking confirmation email sent", {
+                        bookingId: fullBooking.id,
+                        to: fullBooking.email,
+                    });
                 } catch (mailError) {
                     console.error("Kunde inte skicka bekräftelsemail till kund:", mailError);
                     guestEmailError = mailError.message;
@@ -76,6 +80,11 @@ export const handler = async (event) => {
                         endDate: fullBooking.endDate,
                     });
                     guestEmailSent = true;
+                    console.log("Booking declined email sent", {
+                        bookingId: fullBooking.id,
+                        to: fullBooking.email,
+                        status: normalizedStatus,
+                    });
                 } catch (mailError) {
                     console.error("Kunde inte skicka avböjningsmail till kund:", mailError);
                     guestEmailError = mailError.message;
