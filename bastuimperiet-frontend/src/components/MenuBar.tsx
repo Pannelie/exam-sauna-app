@@ -41,17 +41,21 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 function MenuBar() {
+    const scrollToSection = (sectionId: string) => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+    };
+
     const handleBookClick = () => {
-        document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
+        scrollToSection("booking");
     };
 
     return (
         <StyledAppBar position="sticky" className="menubar_container">
             <Toolbar className="menubar_toolbar">
                 <img src={logo} alt="Logo" className="menuBar_img" />
-                <MenuLink href="#info">Info</MenuLink>
-                <MenuLink href="#priser">Priser</MenuLink>
-                <MenuLink href="#kontakt">Kontakt</MenuLink>
+                <MenuLink onClick={() => scrollToSection("info")}>Info</MenuLink>
+                <MenuLink onClick={() => scrollToSection("priser")}>Priser</MenuLink>
+                <MenuLink onClick={() => scrollToSection("kontakt")}>Kontakt</MenuLink>
                 <StyledButton variant="contained" color="primary" onClick={handleBookClick}>
                     Boka nu
                 </StyledButton>
