@@ -1,6 +1,9 @@
+import middy from "@middy/core";
 import { getBookingById } from "../../services/bookingService.mjs";
+import { verifyAdminToken } from "../../middlewares/verifyAdminToken.js";
+import { errorHandler } from "../../middlewares/errorHandler.js";
 
-export const handler = async (event) => {
+export const handler = middy(async (event) => {
     const bookingId = event.pathParameters.id;
 
     try {
@@ -12,4 +15,6 @@ export const handler = async (event) => {
     } catch (err) {
         return { statusCode: 500, body: JSON.stringify({ message: err.message }) };
     }
-};
+})
+    .use(verifyAdminToken())
+    .use(errorHandler());

@@ -1,12 +1,16 @@
+import middy from "@middy/core";
 import { getBookingByIdInternal, updateBookingStatus } from "../../services/bookingService.mjs";
 import { createBookingCalendarEvent } from "../../services/googleCalendarService.mjs";
 import { sendBookingConfirmedToGuest, sendBookingDeclinedToGuest, sendBookingCancelledToGuest } from "../../services/mailerService.mjs";
+import { verifyAdminToken } from "../../middlewares/verifyAdminToken.js";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
+import { errorHandler } from "../../middlewares/errorHandler.js";
 
 const ALLOWED_STATUSES = new Set(["pending", "confirmed", "declined", "cancelled"]);
 
-export const handler = async (event) => {
+export const handler = middy(async (event) => {
     const bookingId = event.pathParameters.id;
-    const { status } = JSON.parse(event.body);
+    const { status } = event.body;
     const normalizedStatus = typeof status === "string" ? status.trim().toLowerCase() : "";
     let calendarUpdated = null;
     let guestEmailSent = null;
@@ -135,4 +139,7 @@ export const handler = async (event) => {
 
         return { statusCode: 500, body: JSON.stringify({ message: err.message }) };
     }
-};
+})
+    .use(httpJsonBodyParser())
+    .use(verifyAdminToken())
+    .use(errorHandler());
