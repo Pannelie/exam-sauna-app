@@ -1,0 +1,14 @@
+.menubar_container {
+    color: #fff;
+}
+
+.menubar_toolbar {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 2rem;
+    margin: 1rem;
+}
+
+.menuBar_img {
+    max-height: 3rem;
+}
