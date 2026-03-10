@@ -9,16 +9,18 @@ plugins:
 package:
     individually: true
 
-build:
-    esbuild:
-        bundle: true
-        minify: false
-        sourcemap: false
-        target: node20
-        platform: node
-        format: esm
-    external:
-        - aws-sdk
+# build:
+#     esbuild:
+#         bundle: true
+#         minify: false
+#         sourcemap: false
+#         target: node20
+#         platform: node
+#         format: esm
+#     external:
+#         - aws-sdk
+#         - jsonwebtoken
+
 #---------------------------------------------------------------------
 provider:
     name: aws
@@ -49,6 +51,7 @@ provider:
                 - OPTIONS
             allowedHeaders:
                 - Content-Type
+                - Auhthorization
     iamRoleStatements:
         - Effect: "Allow"
           Action:
