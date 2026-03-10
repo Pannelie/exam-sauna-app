@@ -1,3 +1,5 @@
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+
 function escapeHtml(value = "") {
     return String(value)
         .replace(/&/g, "&amp;")
@@ -8,35 +10,50 @@ function escapeHtml(value = "") {
 }
 
 async function sendMail({ to, subject, html, text }) {
-    const apiKey = process.env.MAILERSEND_API_KEY;
-    const fromEmail = process.env.MAILERSEND_FROM_EMAIL;
-    const fromName = process.env.MAILERSEND_FROM_NAME || "Bastuimperiet";
+    const region = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "eu-north-1";
+    const fromEmail = process.env.SES_FROM_EMAIL || process.env.MAILERSEND_FROM_EMAIL;
+    const fromName = process.env.SES_FROM_NAME || process.env.MAILERSEND_FROM_NAME || "Bastuimperiet";
 
-    if (!apiKey || !fromEmail || !to) {
-        throw new Error("Missing MailerSend configuration");
+    if (!fromEmail || !to) {
+        throw new Error("Missing SES configuration");
     }
 
-    const response = await fetch("https://api.mailersend.com/v1/email", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
+    const client = new SESClient({ region });
+    const command = new SendEmailCommand({
+        Source: fromName ? `${fromName} <${fromEmail}>` : fromEmail,
+        Destination: {
+            ToAddresses: [to],
         },
-        body: JSON.stringify({
-            from: {
-                email: fromEmail,
-                name: fromName,
+        Message: {
+            Subject: {
+                Data: subject,
+                Charset: "UTF-8",
             },
-            to: [{ email: to }],
-            subject,
-            html,
-            text,
-        }),
+            Body: {
+                Html: {
+                    Data: html,
+                    Charset: "UTF-8",
+                },
+                Text: {
+                    Data: text,
+                    Charset: "UTF-8",
+                },
+            },
+        },
     });
 
-    if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(`MailerSend error (${response.status}): ${errorBody}`);
+    try {
+        await client.send(command);
+    } catch (error) {
+        console.error("SES send failed", {
+            message: error?.message,
+            name: error?.name,
+            code: error?.code,
+            to,
+            fromEmail,
+            region,
+        });
+        throw new Error(`SES error: ${error.message}`);
     }
 }
 
