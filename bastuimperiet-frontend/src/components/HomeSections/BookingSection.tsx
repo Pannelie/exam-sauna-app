@@ -1,10 +1,10 @@
-import { Typography } from "@mui/material";
+import { MenuTitle } from "../MenuTitle";
 import { HomeSection } from "./HomeSection/HomeSection";
 
 export function BookingSection() {
     return (
         <HomeSection id="booking">
-            <Typography variant="h3">Boka</Typography>
+            <MenuTitle title="Boka" />
         </HomeSection>
     );
 }
