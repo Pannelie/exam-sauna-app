@@ -1,35 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 
-const theme = createTheme({
-    typography: {
-        fontFamily: "var(--font-primary)",
-        h1: {
-            fontFamily: "var(--font-secondary)",
-            fontSize: "3rem",
-            fontWeight: 700,
-        },
-        h2: {
-            fontFamily: "var(--font-secondary)",
-        },
-        h3: {
-            fontFamily: "var(--font-primary)",
-        },
-        h4: {
-            fontFamily: "var(--font-secondary)",
-            fontSize: "1.5rem",
-        },
-        h6: {
-            fontFamily: "var(--font-secondary)",
-            fontSize: "1.2rem",
-            fontWeight: 600,
-        },
-        body1: {
-            fontFamily: "var(--font-primary)",
-        },
-        button: {
-            fontFamily: "var(--font-accent), 'Koulen', sans-serif", // knappar med tredje fonten
-        },
-    },
+let theme = createTheme({
     palette: {
         primary: {
             main: "#E9B85C",
@@ -49,6 +20,39 @@ const theme = createTheme({
         text: {
             primary: "#000000",
             secondary: "#4C2223",
+        },
+    },
+});
+
+theme = createTheme(theme, {
+    typography: {
+        fontFamily: "var(--font-primary)",
+        h1: {
+            fontFamily: "var(--font-secondary)",
+            fontSize: "3rem",
+            fontWeight: 700,
+        },
+        h2: {
+            fontFamily: "var(--font-secondary)",
+        },
+        h3: {
+            fontFamily: "var(--font-primary)",
+            color: theme.palette.secondary.contrastText,
+        },
+        h4: {
+            fontFamily: "var(--font-secondary)",
+            fontSize: "1.5rem",
+        },
+        h6: {
+            fontFamily: "var(--font-secondary)",
+            fontSize: "1.2rem",
+            fontWeight: 600,
+        },
+        body1: {
+            fontFamily: "var(--font-primary)",
+        },
+        button: {
+            fontFamily: "var(--font-accent), 'Koulen', sans-serif",
         },
     },
 });
