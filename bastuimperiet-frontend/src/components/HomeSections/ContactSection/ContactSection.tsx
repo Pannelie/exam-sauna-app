@@ -25,7 +25,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 
 const StyledTypography = styled(Typography)({
     fontSize: "1.5rem",
-    fontWeight: 600,
     textAlign: "center",
 });
 
