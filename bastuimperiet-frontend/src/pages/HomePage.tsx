@@ -4,6 +4,7 @@ import { InfoSection } from "../components/HomeSections/InfoSection";
 import { PricesSection } from "../components/HomeSections/PricesSection";
 import { ContactSection } from "../components/HomeSections/ContactSection/ContactSection";
 import { BookingSection } from "../components/HomeSections/BookingSection";
+import "./page.css";
 
 export const HomePage = () => {
     return (
