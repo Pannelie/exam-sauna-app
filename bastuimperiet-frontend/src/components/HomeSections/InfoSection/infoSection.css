@@ -1,0 +1,13 @@
+/* .info_section {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 6rem 2rem;
+    flex-wrap: wrap;
+} */
+
+.carousel_container {
+    flex: 1;
+    max-width: 400px;
+}
