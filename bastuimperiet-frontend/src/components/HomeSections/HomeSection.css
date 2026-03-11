@@ -15,3 +15,26 @@
     grid-column: 1 / -1;
     margin-bottom: 0.5rem;
 }
+
+.home_prices-section {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.home_prices-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.home_prices-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    align-content: start;
+}
+
+.home_prices-grid--extra {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 200px));
+}

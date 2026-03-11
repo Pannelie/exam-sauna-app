@@ -3,23 +3,26 @@ import { createTheme } from "@mui/material/styles";
 let theme = createTheme({
     palette: {
         primary: {
-            main: "#E9B85C",
-            light: "#FFC247",
-            contrastText: "#ffffff",
+            main: "var(--yellow)",
+            light: "var(--yellow-hover)",
+            contrastText: "var(--white)",
         },
         secondary: {
-            main: "#4C2223",
-            contrastText: "#ffffff",
+            main: "var(--dark-red)",
+            contrastText: "var(--white)",
         },
 
         background: {
-            default: "#f5f5f5",
-            paper: "#ffffff",
+            default: "var(--light-grey)",
+            paper: "var(--white)",
+        },
+        common: {
+            white: "var(--white)",
         },
 
         text: {
-            primary: "#000000",
-            secondary: "#4C2223",
+            primary: "var(--dark)",
+            secondary: "var(--dark-red)",
         },
     },
 });
@@ -27,6 +30,7 @@ let theme = createTheme({
 theme = createTheme(theme, {
     typography: {
         fontFamily: "var(--font-primary)",
+        fontSize: "1.3rem",
         h1: {
             fontFamily: "var(--font-secondary)",
             fontSize: "3rem",
@@ -37,7 +41,6 @@ theme = createTheme(theme, {
         },
         h3: {
             fontFamily: "var(--font-primary)",
-            color: theme.palette.secondary.contrastText,
         },
         h4: {
             fontFamily: "var(--font-secondary)",
@@ -49,7 +52,7 @@ theme = createTheme(theme, {
             fontWeight: 600,
         },
         body1: {
-            fontFamily: "var(--font-primary)",
+            fontWeight: 800,
         },
         button: {
             fontFamily: "var(--font-accent), 'Koulen', sans-serif",
