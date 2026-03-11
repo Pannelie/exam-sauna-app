@@ -7,9 +7,8 @@ import "swiper/css/pagination";
 
 import img1 from "../assets/OutsideParking.jpg";
 import img2 from "../assets/hero.png";
-import img3 from "../assets/wood2.jpg";
 
-const images = [img1, img2, img3];
+const images = [img1, img2];
 
 export const Carousel = () => (
     <Swiper
@@ -20,7 +19,7 @@ export const Carousel = () => (
         pagination={{ clickable: true }}
         autoplay={false}
         loop
-        style={{ width: "100%", height: "420px" }}
+        style={{ width: "100%", height: "420px" }} // viktigt: ger Swiper en höjd
     >
         {images.map((img, index) => (
             <SwiperSlide key={index}>
@@ -29,6 +28,8 @@ export const Carousel = () => (
                     sx={{
                         borderRadius: "12px",
                         overflow: "hidden",
+                        width: "100%",
+                        height: "100%", // fyller SwiperSlide
                     }}
                 >
                     <img
@@ -36,7 +37,7 @@ export const Carousel = () => (
                         alt="bastu"
                         style={{
                             width: "100%",
-                            height: "420px",
+                            height: "100%",
                             objectFit: "cover",
                         }}
                     />
