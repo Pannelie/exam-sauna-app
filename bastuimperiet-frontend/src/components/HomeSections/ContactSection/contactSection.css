@@ -1,13 +1,13 @@
 .contact_section {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    gap: 1rem;
     text-align: center;
     width: 100%;
-    gap: 2rem;
 }
 
 .contact_image {
-    max-width: 500px;
     width: 100%;
     border-radius: 8px;
 }
@@ -23,5 +23,5 @@
 
 .contact_staff-details {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
