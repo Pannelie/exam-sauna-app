@@ -15,10 +15,20 @@ html {
     scroll-behavior: smooth;
 }
 
-.page_container--center {
+.home_main {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    background-image: url(../src/assets/wood2.jpg);
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+}
+
+.page_container--center {
     width: min(80%, 1100px);
     margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+    .home_main {
+        padding-bottom: 0;
+    }
 }
