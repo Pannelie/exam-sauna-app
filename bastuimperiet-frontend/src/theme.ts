@@ -10,12 +10,21 @@ const theme = createTheme({
         },
         h2: {
             fontFamily: "var(--font-secondary)",
-            fontSize: "2.5rem",
+        },
+        h3: {
+            fontFamily: "var(--font-primary)",
+        },
+        h4: {
+            fontFamily: "var(--font-secondary)",
+            fontSize: "1.5rem",
         },
         h6: {
             fontFamily: "var(--font-secondary)",
             fontSize: "1.2rem",
             fontWeight: 600,
+        },
+        body1: {
+            fontFamily: "var(--font-primary)",
         },
         button: {
             fontFamily: "var(--font-accent), 'Koulen', sans-serif", // knappar med tredje fonten
