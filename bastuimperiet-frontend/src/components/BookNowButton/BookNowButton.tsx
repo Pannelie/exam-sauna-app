@@ -6,6 +6,7 @@ const StyledButton = styled(Button, {
     shouldForwardProp: (prop) => prop !== "styleVariant",
 })<{ styleVariant: BookNowButtonStyleVariant }>(({ theme, styleVariant }) => ({
     backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
     width: "auto",
     padding: theme.spacing(1, 6),
     fontSize: "2rem",
