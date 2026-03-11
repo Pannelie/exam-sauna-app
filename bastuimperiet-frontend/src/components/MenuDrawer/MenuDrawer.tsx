@@ -20,7 +20,7 @@ interface MenuDrawerProps {
     handleMenuItemClick: (section: string) => void;
 }
 
-export function MenuDrawer({ open, onClose, menuItems, handleBookClick, handleMenuItemClick }: MenuDrawerProps) {
+export const MenuDrawer = ({ open, onClose, menuItems, handleBookClick, handleMenuItemClick }: MenuDrawerProps) => {
     return (
         <StyledDrawer anchor="right" open={open} onClose={onClose}>
             <StyledBox onClick={onClose}>
@@ -41,4 +41,4 @@ export function MenuDrawer({ open, onClose, menuItems, handleBookClick, handleMe
             </StyledBox>
         </StyledDrawer>
     );
-}
+};
