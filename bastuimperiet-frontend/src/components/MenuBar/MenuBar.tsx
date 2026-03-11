@@ -26,6 +26,12 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     boxShadow: "none",
 }));
 
+const StyledToolbar = styled(Toolbar)(() => ({
+    justifyContent: "space-evenly",
+    minHeight: "var(--menubar-height)",
+    padding: "0 1rem",
+}));
+
 const MenuLink = styled("a")(({ theme }) => ({
     color: "inherit",
     textDecoration: "none",
@@ -45,6 +51,27 @@ const MenuLink = styled("a")(({ theme }) => ({
     [theme.breakpoints.down("sm")]: { fontSize: "0.85rem" },
 }));
 
+const StyledMenuButton = styled(IconButton)(({ theme }) => ({
+    position: "fixed",
+    top: "1rem",
+    right: "1rem",
+    zIndex: 1500,
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+    width: 48,
+    height: 48,
+    "&:hover": {
+        backgroundColor: theme.palette.primary.dark,
+    },
+}));
+
+const StyledDrawer = styled(Drawer)(({ theme }) => ({
+    "& .MuiDrawer-paper": {
+        boxSizing: "border-box",
+        backgroundColor: theme.palette.secondary.main,
+        color: theme.palette.common.white,
+    },
+}));
 export default function MenuBar() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -87,13 +114,7 @@ export default function MenuBar() {
             {/* Desktop: Sticky menubar under hero */}
             {!isMobile && (
                 <StyledAppBar position="sticky" sx={{ top: 0 }}>
-                    <Toolbar
-                        sx={{
-                            justifyContent: "space-evenly",
-                            minHeight: "var(--menubar-height)",
-                            padding: "0 1rem",
-                        }}
-                    >
+                    <StyledToolbar>
                         <img src={logo} alt="Logo" className="menuBar_img" />
                         {menuItems.map((item) => (
                             <MenuLink key={item.label} onClick={() => scrollToSection(item.section)}>
@@ -101,46 +122,20 @@ export default function MenuBar() {
                             </MenuLink>
                         ))}
                         <BookNowButton onClick={handleBookClick} />
-                    </Toolbar>
+                    </StyledToolbar>
                 </StyledAppBar>
             )}
 
             {/* Mobile: hamburgermeny ikon ovanpå hero */}
             {isMobile && (
                 <>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerToggle}
-                        sx={{
-                            position: "fixed",
-                            top: "1rem",
-                            right: "1rem",
-                            zIndex: 1500,
-                            backgroundColor: theme.palette.primary.main,
-                            color: theme.palette.common.white,
-                            "&:hover": { backgroundColor: theme.palette.primary.dark },
-                            width: 48,
-                            height: 48,
-                        }}
-                    >
+                    <StyledMenuButton aria-label="open drawer" onClick={handleDrawerToggle}>
                         <MenuIcon />
-                    </IconButton>
+                    </StyledMenuButton>
 
-                    <Drawer
-                        anchor="right"
-                        open={drawerOpen}
-                        onClose={handleDrawerToggle}
-                        sx={{
-                            "& .MuiDrawer-paper": {
-                                boxSizing: "border-box",
-                                backgroundColor: theme.palette.secondary.main,
-                                color: theme.palette.common.white,
-                            },
-                        }}
-                    >
+                    <StyledDrawer anchor="right" open={drawerOpen} onClose={handleDrawerToggle}>
                         {drawer}
-                    </Drawer>
+                    </StyledDrawer>
                 </>
             )}
         </>
