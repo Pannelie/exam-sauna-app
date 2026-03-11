@@ -2,7 +2,7 @@ import "./hero.css";
 import { useEffect, useState } from "react";
 import logo from "../../assets/hero.png";
 import signLogo from "../../assets/wood__logo.jpg";
-import BookNowButton from "../BookNowButton/BookNowButton";
+import { BookNowButton } from "../BookNowButton/BookNowButton";
 import { scrollToSection } from "../../utils/scrollToSection";
 import { Typography, styled, useMediaQuery, useTheme } from "@mui/material";
 

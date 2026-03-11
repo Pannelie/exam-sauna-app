@@ -1,24 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./menuBar.css";
 import bg from "../../assets/wood2.jpg";
 import logo from "../../assets/wood__logo.jpg";
-import {
-    AppBar,
-    Toolbar,
-    IconButton,
-    Drawer,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemText,
-    useMediaQuery,
-    Box,
-    styled,
-} from "@mui/material";
+import { AppBar, Toolbar, IconButton, useMediaQuery, styled } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
-import BookNowButton from "../BookNowButton/BookNowButton";
+import { BookNowButton } from "../BookNowButton/BookNowButton";
 import { scrollToSection } from "../../utils/scrollToSection";
+import { MenuDrawer } from "../MenuDrawer/MenuDrawer";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
     backgroundImage: `url(${bg})`,
@@ -65,14 +55,8 @@ const StyledMenuButton = styled(IconButton)(({ theme }) => ({
     },
 }));
 
-const StyledDrawer = styled(Drawer)(({ theme }) => ({
-    "& .MuiDrawer-paper": {
-        boxSizing: "border-box",
-        backgroundColor: theme.palette.secondary.main,
-        color: theme.palette.common.white,
-    },
-}));
 export default function MenuBar() {
+    const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -86,36 +70,13 @@ export default function MenuBar() {
     const handleBookClick = () => scrollToSection("booking");
     const handleDrawerToggle = () => setDrawerOpen(!drawerOpen);
 
-    const drawer = (
-        <Box sx={{ width: 250 }} onClick={handleDrawerToggle}>
-            <List>
-                {menuItems.map((item) => (
-                    <ListItem key={item.label} disablePadding>
-                        <ListItemButton
-                            onClick={() => {
-                                scrollToSection(item.section);
-                            }}
-                        >
-                            <ListItemText primary={item.label} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-                <ListItem disablePadding>
-                    <ListItemButton onClick={handleBookClick}>
-                        <ListItemText primary="Boka" />
-                    </ListItemButton>
-                </ListItem>
-            </List>
-        </Box>
-    );
-
     return (
         <>
             {/* Desktop: Sticky menubar under hero */}
             {!isMobile && (
                 <StyledAppBar position="sticky" sx={{ top: 0 }}>
                     <StyledToolbar>
-                        <img src={logo} alt="Logo" className="menuBar_img" />
+                        <img src={logo} alt="Logo" className="menuBar_img" onClick={() => navigate("/")} />
                         {menuItems.map((item) => (
                             <MenuLink key={item.label} onClick={() => scrollToSection(item.section)}>
                                 {item.label}
@@ -129,13 +90,17 @@ export default function MenuBar() {
             {/* Mobile: hamburgermeny ikon ovanpå hero */}
             {isMobile && (
                 <>
-                    <StyledMenuButton aria-label="open drawer" onClick={handleDrawerToggle}>
+                    <StyledMenuButton color="inherit" aria-label="open drawer" onClick={handleDrawerToggle}>
                         <MenuIcon />
                     </StyledMenuButton>
 
-                    <StyledDrawer anchor="right" open={drawerOpen} onClose={handleDrawerToggle}>
-                        {drawer}
-                    </StyledDrawer>
+                    <MenuDrawer
+                        open={drawerOpen}
+                        onClose={handleDrawerToggle}
+                        menuItems={menuItems}
+                        handleBookClick={handleBookClick}
+                        handleMenuItemClick={scrollToSection}
+                    />
                 </>
             )}
         </>

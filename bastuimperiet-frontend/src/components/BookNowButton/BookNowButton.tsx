@@ -34,12 +34,10 @@ type BookNowButtonProps = {
     styleVariant?: BookNowButtonStyleVariant;
 };
 
-function BookNowButton({ onClick, className, styleVariant = "default" }: BookNowButtonProps) {
+export const BookNowButton = ({ onClick, className, styleVariant = "default" }: BookNowButtonProps) => {
     return (
         <StyledButton variant="contained" color="primary" onClick={onClick} className={className} styleVariant={styleVariant}>
             Boka nu
         </StyledButton>
     );
-}
-
-export default BookNowButton;
+};
