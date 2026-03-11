@@ -15,7 +15,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 
 const InfoPaper = styled(StyledPaper)(({ theme }) => ({
     backgroundColor: theme.palette.secondary.main,
-    color: theme.palette.secondary.contrastText,
+    color: theme.palette.common.white,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

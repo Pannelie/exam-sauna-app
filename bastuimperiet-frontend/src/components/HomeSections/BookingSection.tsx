@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import { HomeSection } from "./HomeSection";
+import { HomeSection } from "./HomeSection/HomeSection";
 
 export function BookingSection() {
     return (

@@ -1,28 +1,35 @@
 import { createTheme } from "@mui/material/styles";
 
+const colors = {
+    yellow: "#e9b85c",
+    yellowHover: "#ffc247",
+    darkRed: "#4c2223",
+    white: "#ffffff",
+    lightGrey: "#f5f5f5",
+    dark: "#000000",
+};
+
 let theme = createTheme({
     palette: {
         primary: {
-            main: "var(--yellow)",
-            light: "var(--yellow-hover)",
-            contrastText: "var(--white)",
+            main: colors.yellow,
+            light: colors.yellowHover,
         },
         secondary: {
-            main: "var(--dark-red)",
-            contrastText: "var(--white)",
+            main: colors.darkRed,
         },
 
         background: {
-            default: "var(--light-grey)",
-            paper: "var(--white)",
+            default: colors.lightGrey,
+            paper: colors.white,
         },
         common: {
-            white: "var(--white)",
+            white: colors.white,
         },
 
         text: {
-            primary: "var(--dark)",
-            secondary: "var(--dark-red)",
+            primary: colors.dark,
+            secondary: colors.darkRed,
         },
     },
 });
