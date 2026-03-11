@@ -6,7 +6,9 @@
     display: flex;
     justify-content: space-evenly;
     gap: 2rem;
-    margin: 1rem;
+    height: var(--menubar-height);
+    min-height: var(--menubar-height);
+    padding: 0 1rem;
 }
 
 .menuBar_img {

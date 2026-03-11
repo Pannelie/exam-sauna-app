@@ -1,7 +1,9 @@
 import "./menuBar.css";
-import { AppBar, Toolbar, Button, styled } from "@mui/material";
-import bg from "../assets/wood2.jpg";
-import logo from "../assets/wood__logo.jpg";
+import bg from "../../assets/wood2.jpg";
+import logo from "../../assets/wood__logo.jpg";
+import { AppBar, Toolbar, styled } from "@mui/material";
+import BookNowButton from "../BookNowButton/BookNowButton";
+import { scrollToSection } from "../../utils/scrollToSection";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
     backgroundImage: `url(${bg})`,
@@ -28,23 +30,7 @@ const MenuLink = styled("a")(({ theme }) => ({
     [theme.breakpoints.down("sm")]: { fontSize: "0.85rem" },
 }));
 
-const StyledButton = styled(Button)(({ theme }) => ({
-    backgroundColor: theme.palette.primary.main,
-    padding: theme.spacing(1, 5),
-    fontSize: theme.typography.h6.fontSize,
-    fontWeight: theme.typography.h6.fontWeight,
-    transition: "background-color 0.2s ease, transform 0.2s ease",
-    "&:hover": {
-        backgroundColor: theme.palette.primary.light,
-        transform: "scale(1.03)",
-    },
-}));
-
 function MenuBar() {
-    const scrollToSection = (sectionId: string) => {
-        document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
-    };
-
     const handleBookClick = () => {
         scrollToSection("booking");
     };
@@ -56,9 +42,7 @@ function MenuBar() {
                 <MenuLink onClick={() => scrollToSection("info")}>Info</MenuLink>
                 <MenuLink onClick={() => scrollToSection("priser")}>Priser</MenuLink>
                 <MenuLink onClick={() => scrollToSection("kontakt")}>Kontakt</MenuLink>
-                <StyledButton variant="contained" color="primary" onClick={handleBookClick}>
-                    Boka nu
-                </StyledButton>
+                <BookNowButton onClick={handleBookClick} />
             </Toolbar>
         </StyledAppBar>
     );

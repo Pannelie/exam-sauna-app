@@ -1,10 +1,15 @@
 import { styled, Typography } from "@mui/material";
-import MenuBar from "../components/MenuBar";
+import MenuBar from "../components/MenuBar/MenuBar";
+import Hero from "../components/Hero/Hero";
 
-const StyledDiv = styled("div")({
+const StyledDiv = styled("div")(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
-});
+    paddingBottom: "calc(64px + env(safe-area-inset-bottom))",
+    [theme.breakpoints.up("md")]: {
+        paddingBottom: 0,
+    },
+}));
 
 const Section = styled("section")(({ theme }) => ({
     minHeight: "70vh",
@@ -15,6 +20,7 @@ const Section = styled("section")(({ theme }) => ({
 export const HomePage = () => {
     return (
         <StyledDiv>
+            <Hero />
             <MenuBar />
             <Section id="info">
                 <Typography variant="h4">Info</Typography>
