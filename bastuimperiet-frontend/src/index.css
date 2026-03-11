@@ -4,6 +4,13 @@
     padding: 0;
 }
 
+:root {
+    --menubar-height: 96px;
+    --font-primary: "Jura", sans-serif; /* t.ex. brödtext */
+    --font-secondary: "Alfa Slab One", serif; /* t.ex. rubriker, bold */
+    --font-accent: "Koulen", sans-serif; /* t.ex. knappar */
+}
+
 html {
     scroll-behavior: smooth;
 }

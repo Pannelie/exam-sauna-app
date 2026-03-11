@@ -2,13 +2,23 @@ import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
     typography: {
+        fontFamily: "var(--font-primary)",
         h1: {
+            fontFamily: "var(--font-secondary)",
             fontSize: "3rem",
             fontWeight: 700,
         },
+        h2: {
+            fontFamily: "var(--font-secondary)",
+            fontSize: "2.5rem",
+        },
         h6: {
+            fontFamily: "var(--font-secondary)",
             fontSize: "1.2rem",
             fontWeight: 600,
+        },
+        button: {
+            fontFamily: "var(--font-accent), 'Koulen', sans-serif", // knappar med tredje fonten
         },
     },
     palette: {
