@@ -49,3 +49,9 @@
     object-fit: cover;
     border-radius: 2px;
 }
+
+@media (max-width: 899px) {
+    .hero_section {
+        height: 100vh; /* Full viewport height på mobil */
+    }
+}

@@ -61,6 +61,9 @@ theme = createTheme(theme, {
         body1: {
             fontWeight: 800,
         },
+        body2: {
+            fontFamily: "var(--font-primary)",
+        },
         button: {
             fontFamily: "var(--font-accent), 'Koulen', sans-serif",
         },

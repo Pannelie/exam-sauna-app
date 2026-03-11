@@ -13,4 +13,5 @@
 
 .menuBar_img {
     max-height: 3rem;
+    cursor: pointer;
 }
