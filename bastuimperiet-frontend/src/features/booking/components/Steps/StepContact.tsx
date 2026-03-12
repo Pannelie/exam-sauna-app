@@ -15,8 +15,8 @@ export const StepContact = ({ data, updateField, back, next }: StepContactProps)
         <div
             style={{
                 display: "grid",
-                gridTemplateRows: "1fr auto", // innehåll tar all plats, knappar tar sin höjd
-                height: "100%", // fyller förälderns höjd
+                gridTemplateRows: "1fr auto",
+                height: "100%",
                 gap: "16px",
             }}
         >

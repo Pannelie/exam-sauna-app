@@ -1,4 +1,4 @@
-import { Stack, Typography, Button } from "@mui/material";
+import { Stack, Button, TextField } from "@mui/material";
 import type { BookingFormData } from "../../types/bookingTypes";
 
 interface StepSummaryProps {
@@ -19,20 +19,41 @@ export const StepSummary = ({ data, back }: StepSummaryProps) => {
                 gridTemplateRows: "1fr auto", // innehåll tar all plats, knappar tar sin höjd
                 height: "100%", // fyller förälderns höjd
                 gap: "16px",
+                width: "100%",
             }}
         >
-            <Stack spacing={1}>
-                <Typography variant="h6">Granska din bokning</Typography>
-                <Typography>
-                    Datum: {data.startDate} – {data.endDate}
-                </Typography>
-                <Typography>Ved: {data.ved}</Typography>
-                <Typography>Doft: {data.doft}</Typography>
-                <Typography>Städning: {data.cleaning ? "Ja" : "Nej"}</Typography>
-                <Typography>Namn: {data.name}</Typography>
-                <Typography>Email: {data.email}</Typography>
-                <Typography>Telefon: {data.phone}</Typography>
-                <Typography>Adress: {data.address}</Typography>
+            {/* Innehåll */}
+            <Stack spacing={2}>
+                {/* Datum  */}
+                <Stack direction="row" spacing={2}>
+                    <TextField label="Startdatum" value={data.startDate} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                    <TextField label="Slutdatum" value={data.endDate} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                </Stack>
+
+                {/* Tillval*/}
+                <Stack direction="row" spacing={2}>
+                    <TextField label="Ved" value={data.ved} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                    <TextField label="Doft" value={data.doft} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                    <TextField
+                        label="Städning"
+                        value={data.cleaning ? "Ja" : "Nej"}
+                        disabled
+                        variant="outlined"
+                        size="small"
+                        sx={{ flex: 1 }}
+                    />
+                </Stack>
+
+                {/* Kontaktinfo */}
+                <Stack direction="row" spacing={2}>
+                    <TextField label="Namn" value={data.name} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                    <TextField label="Email" value={data.email} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                </Stack>
+
+                <Stack direction="row" spacing={2}>
+                    <TextField label="Telefon" value={data.phone} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                    <TextField label="Adress" value={data.address} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                </Stack>
             </Stack>
             <Stack direction="row" spacing={2}>
                 <Button onClick={back}>Tillbaka</Button>

@@ -22,7 +22,9 @@ export const BookingLayout = () => {
             </div>
 
             {/* Formulär */}
-            <BookingStepper />
+            <div style={{ flex: 1, minWidth: 0 }}>
+                <BookingStepper />
+            </div>
         </section>
     );
 };
