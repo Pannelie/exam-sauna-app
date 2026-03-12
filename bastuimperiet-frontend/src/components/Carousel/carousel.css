@@ -4,6 +4,7 @@
 }
 .swiper-pagination-bullet-active {
     background: var(--dark-red) !important;
+    opacity: 1 !important;
 }
 .swiper_container {
     flex: 1;
