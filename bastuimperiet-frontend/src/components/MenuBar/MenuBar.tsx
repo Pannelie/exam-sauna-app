@@ -1,9 +1,8 @@
+import "./menuBar.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./menuBar.css";
 import bg from "../../assets/wood2.jpg";
-import logo from "../../assets/wood__logo.jpg";
-import { AppBar, Toolbar, IconButton, useMediaQuery, styled } from "@mui/material";
+import { AppBar, Toolbar, IconButton, useMediaQuery, styled, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
 import { BookNowButton } from "../BookNowButton/BookNowButton";
@@ -11,9 +10,12 @@ import { scrollToSection } from "../../utils/scrollToSection";
 import { MenuDrawer } from "../MenuDrawer/MenuDrawer";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
+    position: "sticky",
+    top: 0,
     backgroundImage: `url(${bg})`,
     color: theme.palette.common.white,
     boxShadow: "none",
+    padding: "1rem 0",
 }));
 
 const StyledToolbar = styled(Toolbar)(() => ({
@@ -74,9 +76,11 @@ export default function MenuBar() {
         <>
             {/* Desktop: Sticky menubar under hero */}
             {!isMobile && (
-                <StyledAppBar position="sticky" sx={{ top: 0 }}>
+                <StyledAppBar>
                     <StyledToolbar>
-                        <img src={logo} alt="Logo" className="menuBar_img" onClick={() => navigate("/")} />
+                        <Typography variant="h1" onClick={() => navigate("/")}>
+                            Bastuimperiet
+                        </Typography>
                         {menuItems.map((item) => (
                             <MenuLink key={item.label} onClick={() => scrollToSection(item.section)}>
                                 {item.label}
