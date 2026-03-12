@@ -5,6 +5,8 @@ export interface BookingFormData {
     ved: number;
     doft: number;
     cleaning: boolean;
+    delivery: boolean;
+    deliveryType?: "oneWay" | "return";
 
     name: string;
     email: string;

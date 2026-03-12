@@ -1,7 +1,6 @@
-/* .button_group {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: auto;
-} */
+.step_container {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    height: 100%;
+    gap: 16px;
+}

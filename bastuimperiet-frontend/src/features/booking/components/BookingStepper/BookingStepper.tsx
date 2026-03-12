@@ -1,58 +1,73 @@
-import { Stepper, Step, StepLabel, Box } from "@mui/material";
+import { Stepper, Step, StepLabel, Box, styled } from "@mui/material";
 import { useState } from "react";
 import type { BookingFormData } from "../../types/bookingTypes";
+import { useStepContent } from "../../hooks/useStepContent";
 
-import { StepDates } from "../Steps/StepDates";
-import { StepExtras } from "../Steps/StepExtras";
-import { StepContact } from "../Steps/StepContact";
-import { StepSummary } from "../Steps/StepSummary";
+const StyledBox = styled(Box)(({ theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    background: "rgba(255,255,255,0.9)",
+    borderRadius: "24px",
+    padding: theme.spacing(4),
+    height: "100%",
+}));
 
-const steps = ["Datum", "Tillval", "Kontakt", "Skicka"];
+const StyledStepper = styled(Stepper)(({ theme }) => ({
+    marginBottom: theme.spacing(4),
+}));
+
+const StyledFormContent = styled(Box)({
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+});
 
 export const BookingStepper = () => {
+    const steps = ["Datum", "Tillval", "Kontakt", "Skicka"];
     const [activeStep, setActiveStep] = useState<number>(0);
-
-    const [formData, setFormData] = useState<BookingFormData>({
+    const [isCompleted, setIsCompleted] = useState<boolean>(false);
+    const initialFormData: BookingFormData = {
         ved: 0,
         doft: 0,
         cleaning: false,
+        delivery: false,
         name: "",
         email: "",
         phone: "",
         address: "",
-    });
+        startDate: "",
+        endDate: "",
+    };
+    const [formData, setFormData] = useState<BookingFormData>(initialFormData);
 
     function updateField<K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) {
         setFormData((prev) => ({ ...prev, [field]: value }));
     }
-
-    const handleNext = () => setActiveStep((prev) => prev + 1);
-    const handleBack = () => setActiveStep((prev) => prev - 1);
+    // Använd hooken för att få innehållet för aktuellt steg
+    const stepContent = useStepContent(activeStep, formData, updateField, {
+        next: () => setActiveStep((prev) => prev + 1),
+        back: () => setActiveStep((prev) => prev - 1),
+        complete: () => setIsCompleted(true),
+        reset: () => {
+            setActiveStep(0);
+            setFormData(initialFormData);
+            setIsCompleted(false);
+        },
+        isCompleted,
+    });
 
     return (
-        <Box
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                background: "rgba(255,255,255,0.9)",
-                borderRadius: 3,
-                padding: 4,
-                height: "100%",
-            }}
-        >
-            <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
-                {steps.map((label) => (
-                    <Step key={label}>
+        <StyledBox>
+            <StyledStepper activeStep={activeStep}>
+                {steps.map((label, index) => (
+                    <Step key={label} completed={isCompleted ? true : index < activeStep}>
                         <StepLabel>{label}</StepLabel>
                     </Step>
                 ))}
-            </Stepper>
-            <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                {activeStep === 0 && <StepDates data={formData} updateField={updateField} next={handleNext} />}
-                {activeStep === 1 && <StepExtras data={formData} updateField={updateField} next={handleNext} back={handleBack} />}
-                {activeStep === 2 && <StepContact data={formData} updateField={updateField} next={handleNext} back={handleBack} />}
-                {activeStep === 3 && <StepSummary data={formData} back={handleBack} />}
-            </Box>
-        </Box>
+            </StyledStepper>
+
+            {/* Samma container hela tiden, bara innehållet byts */}
+            <StyledFormContent>{stepContent}</StyledFormContent>
+        </StyledBox>
     );
 };

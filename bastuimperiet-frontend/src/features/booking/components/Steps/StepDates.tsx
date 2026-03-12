@@ -1,6 +1,7 @@
-import { Stack, TextField, Button } from "@mui/material";
-import { NextButton } from "../NextButton/NextButton";
+import { Stack, TextField } from "@mui/material";
+import { FormButton } from "../FormButton/FormButton";
 import type { BookingFormData } from "../../types/bookingTypes";
+import { TotalPrice } from "../TotalPrice/TotalPrice";
 
 interface StepDatesProps {
     data: BookingFormData;
@@ -10,14 +11,7 @@ interface StepDatesProps {
 
 export const StepDates = ({ data, updateField, next }: StepDatesProps) => {
     return (
-        <div
-            style={{
-                display: "grid",
-                gridTemplateRows: "1fr auto", // innehåll tar allt, knappar tar sin höjd
-                height: "100%", // viktig: fyller förälderns höjd
-                gap: "16px",
-            }}
-        >
+        <section className="step_container">
             <Stack spacing={2}>
                 <TextField
                     type="date"
@@ -33,12 +27,12 @@ export const StepDates = ({ data, updateField, next }: StepDatesProps) => {
                     onChange={(e) => updateField("endDate", e.target.value)}
                     InputLabelProps={{ shrink: true }}
                 />
+                <TotalPrice data={data} />
             </Stack>
 
-            <Stack direction="row" spacing={2}>
-                <Button disabled>Tillbaka</Button>
-                <NextButton onClick={next} />
+            <Stack direction="row" spacing={2} justifyContent={"flex-end"}>
+                <FormButton variant="contained" onClick={next} text="Nästa steg" />
             </Stack>
-        </div>
+        </section>
     );
 };
