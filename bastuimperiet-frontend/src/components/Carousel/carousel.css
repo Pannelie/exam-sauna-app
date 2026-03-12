@@ -1,0 +1,32 @@
+.swiper-pagination-bullet {
+    background: var(--dark-red) !important;
+    opacity: 0.6 !important;
+}
+.swiper-pagination-bullet-active {
+    background: var(--dark-red) !important;
+    opacity: 1 !important;
+}
+.swiper_container {
+    flex: 1;
+    height: 420px;
+    width: 100%;
+}
+
+.carousel_image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 899px) {
+    .swiper_container {
+        order: 2;
+    }
+
+    .carousel_image {
+        object-fit: cover;
+        height: 220px;
+    }
+}

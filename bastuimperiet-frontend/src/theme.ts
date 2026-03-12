@@ -40,8 +40,7 @@ theme = createTheme(theme, {
         fontSize: "1.3rem",
         h1: {
             fontFamily: "var(--font-secondary)",
-            fontSize: "3rem",
-            fontWeight: 700,
+            fontSize: "2.8rem",
         },
         h2: {
             fontFamily: "var(--font-secondary)",
