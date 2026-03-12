@@ -9,7 +9,6 @@ export const BookingLayout = () => {
                 style={{
                     flex: 1,
                     minWidth: 0,
-                    minHeight: 500,
                     background: "white",
                     borderRadius: 16,
                     padding: 16,

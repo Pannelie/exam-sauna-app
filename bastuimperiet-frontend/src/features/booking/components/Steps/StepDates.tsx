@@ -1,4 +1,5 @@
 import { Stack, TextField, Button } from "@mui/material";
+import { NextButton } from "../NextButton/NextButton";
 import type { BookingFormData } from "../../types/bookingTypes";
 
 interface StepDatesProps {
@@ -9,24 +10,35 @@ interface StepDatesProps {
 
 export const StepDates = ({ data, updateField, next }: StepDatesProps) => {
     return (
-        <Stack spacing={2}>
-            <TextField
-                type="date"
-                label="Startdatum"
-                value={data.startDate || ""}
-                onChange={(e) => updateField("startDate", e.target.value)}
-                InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-                type="date"
-                label="Slutdatum"
-                value={data.endDate || ""}
-                onChange={(e) => updateField("endDate", e.target.value)}
-                InputLabelProps={{ shrink: true }}
-            />
-            <Button variant="contained" sx={{ backgroundColor: "#d8a74e" }} onClick={next}>
-                Nästa steg
-            </Button>
-        </Stack>
+        <div
+            style={{
+                display: "grid",
+                gridTemplateRows: "1fr auto", // innehåll tar allt, knappar tar sin höjd
+                height: "100%", // viktig: fyller förälderns höjd
+                gap: "16px",
+            }}
+        >
+            <Stack spacing={2}>
+                <TextField
+                    type="date"
+                    label="Startdatum"
+                    value={data.startDate || ""}
+                    onChange={(e) => updateField("startDate", e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                />
+                <TextField
+                    type="date"
+                    label="Slutdatum"
+                    value={data.endDate || ""}
+                    onChange={(e) => updateField("endDate", e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                />
+            </Stack>
+
+            <Stack direction="row" spacing={2}>
+                <Button disabled>Tillbaka</Button>
+                <NextButton onClick={next} />
+            </Stack>
+        </div>
     );
 };

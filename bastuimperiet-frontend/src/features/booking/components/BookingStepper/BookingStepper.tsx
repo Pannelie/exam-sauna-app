@@ -32,9 +32,12 @@ export const BookingStepper = () => {
     return (
         <Box
             sx={{
+                display: "flex",
+                flexDirection: "column",
                 background: "rgba(255,255,255,0.9)",
                 borderRadius: 3,
                 padding: 4,
+                height: "100%",
             }}
         >
             <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
@@ -44,11 +47,12 @@ export const BookingStepper = () => {
                     </Step>
                 ))}
             </Stepper>
-
-            {activeStep === 0 && <StepDates data={formData} updateField={updateField} next={handleNext} />}
-            {activeStep === 1 && <StepExtras data={formData} updateField={updateField} next={handleNext} back={handleBack} />}
-            {activeStep === 2 && <StepContact data={formData} updateField={updateField} next={handleNext} back={handleBack} />}
-            {activeStep === 3 && <StepSummary data={formData} back={handleBack} />}
+            <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                {activeStep === 0 && <StepDates data={formData} updateField={updateField} next={handleNext} />}
+                {activeStep === 1 && <StepExtras data={formData} updateField={updateField} next={handleNext} back={handleBack} />}
+                {activeStep === 2 && <StepContact data={formData} updateField={updateField} next={handleNext} back={handleBack} />}
+                {activeStep === 3 && <StepSummary data={formData} back={handleBack} />}
+            </Box>
         </Box>
     );
 };
