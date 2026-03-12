@@ -35,6 +35,8 @@ export const BookingStepper = () => {
         email: "",
         phone: "",
         address: "",
+        postcode: "",
+        city: "",
         startDate: "",
         endDate: "",
     };

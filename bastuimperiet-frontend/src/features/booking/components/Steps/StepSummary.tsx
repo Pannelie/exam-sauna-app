@@ -32,6 +32,9 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
                     <Typography variant="h5" align="center">
                         Tack för din förfrågan!
                     </Typography>
+                    <Typography variant="h5" align="center">
+                        {data.name}
+                    </Typography>
                     <Typography variant="body2" align="center">
                         Vi återkommer inom kort med en bekräftelse.
                     </Typography>
@@ -102,7 +105,14 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
                     <TextField label="Email" value={data.email} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
                 </Stack>
                 <Stack direction="row" spacing={2}>
-                    <TextField label="Adress" value={data.address} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                    <TextField
+                        label="Adress"
+                        value={`${data.address}, ${data.postcode} ${data.city}`}
+                        disabled
+                        variant="outlined"
+                        size="small"
+                        sx={{ flex: 1 }}
+                    />
                 </Stack>
                 <TotalPrice data={data} />
             </Stack>

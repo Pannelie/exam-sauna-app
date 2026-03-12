@@ -33,8 +33,8 @@ export const TotalPrice = ({ data }: TotalPriceProps) => {
     return (
         <Paper sx={{ p: 2 }}>
             <Stack direction="row" justifyContent="space-between">
-                <Typography variant="h6">Totalt</Typography>
-                <Typography variant="h6">{total} kr</Typography>
+                <Typography>Totalt</Typography>
+                <Typography>{total} kr</Typography>
             </Stack>
             {days > 0 && (
                 <Typography variant="body2">
