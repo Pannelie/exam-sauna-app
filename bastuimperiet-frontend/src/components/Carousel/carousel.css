@@ -1,25 +1,8 @@
-@media (min-width: 900px) {
-    .swiper_container,
-    .swiper-slide,
-    .carousel_image {
-        min-height: 420px;
-    }
-}
-@media (max-width: 899px) {
-    .swiper_container,
-    .swiper-slide,
-    .carousel_image {
-        height: 200px;
-    }
-}
 .swiper_container {
     flex: 1;
     height: 420px;
     width: 100%;
 }
-/* .swiper-slide {
-    height: 100%;
-} */
 
 .carousel_image {
     object-fit: cover;

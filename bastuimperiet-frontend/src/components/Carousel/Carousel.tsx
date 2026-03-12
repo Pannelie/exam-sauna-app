@@ -1,5 +1,4 @@
 import "./carousel.css";
-import { Paper, styled } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -10,13 +9,6 @@ import img2 from "../../assets/hero.png";
 
 const images = [img1, img2];
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
-    borderRadius: "12px",
-    overflow: "hidden",
-    width: "100%",
-    height: "100%",
-    [theme.breakpoints.down("md")]: {},
-}));
 export const Carousel = () => (
     <Swiper
         modules={[Pagination, Autoplay]}
