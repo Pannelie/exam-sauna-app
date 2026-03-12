@@ -1,8 +1,8 @@
-import { Stack, TextField, Typography, Divider } from "@mui/material";
+import { Stack, Typography, Divider } from "@mui/material";
 import type { BookingFormData } from "../../types/bookingTypes";
 import { FormButton } from "../FormButton/FormButton";
 import { TotalPrice } from "../TotalPrice/TotalPrice";
-
+import { StyledTextField } from "../StyledTextField/StyledTextField";
 interface StepSummaryProps {
     data: BookingFormData;
     back: () => void;
@@ -48,48 +48,36 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
 
     return (
         <section className="step_container">
+            <Typography variant="h3" fontSize={24} gutterBottom>
+                Kontrollera dina uppgifter
+            </Typography>
             {/* Innehåll */}
-            <Stack spacing={3}>
+            <Stack spacing={2} gap={0.2}>
                 {/* Datum  */}
                 <Stack direction="row" spacing={2}>
-                    <TextField label="Startdatum" value={data.startDate} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
-                    <TextField label="Slutdatum" value={data.endDate} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                    <StyledTextField label="Startdatum" value={data.startDate} disabled variant="outlined" size="small" />
+                    <StyledTextField label="Slutdatum" value={data.endDate} disabled variant="outlined" size="small" />
                 </Stack>
                 <Divider />
 
                 {/* Tillval*/}
                 <Stack direction="row" spacing={2}>
-                    <TextField label="Ved" value={data.ved} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
-                    <TextField label="Doft" value={data.doft} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
-                    <TextField
-                        label="Städning"
-                        value={data.cleaning ? "Ja" : "Nej"}
-                        disabled
-                        variant="outlined"
-                        size="small"
-                        sx={{ flex: 1 }}
-                    />
+                    <StyledTextField label="Ved" value={data.ved} disabled variant="outlined" size="small" />
+                    <StyledTextField label="Doft" value={data.doft} disabled variant="outlined" size="small" />
+                    <StyledTextField label="Städning" value={data.cleaning ? "Ja" : "Nej"} disabled variant="outlined" size="small" />
                 </Stack>
 
                 {/* Visa deliveryType om utkörning är på */}
                 {data.delivery && (
                     <Stack direction="row" spacing={2}>
-                        <TextField
-                            label="Utkörning"
-                            value={data.delivery ? "Ja" : "Nej"}
-                            disabled
-                            variant="outlined"
-                            size="small"
-                            sx={{ flex: 1 }}
-                        />
+                        <StyledTextField label="Utkörning" value={data.delivery ? "Ja" : "Nej"} disabled variant="outlined" size="small" />
 
-                        <TextField
+                        <StyledTextField
                             label="Typ av utkörning"
                             value={data.deliveryType === "return" ? "Tur & Retur" : "Enkel"}
                             disabled
                             variant="outlined"
                             size="small"
-                            sx={{ flex: 1 }}
                         />
                     </Stack>
                 )}
@@ -97,25 +85,19 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
 
                 {/* Kontaktinfo */}
                 <Stack direction="row" spacing={2}>
-                    <TextField label="Namn" value={data.name} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
-                    <TextField label="Telefon" value={data.phone} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                    <StyledTextField label="Namn" value={`${data.name}`} disabled variant="outlined" size="small" />
+                    <StyledTextField label="Telefon" value={data.phone} disabled variant="outlined" size="small" />
                 </Stack>
 
+                <StyledTextField label="Email" value={data.email} disabled variant="outlined" size="small" />
+                <StyledTextField label="Adress" value={data.address} disabled variant="outlined" size="small" flex={2} />
+
                 <Stack direction="row" spacing={2}>
-                    <TextField label="Email" value={data.email} disabled variant="outlined" size="small" sx={{ flex: 1 }} />
+                    <StyledTextField label="Postnummer" value={data.postcode} disabled variant="outlined" size="small" />
+                    <StyledTextField label="Stad" value={data.city} disabled variant="outlined" size="small" />
                 </Stack>
-                <Stack direction="row" spacing={2}>
-                    <TextField
-                        label="Adress"
-                        value={`${data.address}, ${data.postcode} ${data.city}`}
-                        disabled
-                        variant="outlined"
-                        size="small"
-                        sx={{ flex: 1 }}
-                    />
-                </Stack>
-                <TotalPrice data={data} />
             </Stack>
+            <TotalPrice data={data} />
             <Stack direction="row" spacing={2} justifyContent={"space-between"}>
                 <FormButton variant="outlined" onClick={back} text="Tillbaka" />
                 <FormButton variant="contained" onClick={handleSubmit} text="Skicka förfrågan" />

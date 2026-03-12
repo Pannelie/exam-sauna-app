@@ -120,11 +120,9 @@ export const StepExtras = ({ data, updateField, next, back }: StepExtrasProps) =
                         )}
                     </Stack>
                 </Paper>
-
-                {/* Total (räknar bara med extra och startavgift, km tillkommer senare) */}
-                <TotalPrice data={data} />
             </Stack>
-
+            {/* Total (räknar bara med extra och startavgift, km tillkommer senare) */}
+            <TotalPrice data={data} />
             {/* Navigation */}
             <Stack direction="row" spacing={2} justifyContent="space-between">
                 <FormButton variant="outlined" onClick={back} text="Tillbaka" />

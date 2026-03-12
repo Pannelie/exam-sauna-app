@@ -8,8 +8,7 @@ export interface BookingFormData {
     delivery: boolean;
     deliveryType?: "oneWay" | "return";
 
-    firstName: string;
-    lastName: string;
+    name: string;
     email: string;
     phone: string;
     address: string;

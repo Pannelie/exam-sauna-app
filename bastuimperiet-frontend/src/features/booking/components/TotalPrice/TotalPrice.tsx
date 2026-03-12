@@ -31,7 +31,7 @@ export const TotalPrice = ({ data }: TotalPriceProps) => {
     const total = baseTotal + extrasTotal;
 
     return (
-        <Paper sx={{ p: 2 }}>
+        <Paper sx={{ p: 2, mt: "auto" }}>
             <Stack direction="row" justifyContent="space-between">
                 <Typography>Totalt</Typography>
                 <Typography>{total} kr</Typography>
