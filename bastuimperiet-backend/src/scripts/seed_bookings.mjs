@@ -63,7 +63,7 @@ function calculateTotalPrice(startDateStr, endDateStr, cleaning, firewood) {
 const bookings = [
     {
         id: "1",
-        guestName: "Anna Svensson",
+        name: "Anna Svensson",
         email: "anna@example.com",
         phone: "0701234567",
         startDate: "2026-01-20",
@@ -73,7 +73,7 @@ const bookings = [
     },
     {
         id: "2",
-        guestName: "Erik Karlsson",
+        name: "Erik Karlsson",
         email: "erik@example.com",
         phone: "0709876543",
         startDate: "2026-01-23",
@@ -83,7 +83,7 @@ const bookings = [
     },
     {
         id: "3",
-        guestName: "Lisa Johansson",
+        name: "Lisa Johansson",
         email: "lisa@example.com",
         phone: "0705551234",
         startDate: "2026-04-18",
@@ -100,7 +100,7 @@ async function seedBookings() {
         const item = {
             PK: `BOOKING#${booking.id}`,
             SK: "BOOKING",
-            guestName: booking.guestName,
+            name: booking.name,
             email: booking.email,
             phone: booking.phone,
             startDate: booking.startDate,
@@ -128,10 +128,10 @@ async function seedBookings() {
                 })
                 .promise();
 
-            console.log(`Bokning skapad: ${booking.guestName} (${booking.startDate}) – ${totalPrice} kr`);
+            console.log(`Bokning skapad: ${booking.name} (${booking.startDate}) – ${totalPrice} kr`);
         } catch (err) {
             if (err.code === "ConditionalCheckFailedException") {
-                console.log(`Bokning finns redan: ${booking.guestName}`);
+                console.log(`Bokning finns redan: ${booking.name}`);
             } else {
                 console.error("Fel vid skapande av bokning:", err);
             }

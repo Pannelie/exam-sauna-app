@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const bookingSchema = Joi.object({
-    guestName: Joi.string().min(2).max(100).required().messages({
+    name: Joi.string().min(2).max(100).required().messages({
         "string.empty": "Namn krävs",
         "string.min": "Namn måste vara minst 2 tecken",
         "string.max": "Namn får vara max 100 tecken",

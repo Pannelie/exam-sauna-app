@@ -56,7 +56,7 @@ export async function postBooking(tableName, bookingData) {
     const allBookings = await getAllBookings(tableName);
     const id = generateShortId(); // Generera id här
     const {
-        guestName,
+        name,
         email,
         phone,
         address,
@@ -94,7 +94,7 @@ export async function postBooking(tableName, bookingData) {
         SK: "BOOKING",
 
         id,
-        guestName,
+        name,
         email,
         phone,
 
@@ -130,7 +130,7 @@ export async function postBooking(tableName, bookingData) {
             ConditionExpression: "attribute_not_exists(PK)", // skriv inte över
         }),
     );
-
+    console.log("Bokning skapad:", item);
     return formatBookingForFrontend(item);
 }
 

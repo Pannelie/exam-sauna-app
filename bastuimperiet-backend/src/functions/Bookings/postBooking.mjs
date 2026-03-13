@@ -29,7 +29,7 @@ export const handler = async (event) => {
         try {
             await sendNewBookingRequestToAdmin({
                 bookingId: booking.id,
-                ...bookingData,
+                ...booking,
             });
             console.log("Admin booking request email sent", {
                 bookingId: booking.id,

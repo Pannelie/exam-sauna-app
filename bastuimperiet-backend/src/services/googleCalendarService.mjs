@@ -134,7 +134,7 @@ export async function getCalendarBookings() {
 
 export async function createBookingCalendarEvent({
     bookingId,
-    guestName,
+    name,
     email,
     phone,
     address,
@@ -157,12 +157,12 @@ export async function createBookingCalendarEvent({
     const range = buildCalendarDateRange(startDate, endDate);
 
     const eventBody = {
-        summary: `Bastu-bokning: ${guestName}`,
+        summary: `Bastu-bokning: ${name}`,
         description: `
 Bokningsnummer: ${bookingId}
 
 Kund:
-${guestName}
+${name}
 ${email}
 ${phone}
 

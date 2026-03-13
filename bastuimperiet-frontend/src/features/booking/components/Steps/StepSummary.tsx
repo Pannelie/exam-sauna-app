@@ -175,7 +175,7 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
                 </Stack>
             </Stack>
 
-            <TotalPrice data={data} />
+            <TotalPrice />
             <Stack direction="row" spacing={2} justifyContent={"space-between"}>
                 <FormButton variant="outlined" onClick={back} text="Tillbaka" />
                 <FormButton variant="contained" onClick={handleSubmit} text="Skicka förfrågan" />
