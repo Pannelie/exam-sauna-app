@@ -6,6 +6,7 @@ import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 
+import { TransportType } from "../../types/bookingTypes";
 import type { BookingFormData } from "../../types/bookingTypes";
 
 const StyledPaper = styled(Paper)({
@@ -40,11 +41,11 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                         </Stack>
                     </Stack>
                     <Stack direction="row" spacing={1} alignItems="center">
-                        <IconButton disabled={data.ved === 0} onClick={() => updateField("ved", data.ved - 1)}>
+                        <IconButton disabled={data.firewood === 0} onClick={() => updateField("firewood", data.firewood - 1)}>
                             <RemoveIcon />
                         </IconButton>
-                        <Typography>{data.ved}</Typography>
-                        <IconButton onClick={() => updateField("ved", data.ved + 1)}>
+                        <Typography>{data.firewood}</Typography>
+                        <IconButton onClick={() => updateField("firewood", data.firewood + 1)}>
                             <AddIcon />
                         </IconButton>
                     </Stack>
@@ -64,11 +65,11 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                         </Stack>
                     </Stack>
                     <Stack direction="row" spacing={1} alignItems="center">
-                        <IconButton disabled={data.doft === 0} onClick={() => updateField("doft", data.doft - 1)}>
+                        <IconButton disabled={data.scent === 0} onClick={() => updateField("scent", data.scent - 1)}>
                             <RemoveIcon />
                         </IconButton>
-                        <Typography>{data.doft}</Typography>
-                        <IconButton onClick={() => updateField("doft", data.doft + 1)}>
+                        <Typography>{data.scent}</Typography>
+                        <IconButton onClick={() => updateField("scent", data.scent + 1)}>
                             <AddIcon />
                         </IconButton>
                     </Stack>
@@ -110,11 +111,15 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                     {data.delivery && (
                         <RadioGroup
                             row
-                            value={data.deliveryType || "oneWay"}
-                            onChange={(e) => updateField("deliveryType", e.target.value as "oneWay" | "return")}
+                            value={data.transportType || TransportType.OneWay}
+                            onChange={(e) => updateField("transportType", e.target.value as TransportType)}
                         >
-                            <FormControlLabel value="oneWay" control={<Radio />} label={`Enkel (${priceOneWay} kr/km)`} />
-                            <FormControlLabel value="return" control={<Radio />} label={`Tur & Retur (${priceReturn} kr/km)`} />
+                            <FormControlLabel value={TransportType.OneWay} control={<Radio />} label={`Enkel (${priceOneWay} kr/km)`} />
+                            <FormControlLabel
+                                value={TransportType.Return}
+                                control={<Radio />}
+                                label={`Tur & Retur (${priceReturn} kr/km)`}
+                            />
                         </RadioGroup>
                     )}
                 </Stack>

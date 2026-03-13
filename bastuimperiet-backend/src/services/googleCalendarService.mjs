@@ -106,6 +106,32 @@ function buildCalendarDateRange(startDate, endDate) {
     };
 }
 
+export async function getCalendarBookings() {
+    const serviceAccount = parseServiceAccount();
+    const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";
+
+    const accessToken = await getAccessToken(serviceAccount);
+
+    const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+
+    if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`Google Calendar fetch error (${response.status}): ${errorBody}`);
+    }
+
+    const data = await response.json();
+
+    return data.items.map((event) => ({
+        id: event.id,
+        start: event.start.dateTime,
+        end: event.end.dateTime,
+    }));
+}
+
 export async function createBookingCalendarEvent({
     bookingId,
     guestName,

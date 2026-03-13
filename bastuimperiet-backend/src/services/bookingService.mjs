@@ -52,6 +52,7 @@ export async function getBookingByIdInternal(tableName, bookingId) {
 }
 
 export async function postBooking(tableName, bookingData) {
+    const allBookings = await getAllBookings(tableName);
     const id = generateShortId(); // Generera id här
     const {
         guestName,
@@ -68,6 +69,12 @@ export async function postBooking(tableName, bookingData) {
         delivery = false,
         transportType = null,
     } = bookingData;
+
+    if (hasBookingOverlap(startDate, endDate, allBookings)) {
+        const error = new Error("Datumet är redan bokat");
+        error.code = 409;
+        throw error;
+    }
 
     const totalPrice = calculateTotalPrice(startDate, endDate, cleaning, firewood, scent, delivery);
     const status = "pending";
@@ -151,4 +158,16 @@ export async function saveCalendarEventId(tableName, bookingId, calendarEventId)
         },
     };
     await client.send(new UpdateCommand(params));
+}
+
+export function hasBookingOverlap(startDate, endDate, existingBookings) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    return existingBookings.some((booking) => {
+        const bookingStart = new Date(booking.startDate);
+        const bookingEnd = new Date(booking.endDate);
+
+        return start < bookingEnd && end > bookingStart;
+    });
 }

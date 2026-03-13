@@ -5,7 +5,7 @@ enum BookingStatus {
     Cancelled = "cancelled",
 }
 
-enum TransportType {
+export enum TransportType {
     OneWay = "oneWay",
     Return = "return",
 }
@@ -13,11 +13,11 @@ export interface BookingFormData {
     startDate: string;
     endDate: string;
 
-    firewood?: number;
-    scent?: number;
-    cleaning?: boolean;
-    delivery?: boolean;
-    transportType?: TransportType | null;
+    firewood: number;
+    scent: number;
+    cleaning: boolean;
+    delivery: boolean;
+    transportType?: TransportType;
 
     name: string;
     email: string;
@@ -29,7 +29,7 @@ export interface BookingFormData {
 
 export interface ApiBookingData {
     id: string;
-    guestName: string;
+    name: string;
     email: string;
     phone: string;
     address: string;
@@ -39,11 +39,11 @@ export interface ApiBookingData {
     startDate: string; // ISO-date
     endDate: string; // ISO-date
 
-    cleaning?: boolean;
-    firewood?: number;
-    scent?: number;
-    delivery?: boolean;
-    transportType?: TransportType | null;
+    cleaning: boolean;
+    firewood: number;
+    scent: number;
+    delivery: boolean;
+    transportType?: TransportType;
 
     totalPrice: number;
     status: BookingStatus;
@@ -57,7 +57,7 @@ export interface ApiBookingData {
 
 export interface AdminBookingData {
     id: string;
-    guestName: string;
+    name: string;
     email: string;
     phone: string;
     address?: string | null;
@@ -68,11 +68,11 @@ export interface AdminBookingData {
     endDate: string; // ISO-date
     durationDays: number; // beräknad från startDate–endDate
 
-    cleaning?: boolean;
-    firewood?: number;
-    scent?: number;
-    delivery?: boolean;
-    transportType?: TransportType | null;
+    cleaning: boolean;
+    firewood: number;
+    scent: number;
+    delivery: boolean;
+    transportType?: TransportType;
 
     totalPrice: number;
     status: BookingStatus;

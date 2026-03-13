@@ -1,8 +1,10 @@
 import { Stack, Typography, Divider } from "@mui/material";
-import type { BookingFormData } from "../../types/bookingTypes";
+import type { ApiBookingData, BookingFormData } from "../../types/bookingTypes";
 import { FormButton } from "../FormButton/FormButton";
 import { TotalPrice } from "../TotalPrice/TotalPrice";
 import { StyledTextField } from "../StyledTextField/StyledTextField";
+import { postBooking } from "../../services/bookingService";
+import { useState } from "react";
 interface StepSummaryProps {
     data: BookingFormData;
     back: () => void;
@@ -12,12 +14,38 @@ interface StepSummaryProps {
 }
 
 export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSummaryProps) => {
-    const handleSubmit = () => {
-        console.log("Skickar bokning:", data);
-        complete();
+    const [bookingResult, setBookingResult] = useState<ApiBookingData | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+    const handleSubmit = async () => {
+        // Logga alla fält innan submit
+        console.log("BookingFormData skickas:", JSON.stringify(data, null, 2));
+        setFieldErrors({});
+        try {
+            const result = await postBooking(data);
+            setBookingResult(result);
+            setError(null);
+            complete();
+        } catch (error: any) {
+            // Hantera specifika fältfel från backend
+            if (error.response && error.response.data && error.response.data.details) {
+                // details är en array av Joi errors
+                const errors: Record<string, string> = {};
+                error.response.data.details.forEach((err: any) => {
+                    // err.path[0] är fältnamnet, err.message är felmeddelandet
+                    errors[err.path[0]] = err.message;
+                });
+                setFieldErrors(errors);
+            } else if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            } else {
+                setError(error instanceof Error ? error.message : "Något gick fel vid bokning");
+            }
+        }
     };
 
-    if (isCompleted) {
+    if (isCompleted && bookingResult) {
         return (
             <div
                 style={{
@@ -33,7 +61,7 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
                         Tack för din förfrågan!
                     </Typography>
                     <Typography variant="h5" align="center">
-                        {data.name}
+                        {bookingResult.name}
                     </Typography>
                     <Typography variant="body2" align="center">
                         Vi återkommer inom kort med en bekräftelse.
@@ -62,8 +90,8 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
 
                 {/* Tillval*/}
                 <Stack direction="row" spacing={2}>
-                    <StyledTextField label="Ved" value={data.ved} disabled variant="outlined" size="small" />
-                    <StyledTextField label="Doft" value={data.doft} disabled variant="outlined" size="small" />
+                    <StyledTextField label="Ved" value={data.firewood} disabled variant="outlined" size="small" />
+                    <StyledTextField label="Doft" value={data.scent} disabled variant="outlined" size="small" />
                     <StyledTextField label="Städning" value={data.cleaning ? "Ja" : "Nej"} disabled variant="outlined" size="small" />
                 </Stack>
 
@@ -74,7 +102,7 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
 
                         <StyledTextField
                             label="Typ av utkörning"
-                            value={data.deliveryType === "return" ? "Tur & Retur" : "Enkel"}
+                            value={data.transportType === "return" ? "Tur & Retur" : "Enkel"}
                             disabled
                             variant="outlined"
                             size="small"
@@ -85,18 +113,68 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
 
                 {/* Kontaktinfo */}
                 <Stack direction="row" spacing={2}>
-                    <StyledTextField label="Namn" value={`${data.name}`} disabled variant="outlined" size="small" />
-                    <StyledTextField label="Telefon" value={data.phone} disabled variant="outlined" size="small" />
+                    <StyledTextField
+                        label="Namn"
+                        value={`${data.name}`}
+                        disabled
+                        variant="outlined"
+                        size="small"
+                        error={!!fieldErrors.name}
+                        helperText={fieldErrors.name}
+                    />
+                    <StyledTextField
+                        label="Telefon"
+                        value={data.phone}
+                        disabled
+                        variant="outlined"
+                        size="small"
+                        error={!!fieldErrors.phone}
+                        helperText={fieldErrors.phone}
+                    />
                 </Stack>
 
-                <StyledTextField label="Email" value={data.email} disabled variant="outlined" size="small" />
-                <StyledTextField label="Adress" value={data.address} disabled variant="outlined" size="small" flex={2} />
+                <StyledTextField
+                    label="Email"
+                    value={data.email}
+                    disabled
+                    variant="outlined"
+                    size="small"
+                    error={!!fieldErrors.email}
+                    helperText={fieldErrors.email}
+                />
+                <StyledTextField
+                    label="Adress"
+                    value={data.address}
+                    disabled
+                    variant="outlined"
+                    size="small"
+                    flex={2}
+                    error={!!fieldErrors.address}
+                    helperText={fieldErrors.address}
+                />
 
                 <Stack direction="row" spacing={2}>
-                    <StyledTextField label="Postnummer" value={data.postcode} disabled variant="outlined" size="small" />
-                    <StyledTextField label="Stad" value={data.city} disabled variant="outlined" size="small" />
+                    <StyledTextField
+                        label="Postnummer"
+                        value={data.postalCode}
+                        disabled
+                        variant="outlined"
+                        size="small"
+                        error={!!fieldErrors.postalCode}
+                        helperText={fieldErrors.postalCode}
+                    />
+                    <StyledTextField
+                        label="Stad"
+                        value={data.city}
+                        disabled
+                        variant="outlined"
+                        size="small"
+                        error={!!fieldErrors.city}
+                        helperText={fieldErrors.city}
+                    />
                 </Stack>
             </Stack>
+
             <TotalPrice data={data} />
             <Stack direction="row" spacing={2} justifyContent={"space-between"}>
                 <FormButton variant="outlined" onClick={back} text="Tillbaka" />
