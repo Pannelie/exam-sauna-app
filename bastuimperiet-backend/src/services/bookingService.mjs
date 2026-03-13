@@ -76,7 +76,7 @@ export async function postBooking(tableName, bookingData) {
         throw error;
     }
 
-    const totalPrice = calculateTotalPrice(startDate, endDate, cleaning, firewood, scent, delivery);
+    const totalPrice = await calculateTotalPrice(startDate, endDate, cleaning, firewood, scent, delivery);
     const status = "pending";
 
     const item = {
