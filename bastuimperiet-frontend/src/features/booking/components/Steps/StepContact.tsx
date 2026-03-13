@@ -24,7 +24,11 @@ export const StepContact = ({ data, updateField, back, next }: StepContactProps)
                     <StyledTextField label="Adress" value={data.address} onChange={(e) => updateField("address", e.target.value)} />
                 </Stack>
                 <Stack direction="row" spacing={2}>
-                    <StyledTextField label="Postnummer" value={data.postcode} onChange={(e) => updateField("postcode", e.target.value)} />
+                    <StyledTextField
+                        label="Postnummer"
+                        value={data.postalCode}
+                        onChange={(e) => updateField("postalCode", e.target.value)}
+                    />
                     <StyledTextField label="Stad" value={data.city} onChange={(e) => updateField("city", e.target.value)} />
                 </Stack>
             </Stack>

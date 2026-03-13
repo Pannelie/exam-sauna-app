@@ -27,15 +27,15 @@ export const BookingStepper = () => {
     const [activeStep, setActiveStep] = useState<number>(0);
     const [isCompleted, setIsCompleted] = useState<boolean>(false);
     const initialFormData: BookingFormData = {
-        ved: 0,
-        doft: 0,
+        firewood: 0,
+        scent: 0,
         cleaning: false,
         delivery: false,
         name: "",
         email: "",
         phone: "",
         address: "",
-        postcode: "",
+        postalCode: "",
         city: "",
         startDate: "",
         endDate: "",

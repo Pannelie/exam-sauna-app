@@ -1,3 +1,4 @@
+// seedBookings.js
 import AWS from "aws-sdk";
 import dotenv from "dotenv";
 
@@ -31,8 +32,31 @@ function isSpecialDay(dateStr) {
 // Pris per dag
 function calculateDayPrice(dateStr) {
     if (isSpecialDay(dateStr)) return 950;
-    const type = getDayType(dateStr);
-    return type === "helg" ? 800 : 600;
+    return getDayType(dateStr) === "helg" ? 800 : 600;
+}
+
+// Totalpris för bokning
+function calculateTotalPrice(startDateStr, endDateStr, cleaning, firewood) {
+    const start = new Date(startDateStr);
+    const end = new Date(endDateStr);
+    const dayCount = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+    // Veckohyra/månadshyra
+    if (dayCount >= 31) return 6000 + (cleaning ? 995 : 0) + firewood * 40;
+    if (dayCount >= 7) return 2000 + (cleaning ? 995 : 0) + firewood * 40;
+
+    let total = 0;
+    for (let i = 0; i < dayCount; i++) {
+        const currentDate = new Date(start);
+        currentDate.setDate(start.getDate() + i);
+        const dateStr = currentDate.toISOString().split("T")[0];
+        total += calculateDayPrice(dateStr);
+    }
+
+    if (cleaning) total += 995;
+    if (firewood) total += firewood * 40;
+
+    return total;
 }
 
 // Exempelbokningar
@@ -45,7 +69,7 @@ const bookings = [
         startDate: "2026-01-20",
         endDate: "2026-01-21",
         cleaning: true,
-        firewood: 2, // 2 paket à 20 liter = 40 liter
+        firewood: 2,
     },
     {
         id: "2",
@@ -67,43 +91,7 @@ const bookings = [
         cleaning: true,
         firewood: 1,
     },
-    {
-        id: "4",
-        guestName: "Oskar Nilsson",
-        email: "oskar@example.com",
-        phone: "0701122334",
-        startDate: "2026-01-25",
-        endDate: "2026-01-26",
-        cleaning: true,
-        firewood: 3,
-    },
 ];
-
-// Beräkna totalpris
-function calculateTotalPrice(startDateStr, endDateStr, cleaning, firewood) {
-    const start = new Date(startDateStr);
-    const end = new Date(endDateStr);
-    let totalPrice = 0;
-
-    const dayCount = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
-
-    // Veckohyra/månadshyra
-    if (dayCount >= 31) return 6000 + (cleaning ? 995 : 0) + firewood * 40;
-    if (dayCount >= 7) return 2000 + (cleaning ? 995 : 0) + firewood * 40;
-
-    // Summa per dag
-    for (let i = 0; i < dayCount; i++) {
-        const currentDate = new Date(start);
-        currentDate.setDate(start.getDate() + i);
-        const dateStr = currentDate.toISOString().split("T")[0];
-        totalPrice += calculateDayPrice(dateStr);
-    }
-
-    if (cleaning) totalPrice += 995;
-    if (firewood) totalPrice += firewood * 40;
-
-    return totalPrice;
-}
 
 async function seedBookings() {
     for (const booking of bookings) {
@@ -121,6 +109,12 @@ async function seedBookings() {
             firewood: booking.firewood,
             status: "pending",
             totalPrice,
+
+            // GSI1 för query på status
+            GSI1PK: `STATUS#pending`,
+            GSI1SK: booking.startDate, // sorterar bokningar på startdatum
+
+            // GSI2 för att hämta alla bokningar sorterat på startdatum
             GSI2PK: "BOOKING",
             GSI2SK: booking.startDate,
         };
