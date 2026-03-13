@@ -1,6 +1,4 @@
-import { dynamoClient as client } from "../clients/dynamodbClient.mjs";
-import { QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { getPrices } from "../services/PriceService.mjs";
+import { getPrices } from "../services/priceService.mjs";
 
 // ---------- Specialdagar ----------
 const specialDays = ["2026-04-18", "2026-06-06"];

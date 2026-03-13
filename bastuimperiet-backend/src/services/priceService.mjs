@@ -1,4 +1,5 @@
 import { dynamoClient as client } from "../clients/dynamodbClient.mjs";
+import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 export async function getPrices() {
     const res = await client.send(
