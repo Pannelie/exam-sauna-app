@@ -23,30 +23,13 @@ export const handler = async (event) => {
                 body: JSON.stringify({ message: "Selected dates are already booked" }),
             };
         }
+
         const booking = await postBooking(process.env.TABLE_NAME, data);
 
         try {
             await sendNewBookingRequestToAdmin({
                 bookingId: booking.id,
-                name: data.name,
-                email: data.email,
-                phone: data.phone,
-
-                address: data.address,
-                postalCode: data.postalCode,
-                city: data.city,
-
-                startDate: data.startDate,
-                endDate: data.endDate,
-
-                cleaning: data.cleaning,
-                firewood: data.firewood,
-                scent: data.scent,
-
-                delivery: data.delivery,
-                transportType: data.transportType,
-
-                totalPrice: booking.totalPrice,
+                ...bookingData,
             });
             console.log("Admin booking request email sent", {
                 bookingId: booking.id,

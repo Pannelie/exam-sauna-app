@@ -19,9 +19,9 @@ interface StepExtrasProps {
 }
 
 export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
-    const priceVed = 50;
+    const priceVed = 40;
     const priceDoft = 30;
-    const priceCleaning = 500;
+    const priceCleaning = 995;
     const deliveryStartFee = 1000; // startavgift
     const priceOneWay = 40; // per km
     const priceReturn = 80; // per km tur & retur

@@ -23,7 +23,7 @@ export const StepDates = ({ data, updateField, next }: StepDatesProps) => {
             <Stack spacing={2}>
                 <StepExtras data={data} updateField={updateField} />
             </Stack>
-            <TotalPrice data={data} />
+            <TotalPrice />
             <Stack direction="row" spacing={2} justifyContent={"flex-end"}>
                 <FormButton variant="contained" onClick={next} text="Nästa steg" />
             </Stack>

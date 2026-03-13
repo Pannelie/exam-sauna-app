@@ -1,7 +1,8 @@
 import { Stepper, Step, StepLabel, Box, styled } from "@mui/material";
 import { useState } from "react";
-import type { BookingFormData } from "../../types/bookingTypes";
+import type { BookingFormData, BookingState } from "../../types/bookingTypes";
 import { useStepContent } from "../../hooks/useStepContent";
+import { useBookingStore } from "../../stores/useBookingStore";
 
 const StyledBox = styled(Box)(({ theme }) => ({
     display: "flex",
@@ -44,6 +45,10 @@ export const BookingStepper = () => {
 
     function updateField<K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) {
         setFormData((prev) => ({ ...prev, [field]: value }));
+        const priceFields: (keyof BookingState)[] = ["startDate", "endDate", "cleaning", "firewood", "scent", "delivery"];
+        if (priceFields.includes(field as keyof BookingState)) {
+            useBookingStore.getState().setField(field as keyof BookingState, value as any);
+        }
     }
     // Använd hooken för att få innehållet för aktuellt steg
     const stepContent = useStepContent(activeStep, formData, updateField, {

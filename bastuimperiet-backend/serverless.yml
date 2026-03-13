@@ -107,7 +107,12 @@ functions:
             - httpApi:
                   path: /bookings
                   method: POST
-
+    getPrices:
+        handler: src/functions/Price/getPrices.handler
+        events:
+            - httpApi:
+                  path: /prices
+                  method: GET
 #---------------------------------------------------------------------
 # DynamoDB Single Table Design
 resources:
