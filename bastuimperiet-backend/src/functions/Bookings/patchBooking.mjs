@@ -3,6 +3,7 @@ import { getBookingByIdInternal, updateBookingStatus, saveCalendarEventId } from
 import { createBookingCalendarEvent, deleteBookingCalendarEvent } from "../../services/googleCalendarService.mjs";
 import { sendBookingConfirmedToGuest, sendBookingDeclinedToGuest, sendBookingCancelledToGuest } from "../../services/mailerService.mjs";
 import { verifyAdminToken } from "../../middlewares/verifyAdminToken.js";
+import { validateBooking } from "../../middlewares/validateBooking.mjs";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { errorHandler } from "../../middlewares/errorHandler.js";
 
@@ -167,5 +168,6 @@ export const handler = middy(async (event) => {
     }
 })
     .use(httpJsonBodyParser())
+    .use(validateBooking())
     .use(verifyAdminToken())
     .use(errorHandler());
