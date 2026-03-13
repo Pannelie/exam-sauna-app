@@ -23,7 +23,7 @@ const StyledFormContent = styled(Box)({
 });
 
 export const BookingStepper = () => {
-    const steps = ["Datum", "Tillval", "Kontakt", "Skicka"];
+    const steps = ["Bokning", "Kontakt", "Skicka"];
     const [activeStep, setActiveStep] = useState<number>(0);
     const [isCompleted, setIsCompleted] = useState<boolean>(false);
     const initialFormData: BookingFormData = {
