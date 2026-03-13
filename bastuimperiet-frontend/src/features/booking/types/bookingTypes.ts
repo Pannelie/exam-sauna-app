@@ -48,8 +48,15 @@ export interface ApiBookingData extends BookingBase {
 }
 
 export interface BookingState extends BookingBase {
+    // State
     totalPrice: number;
-    setField: <K extends keyof BookingState>(field: K, value: BookingState[K]) => void;
+    isLoading: boolean;
+    error: string | null;
+
+    // Actions
+    reset: () => void;
+    setField: <K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) => void;
+    calculateTotal: () => Promise<void>;
 }
 
 export interface BookingPriceData {

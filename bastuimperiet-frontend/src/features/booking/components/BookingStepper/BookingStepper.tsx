@@ -1,6 +1,6 @@
 import { Stepper, Step, StepLabel, Box, styled } from "@mui/material";
 import { useState } from "react";
-import type { BookingFormData, BookingState } from "../../types/bookingTypes";
+import type { BookingFormData, BookingState, BookingBase } from "../../types/bookingTypes";
 import { useStepContent } from "../../hooks/useStepContent";
 import { useBookingStore } from "../../stores/useBookingStore";
 
@@ -27,6 +27,10 @@ export const BookingStepper = () => {
     const steps = ["Bokning", "Kontakt", "Skicka"];
     const [activeStep, setActiveStep] = useState<number>(0);
     const [isCompleted, setIsCompleted] = useState<boolean>(false);
+
+    const setBookingField = useBookingStore((state) => state.setField);
+    const resetStore = useBookingStore((state) => state.reset);
+
     const initialFormData: BookingFormData = {
         firewood: 0,
         scent: 0,
@@ -47,11 +51,12 @@ export const BookingStepper = () => {
         setFormData((prev) => ({ ...prev, [field]: value }));
         const priceFields: (keyof BookingState)[] = ["startDate", "endDate", "cleaning", "firewood", "scent", "delivery"];
         if (priceFields.includes(field as keyof BookingState)) {
-            useBookingStore.getState().setField(field as keyof BookingState, value as any);
+            setBookingField(field as keyof BookingBase, value as any);
         }
     }
-    // Använd hooken för att få innehållet för aktuellt steg
-    const stepContent = useStepContent(activeStep, formData, updateField, {
+
+    // Handlers för navigation
+    const handlers = {
         next: () => setActiveStep((prev) => prev + 1),
         back: () => setActiveStep((prev) => prev - 1),
         complete: () => setIsCompleted(true),
@@ -59,9 +64,12 @@ export const BookingStepper = () => {
             setActiveStep(0);
             setFormData(initialFormData);
             setIsCompleted(false);
+            resetStore();
         },
         isCompleted,
-    });
+    };
+    // Använd hooken för att få innehållet för aktuellt steg
+    const stepContent = useStepContent(activeStep, formData, updateField, handlers);
 
     return (
         <StyledBox>

@@ -1,6 +1,7 @@
 import { formatBookingForFrontend } from "../utils/formatters.js";
 import { dynamoClient as client } from "../clients/dynamodbClient.mjs";
-import { calculateTotalPrice } from "../utils/calculatePrice.js"; // din tidigare logik
+import { calculatePrice } from "../services/priceEngine.mjs";
+import { getPrices } from "../services/priceService.mjs";
 import { v4 as uuidv4 } from "uuid";
 import { GetCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
@@ -76,7 +77,16 @@ export async function postBooking(tableName, bookingData) {
         throw error;
     }
 
-    const totalPrice = await calculateTotalPrice(startDate, endDate, cleaning, firewood, scent, delivery);
+    const prices = await getPrices();
+    const specialDays = ["2026-04-18", "2026-06-06"];
+    const totalPrice = calculatePrice(prices, specialDays, {
+        startDate,
+        endDate,
+        cleaning,
+        firewood,
+        scent,
+        delivery,
+    });
     const status = "pending";
 
     const item = {
@@ -104,6 +114,7 @@ export async function postBooking(tableName, bookingData) {
 
         status: status,
         totalPrice,
+        createdAt: new Date().toISOString(),
 
         GSI1PK: `STATUS#${status}`,
         GSI1SK: startDate,

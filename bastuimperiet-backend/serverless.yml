@@ -113,6 +113,12 @@ functions:
             - httpApi:
                   path: /prices
                   method: GET
+    calculatePrice: # NY FUNKTION
+        handler: src/functions/Price/calculatePrice.handler
+        events:
+            - httpApi:
+                  path: /prices/calculate
+                  method: POST
 #---------------------------------------------------------------------
 # DynamoDB Single Table Design
 resources:

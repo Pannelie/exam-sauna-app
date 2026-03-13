@@ -1,23 +1,41 @@
 import axios from "axios";
-import type { BookingPriceData } from "../types/bookingTypes";
+import type { BookingBase } from "../types/bookingTypes";
 
 const baseUrl = "https://vfmzqfunsg.execute-api.eu-north-1.amazonaws.com/prices";
 
-export const getPrice = async (bookingData: BookingPriceData): Promise<number> => {
+/**
+ * Hämtar den allmänna prislistan (t.ex. för att visa "Ved: 40kr" i UI)
+ */
+export const getPriceList = async () => {
     try {
-        console.log("Beräknar pris med backend:", bookingData);
-
-        const response = await axios.get<{ totalPrice: number }>(baseUrl, {
-            params: bookingData,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        console.log("Pris mottaget från backend:", response.data.totalPrice);
-        return response.data.totalPrice;
+        const response = await axios.get(baseUrl);
+        return response.data;
     } catch (err: any) {
-        console.error("Kunde inte beräkna pris:", err.response?.data || err.message);
-        throw new Error(err.response?.data?.message || "Något gick fel vid prisberäkning");
+        console.error("Kunde inte hämta prislistan:", err.message);
+        throw err;
+    }
+};
+
+/**
+ * Skickar användarens val till backend för att få en exakt uträkning
+ */
+export const getPricePreview = async (bookingData: BookingBase): Promise<number> => {
+    // Säkerhetskoll: Om datum saknas, returnera 0 direkt utan API-anrop
+    if (!bookingData.startDate || !bookingData.endDate) {
+        return 0;
+    }
+
+    try {
+        // Vi skapar en kopia där vi garanterar att datumen är strängar
+        const payload = {
+            ...bookingData,
+            startDate: bookingData.startDate,
+            endDate: bookingData.endDate,
+        };
+
+        const response = await axios.post<{ total: number }>(`${baseUrl}/calculate`, payload);
+        return response.data.total;
+    } catch (err: any) {
+        throw new Error("Kunde inte beräkna pris");
     }
 };
