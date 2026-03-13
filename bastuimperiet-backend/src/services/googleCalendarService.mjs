@@ -106,7 +106,23 @@ function buildCalendarDateRange(startDate, endDate) {
     };
 }
 
-export async function createBookingCalendarEvent({ bookingId, guestName, email, phone, startDate, endDate, totalPrice }) {
+export async function createBookingCalendarEvent({
+    bookingId,
+    guestName,
+    email,
+    phone,
+    address,
+    postalCode,
+    city,
+    cleaning,
+    firewood,
+    scent,
+    delivery,
+    transportType,
+    startDate,
+    endDate,
+    totalPrice,
+}) {
     const serviceAccount = parseServiceAccount();
     const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";
     const timeZone = process.env.GOOGLE_CALENDAR_TIMEZONE || "Europe/Stockholm";
@@ -116,7 +132,30 @@ export async function createBookingCalendarEvent({ bookingId, guestName, email, 
 
     const eventBody = {
         summary: `Bastu-bokning: ${guestName}`,
-        description: `Boknings-id: ${bookingId}\nNamn: ${guestName}\nE-post: ${email}\nTelefon: ${phone}\nTotalpris: ${totalPrice} kr`,
+        description: `
+Bokningsnummer: ${bookingId}
+
+Kund:
+${guestName}
+${email}
+${phone}
+
+Adress:
+${address || "-"}
+${postalCode || ""} ${city || ""}
+
+Tillägg:
+Städning: ${cleaning ? "Ja" : "Nej"}
+Ved: ${firewood} paket
+Doft: ${scent || "Ingen"}
+
+Transport:
+Utkörning: ${delivery ? "Ja" : "Nej"}
+Typ: ${transportType || "-"}
+
+Pris:
+${totalPrice} kr
+`,
         start: {
             dateTime: range.startDateTime,
             timeZone,
@@ -142,4 +181,22 @@ export async function createBookingCalendarEvent({ bookingId, guestName, email, 
     }
 
     return response.json();
+}
+
+export async function deleteBookingCalendarEvent(eventId) {
+    const serviceAccount = parseServiceAccount();
+    const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";
+    const accessToken = await getAccessToken(serviceAccount);
+
+    const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${eventId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`Google Calendar delete error (${response.status}): ${errorBody}`);
+    }
+
+    return true; // lyckad radering
 }
