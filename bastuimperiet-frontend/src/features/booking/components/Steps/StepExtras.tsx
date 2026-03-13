@@ -1,4 +1,4 @@
-import { Stack, Typography, IconButton, Paper, Switch, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import { styled, Stack, Typography, IconButton, Paper, Switch, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import SpaIcon from "@mui/icons-material/Spa";
@@ -7,6 +7,10 @@ import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 
 import type { BookingFormData } from "../../types/bookingTypes";
+
+const StyledPaper = styled(Paper)({
+    padding: "1rem",
+});
 
 interface StepExtrasProps {
     data: BookingFormData;
@@ -24,7 +28,7 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
     return (
         <>
             {/* Ved */}
-            <Paper sx={{ p: 2 }}>
+            <StyledPaper>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Stack direction="row" spacing={1} alignItems="center">
                         <LocalFireDepartmentIcon />
@@ -45,10 +49,10 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                         </IconButton>
                     </Stack>
                 </Stack>
-            </Paper>
+            </StyledPaper>
 
             {/* Doft */}
-            <Paper sx={{ p: 2 }}>
+            <StyledPaper>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Stack direction="row" spacing={1} alignItems="center">
                         <SpaIcon />
@@ -69,10 +73,10 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                         </IconButton>
                     </Stack>
                 </Stack>
-            </Paper>
+            </StyledPaper>
 
             {/* Städning */}
-            <Paper sx={{ p: 2 }}>
+            <StyledPaper>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Stack direction="row" spacing={1} alignItems="center">
                         <CleaningServicesIcon />
@@ -85,10 +89,10 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                     </Stack>
                     <Switch checked={data.cleaning} onChange={() => updateField("cleaning", !data.cleaning)} />
                 </Stack>
-            </Paper>
+            </StyledPaper>
 
             {/* Utkörning */}
-            <Paper sx={{ p: 2 }}>
+            <StyledPaper>
                 <Stack spacing={1}>
                     <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
                         <Stack direction="row" spacing={1} alignItems="center">
@@ -114,7 +118,7 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                         </RadioGroup>
                     )}
                 </Stack>
-            </Paper>
+            </StyledPaper>
         </>
     );
 };

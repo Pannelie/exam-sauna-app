@@ -1,5 +1,10 @@
-import { Stack, Typography, Paper } from "@mui/material";
+import { Stack, Typography, Paper, styled } from "@mui/material";
 import type { BookingFormData } from "../../types/bookingTypes";
+
+const StyledPaper = styled(Paper)({
+    padding: "1rem",
+    marginTop: "auto",
+});
 
 interface TotalPriceProps {
     data: BookingFormData;
@@ -31,7 +36,7 @@ export const TotalPrice = ({ data }: TotalPriceProps) => {
     const total = baseTotal + extrasTotal;
 
     return (
-        <Paper sx={{ p: 2, mt: "auto" }}>
+        <StyledPaper>
             <Stack direction="row" justifyContent="space-between">
                 <Typography>Totalt</Typography>
                 <Typography>{total} kr</Typography>
@@ -41,6 +46,6 @@ export const TotalPrice = ({ data }: TotalPriceProps) => {
                     {days} dygn à {basePricePerDay} kr
                 </Typography>
             )}
-        </Paper>
+        </StyledPaper>
     );
 };
