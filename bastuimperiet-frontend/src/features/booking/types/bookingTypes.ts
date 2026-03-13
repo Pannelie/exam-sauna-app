@@ -2,8 +2,8 @@ export interface BookingFormData {
     startDate?: string;
     endDate?: string;
 
-    ved: number;
-    doft: number;
+    wood: number;
+    scent: number;
     cleaning: boolean;
     delivery: boolean;
     deliveryType?: "oneWay" | "return";
@@ -12,6 +12,12 @@ export interface BookingFormData {
     email: string;
     phone: string;
     address: string;
-    postcode: string;
+    postalCode: string;
     city: string;
+}
+
+export interface ApiBookingData {
+    id: number;
+    startDate: string;
+    endDate: string;
 }
