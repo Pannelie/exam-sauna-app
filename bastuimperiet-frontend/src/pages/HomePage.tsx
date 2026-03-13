@@ -3,7 +3,7 @@ import Hero from "../components/Hero/Hero";
 import { InfoSection } from "../components/HomeSections/InfoSection/InfoSection";
 import { PricesSection } from "../components/HomeSections/PricesSection";
 import { ContactSection } from "../components/HomeSections/ContactSection/ContactSection";
-import { BookingSection } from "../components/HomeSections/BookingSection";
+import { BookingSection } from "../features/BookingSection";
 import "./page.css";
 
 export const HomePage = () => {
