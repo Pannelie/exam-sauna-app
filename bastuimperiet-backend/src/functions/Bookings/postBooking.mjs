@@ -4,6 +4,15 @@ import { sendNewBookingRequestToAdmin } from "../../services/mailerService.mjs";
 export const handler = async (event) => {
     try {
         const data = JSON.parse(event.body);
+
+        if (!data.guestName || !data.email || !data.phone || !data.startDate || !data.endDate) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({
+                    message: "Missing required fields",
+                }),
+            };
+        }
         const booking = await postBooking(process.env.TABLE_NAME, data);
 
         try {
@@ -12,11 +21,22 @@ export const handler = async (event) => {
                 guestName: data.guestName,
                 email: data.email,
                 phone: data.phone,
+
+                address: data.address,
+                postalCode: data.postalCode,
+                city: data.city,
+
                 startDate: data.startDate,
                 endDate: data.endDate,
-                totalPrice: booking.totalPrice,
+
                 cleaning: data.cleaning,
                 firewood: data.firewood,
+                scent: data.scent,
+
+                delivery: data.delivery,
+                transportType: data.transportType,
+
+                totalPrice: booking.totalPrice,
             });
             console.log("Admin booking request email sent", {
                 bookingId: booking.id,

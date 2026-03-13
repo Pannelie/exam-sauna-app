@@ -1,6 +1,6 @@
 import middy from "@middy/core";
-import { getBookingByIdInternal, updateBookingStatus } from "../../services/bookingService.mjs";
-import { createBookingCalendarEvent } from "../../services/googleCalendarService.mjs";
+import { getBookingByIdInternal, updateBookingStatus, saveCalendarEventId } from "../../services/bookingService.mjs";
+import { createBookingCalendarEvent, deleteBookingCalendarEvent } from "../../services/googleCalendarService.mjs";
 import { sendBookingConfirmedToGuest, sendBookingDeclinedToGuest, sendBookingCancelledToGuest } from "../../services/mailerService.mjs";
 import { verifyAdminToken } from "../../middlewares/verifyAdminToken.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
@@ -27,24 +27,45 @@ export const handler = middy(async (event) => {
     }
 
     try {
+        const fullBooking = await getBookingByIdInternal(process.env.TABLE_NAME, bookingId);
+
+        if (!fullBooking) {
+            return {
+                statusCode: 404,
+                body: JSON.stringify({ message: "Bokning hittades inte" }),
+            };
+        }
+
         const updatedBooking = await updateBookingStatus(process.env.TABLE_NAME, bookingId, normalizedStatus);
+        switch (normalizedStatus) {
+            case "confirmed":
+                calendarUpdated = false;
+                guestEmailSent = false;
 
-        if (normalizedStatus === "confirmed") {
-            calendarUpdated = false;
-            guestEmailSent = false;
-            const fullBooking = await getBookingByIdInternal(process.env.TABLE_NAME, bookingId);
-
-            if (fullBooking) {
                 try {
-                    await createBookingCalendarEvent({
+                    const calendarEvent = await createBookingCalendarEvent({
                         bookingId: fullBooking.id,
                         guestName: fullBooking.guestName,
                         email: fullBooking.email,
                         phone: fullBooking.phone,
+
+                        address: fullBooking.address,
+                        postalCode: fullBooking.postalCode,
+                        city: fullBooking.city,
+
                         startDate: fullBooking.startDate,
                         endDate: fullBooking.endDate,
+
+                        cleaning: fullBooking.cleaning,
+                        firewood: fullBooking.firewood,
+                        scent: fullBooking.scent,
+
+                        delivery: fullBooking.delivery,
+                        transportType: fullBooking.transportType,
+
                         totalPrice: fullBooking.totalPrice,
                     });
+                    await saveCalendarEventId(process.env.TABLE_NAME, bookingId, calendarEvent.id);
                     calendarUpdated = true;
                 } catch (calendarErr) {
                     console.error("Kunde inte uppdatera Google Calendar:", calendarErr);
@@ -68,14 +89,10 @@ export const handler = middy(async (event) => {
                     console.error("Kunde inte skicka bekräftelsemail till kund:", mailError);
                     guestEmailError = mailError.message;
                 }
-            }
-        }
+                break;
+            case "declined":
+                guestEmailSent = false;
 
-        if (normalizedStatus === "declined") {
-            guestEmailSent = false;
-            const fullBooking = await getBookingByIdInternal(process.env.TABLE_NAME, bookingId);
-
-            if (fullBooking) {
                 try {
                     await sendBookingDeclinedToGuest({
                         guestName: fullBooking.guestName,
@@ -93,13 +110,22 @@ export const handler = middy(async (event) => {
                     console.error("Kunde inte skicka avböjningsmail till kund:", mailError);
                     guestEmailError = mailError.message;
                 }
-            }
-        }
-        if (normalizedStatus === "cancelled") {
-            guestEmailSent = false;
-            const fullBooking = await getBookingByIdInternal(process.env.TABLE_NAME, bookingId);
+                break;
+            case "cancelled":
+                guestEmailSent = false;
+                calendarUpdated = false;
 
-            if (fullBooking) {
+                // Försök ta bort kalender-event
+                if (fullBooking.calendarEventId) {
+                    try {
+                        await deleteBookingCalendarEvent(fullBooking.calendarEventId);
+                        calendarUpdated = true;
+                        console.log("Google Calendar event deleted for booking", bookingId);
+                    } catch (calendarErr) {
+                        console.error("Kunde inte ta bort kalender-event:", calendarErr);
+                        calendarErrorMessage = calendarErr.message;
+                    }
+                }
                 try {
                     await sendBookingCancelledToGuest({
                         guestName: fullBooking.guestName,
@@ -117,7 +143,7 @@ export const handler = middy(async (event) => {
                     console.error("Kunde inte skicka avbokningsmail till kund:", mailError);
                     guestEmailError = mailError.message;
                 }
-            }
+                break;
         }
 
         return {
