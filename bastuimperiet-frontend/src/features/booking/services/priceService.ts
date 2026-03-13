@@ -3,11 +3,12 @@ import type { BookingPriceData } from "../types/bookingTypes";
 
 const baseUrl = "https://vfmzqfunsg.execute-api.eu-north-1.amazonaws.com/prices";
 
-export const postPrice = async (bookingData: BookingPriceData): Promise<number> => {
+export const getPrice = async (bookingData: BookingPriceData): Promise<number> => {
     try {
         console.log("Beräknar pris med backend:", bookingData);
 
-        const response = await axios.post<{ totalPrice: number }>(baseUrl, bookingData, {
+        const response = await axios.get<{ totalPrice: number }>(baseUrl, {
+            params: bookingData,
             headers: {
                 "Content-Type": "application/json",
             },

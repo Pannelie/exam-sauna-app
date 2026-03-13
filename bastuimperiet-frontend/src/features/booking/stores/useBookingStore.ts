@@ -1,56 +1,47 @@
-// src/stores/bookingStore.ts
 import { create } from "zustand";
-import type { BookingState, BookingBase } from "../types/bookingTypes";
-import { calculateTotalPrice } from "../utils/calculatePrice";
-import { postPrice } from "../services/priceService";
+import type { BookingState } from "../types/bookingTypes";
+import { getPrice } from "../services/priceService";
 
-export const useBookingStore = create<BookingState>((set, get) => ({
-    // --- Booking data ---
-    startDate: undefined,
-    endDate: undefined,
+interface BookingStore extends BookingState {
+    setField: <K extends keyof BookingState>(field: K, value: BookingState[K]) => void;
+    calculateTotalPrice: () => Promise<void>;
+}
+
+export const useBookingStore = create<BookingStore>((set, get) => ({
+    startDate: "",
+    endDate: "",
     cleaning: false,
     firewood: 0,
     scent: 0,
     delivery: false,
-    transportType: undefined,
     totalPrice: 0,
 
-    // --- Uppdatera fält ---
     setField: (field, value) => {
-        set({ [field]: value });
-
-        // --- Lokal prisberäkning för UI ---
-        const { startDate, endDate, cleaning, firewood, scent, delivery, transportType } = get();
-        if (startDate && endDate) {
-            const totalPrice = calculateTotalPrice(startDate, endDate, cleaning, firewood, scent, delivery, transportType);
-            set({ totalPrice });
-        } else {
-            set({ totalPrice: 0 });
-        }
+        set({ [field]: value } as any); // uppdatera fältet
+        get().calculateTotalPrice(); // räkna om priset automatiskt
     },
 
-    // --- Backend-pris för validering ---
-    fetchPriceFromBackend: async () => {
-        const { startDate, endDate, cleaning, firewood, scent, delivery, transportType } = get();
-        if (!startDate || !endDate) return 0;
-
-        const bookingData: BookingBase = {
-            startDate,
-            endDate,
-            cleaning,
-            firewood,
-            scent,
-            delivery,
-            transportType,
-        };
+    calculateTotalPrice: async () => {
+        const state = get();
+        // Kolla att datum är satta
+        if (!state.startDate || !state.endDate) {
+            set({ totalPrice: 0 });
+            return;
+        }
 
         try {
-            const backendPrice = await postPrice(bookingData);
-            set({ totalPrice: backendPrice });
-            return backendPrice;
+            const price = await getPrice({
+                startDate: state.startDate,
+                endDate: state.endDate,
+                cleaning: state.cleaning,
+                firewood: state.firewood,
+                scent: state.scent,
+                delivery: state.delivery,
+            });
+            set({ totalPrice: price });
         } catch (err) {
-            console.error("Fel vid backend-pris:", err);
-            return 0;
+            console.error("Kunde inte uppdatera priset:", err);
+            set({ totalPrice: 0 });
         }
     },
 }));
