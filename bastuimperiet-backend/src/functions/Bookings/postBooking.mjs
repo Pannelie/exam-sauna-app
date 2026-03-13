@@ -1,6 +1,5 @@
 import { postBooking, hasBookingOverlap, getAllBookings } from "../../services/bookingService.mjs";
 import { sendNewBookingRequestToAdmin } from "../../services/mailerService.mjs";
-import { calculateTotalPrice } from "../../utils/calculatePrice.js";
 
 export const handler = async (event) => {
     try {
@@ -24,10 +23,8 @@ export const handler = async (event) => {
                 body: JSON.stringify({ message: "Selected dates are already booked" }),
             };
         }
-        const totalPrice = await calculateTotalPrice(data.startDate, data.endDate, data.cleaning, data.firewood, data.scent, data.delivery);
 
-        const bookingData = { ...data, totalPrice };
-        const booking = await postBooking(process.env.TABLE_NAME, bookingData);
+        const booking = await postBooking(process.env.TABLE_NAME, data);
 
         try {
             await sendNewBookingRequestToAdmin({
