@@ -1,19 +1,25 @@
 import { dynamoClient as client } from "../clients/dynamodbClient.mjs";
-import { QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand } from "@aws-sdk/lib-dynamodb"; // Byt till GetCommand
 
 export async function getPrices() {
     const res = await client.send(
-        new QueryCommand({
+        new GetCommand({
             TableName: process.env.TABLE_NAME,
-            KeyConditionExpression: "PK = :pk",
-            ExpressionAttributeValues: { ":pk": "PRICES" },
+            Key: {
+                PK: "CONFIG",
+                SK: "PRICES",
+            },
         }),
     );
 
-    const prices = {};
-    res.Items.forEach((item) => {
-        prices[item.SK] = item.price;
-    });
+    if (!res.Item) {
+        throw new Error("Prislista hittades inte i databasen");
+    }
 
-    return prices;
+    // Eftersom vi sparade allt i ett objekt i seed-filen:
+    // res.Item innehåller nu { priceList: {...}, specialDays: [...] }
+    return {
+        prices: res.Item.priceList,
+        specialDays: res.Item.specialDays || [],
+    };
 }
