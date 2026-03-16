@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Container, Paper, CircularProgress, Alert } from "@mui/material";
+import { Box, TextField, Button, Paper, CircularProgress, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { adminService } from "../../services/adminService"; // Justera sökvägen
@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 // --- Custom Styling för att matcha din bild ---
 
 const GlassPaper = styled(Paper)({
-    backgroundColor: "rgba(255, 255, 255, 0.25)", // Halvtransparent vit
+    backgroundColor: "rgba(255, 255, 255, 0.5)", // Halvtransparent vit
     backdropFilter: "blur(4px)",
     padding: "40px 30px",
     borderRadius: "15px",
@@ -51,7 +51,7 @@ const YellowButton = styled(Button)({
 // --- Själva Komponenten ---
 
 export const AdminLogin = () => {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -64,13 +64,16 @@ export const AdminLogin = () => {
 
         try {
             // Här anropar vi din service!
-            const response = await adminService.login({ username, password });
+            const response = await adminService.login({ email, password });
 
+            if (response.token) {
+                localStorage.setItem("adminToken", response.token);
+            }
             console.log("Inloggad!", response);
-            // Spara token om det behövs: localStorage.setItem("token", response.token);
             navigate("/dashboard");
-        } catch (err) {
-            setError("Kunde inte logga in. Kontrollera uppgifterna.");
+        } catch (err: any) {
+            const serverErrorMessage = err.response?.data?.message || "Ett oväntat fel uppstod";
+            setError(serverErrorMessage);
         } finally {
             setLoading(false);
         }
@@ -78,47 +81,40 @@ export const AdminLogin = () => {
 
     return (
         <Box
+            component="form"
+            onSubmit={handleLogin}
             sx={{
-                minHeight: "100vh",
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
-                backgroundColor: "#7a2a2a", // Eller backgroundImage: 'url(...)'
+                width: "100%",
+                maxWidth: "400px",
             }}
         >
-            <Container maxWidth="xs">
-                <Box component="form" onSubmit={handleLogin} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <GlassPaper>
-                        <AccountCircleIcon sx={{ fontSize: 100, color: "#4a1a1a", mb: 3 }} />
+            <GlassPaper>
+                <AccountCircleIcon sx={{ fontSize: 100, color: "#4a1a1a", mb: 3 }} />
 
-                        <StyledInput
-                            fullWidth
-                            placeholder="ANVÄNDARNAMN"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            disabled={loading}
-                        />
+                <StyledInput fullWidth placeholder="E-POST" value={email} onChange={(e) => setEmail(e.target.value)} disabled={loading} />
 
-                        <StyledInput
-                            fullWidth
-                            type="password"
-                            placeholder="LÖSENORD"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={loading}
-                        />
+                <StyledInput
+                    fullWidth
+                    type="password"
+                    placeholder="LÖSENORD"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                />
 
-                        {error && (
-                            <Alert severity="error" sx={{ mt: 1, width: "100%" }}>
-                                {error}
-                            </Alert>
-                        )}
-                    </GlassPaper>
+                {error && (
+                    <Typography color="error" sx={{ mt: 1, width: "100%", textAlign: "center" }}>
+                        {error}
+                    </Typography>
+                )}
+            </GlassPaper>
 
-                    <YellowButton type="submit" disabled={loading}>
-                        {loading ? <CircularProgress size={30} color="inherit" /> : "LOGGA IN"}
-                    </YellowButton>
-                </Box>
-            </Container>
+            <YellowButton type="submit" disabled={loading}>
+                {loading ? <CircularProgress size={30} color="inherit" /> : "LOGGA IN"}
+            </YellowButton>
         </Box>
     );
 };

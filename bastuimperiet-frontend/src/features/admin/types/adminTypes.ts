@@ -1,4 +1,4 @@
 export interface adminUser {
-    username: string;
+    email: string;
     password: string;
 }
