@@ -1,3 +1,9 @@
+import AllBookings from "../features/allBookings/AllBookings";
+
 export const BookingsPage = () => {
-    return <div>all bookings</div>;
+    return (
+        <>
+            <AllBookings />
+        </>
+    );
 };

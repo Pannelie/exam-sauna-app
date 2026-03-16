@@ -15,7 +15,7 @@ export const AdminPage = () => {
     };
 
     return (
-        <main className="home_main home_main--centered">
+        <>
             {isLoggedIn ? (
                 /* Skicka med den riktiga inloggade mejlen till listan */
                 <>
@@ -25,6 +25,6 @@ export const AdminPage = () => {
             ) : (
                 <AdminLogin onLoginSuccess={() => setIsLoggedIn(true)} />
             )}
-        </main>
+        </>
     );
 };
