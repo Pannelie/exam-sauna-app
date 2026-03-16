@@ -82,6 +82,7 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
             <Typography variant="h3" fontSize={24} gutterBottom>
                 Kontrollera dina uppgifter
             </Typography>
+
             {/* Innehåll */}
             <Stack spacing={2} gap={0.2}>
                 {/* Datum  */}
@@ -179,6 +180,11 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
             </Stack>
 
             <TotalPrice />
+            {error && (
+                <Typography variant="body1" color="error">
+                    {error}
+                </Typography>
+            )}
             <Stack direction="row" spacing={2} justifyContent={"space-between"}>
                 <FormButton variant="outlined" onClick={back} text="Tillbaka" disabled={isSubmitting} />
                 <FormButton
