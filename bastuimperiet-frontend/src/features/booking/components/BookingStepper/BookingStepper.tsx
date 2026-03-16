@@ -1,6 +1,6 @@
 import { Stepper, Step, StepLabel, Box, styled } from "@mui/material";
 import { useState } from "react";
-import type { BookingFormData, BookingBase } from "../../types/bookingTypes";
+import type { BookingFormData, BookingBase } from "../../../../types/bookingTypes";
 import { useStepContent } from "../../hooks/useStepContent";
 import { useBookingStore } from "../../stores/useBookingStore";
 import { validateBookingService } from "../../services/bookingService";

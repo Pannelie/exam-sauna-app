@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { getPriceList } from "../services/priceService";
-import type { BookingState } from "../types/bookingTypes";
+import type { BookingState } from "../../../types/bookingTypes";
 import { calculatePrice } from "../utils/priceEngine";
 
 export const useBookingStore = create<BookingState>((set, get) => ({

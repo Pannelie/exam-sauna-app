@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import { FormButton } from "../FormButton/FormButton";
-import type { BookingFormData } from "../../types/bookingTypes";
+import type { BookingFormData } from "../../../../types/bookingTypes";
 import { TotalPrice } from "../TotalPrice/TotalPrice";
 import { MyDatePicker } from "../DatePicker/DatePicker";
 import { StepExtras } from "./StepExtras";
