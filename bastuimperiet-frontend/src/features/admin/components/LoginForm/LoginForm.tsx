@@ -3,7 +3,7 @@ import { Box, TextField, Button, Paper, CircularProgress, Typography } from "@mu
 import { styled } from "@mui/material/styles";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { adminService } from "../../services/adminService"; // Justera sökvägen
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 // --- Custom Styling för att matcha din bild ---
 
@@ -51,29 +51,26 @@ const YellowButton = styled(Button)({
 // --- Själva Komponenten ---
 
 export const AdminLogin = ({ onLoginSuccess }: { onLoginSuccess: () => void }) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const { login } = useAuth();
+    const [credentials, setCredentials] = useState({ email: "", password: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const navigate = useNavigate();
 
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
         try {
             // Här anropar vi din service!
-            const response = await adminService.login({ email, password });
+            const response = await adminService.login({ email: credentials.email, password: credentials.password });
 
             if (response.token) {
-                localStorage.setItem("adminToken", response.token);
-                localStorage.setItem("adminEmail", email);
+                login(response.token, credentials.email);
 
                 onLoginSuccess();
             }
             console.log("Inloggad!", response);
-            navigate("/dashboard");
         } catch (err: any) {
             const serverErrorMessage = err.response?.data?.message || "Ett oväntat fel uppstod";
             setError(serverErrorMessage);
@@ -97,14 +94,20 @@ export const AdminLogin = ({ onLoginSuccess }: { onLoginSuccess: () => void }) =
             <GlassPaper>
                 <AccountCircleIcon sx={{ fontSize: 100, color: "#4a1a1a", mb: 3 }} />
 
-                <StyledInput fullWidth placeholder="E-POST" value={email} onChange={(e) => setEmail(e.target.value)} disabled={loading} />
+                <StyledInput
+                    fullWidth
+                    placeholder="E-POST"
+                    value={credentials.email}
+                    onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
+                    disabled={loading}
+                />
 
                 <StyledInput
                     fullWidth
                     type="password"
                     placeholder="LÖSENORD"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={credentials.password}
+                    onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                     disabled={loading}
                 />
 

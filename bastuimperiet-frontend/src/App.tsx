@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
-import { HomePage, AdminPage, BookingsPage, BookingDetailsPage } from "./pages";
+import { HomePage, AdminPage, BookingDetailsPage } from "./pages";
 
 export default function App() {
     return (
@@ -12,7 +12,7 @@ export default function App() {
                 <Route path="/login" element={<AdminPage />} />
 
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/dashboard" element={<BookingsPage />} />
+                    <Route path="/dashboard" element={<AdminPage />} />
                     <Route path="/admin/bookings/:id" element={<BookingDetailsPage />} />
                 </Route>
 
