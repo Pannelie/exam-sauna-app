@@ -51,7 +51,7 @@ provider:
                 - OPTIONS
             allowedHeaders:
                 - Content-Type
-                - Auhthorization
+                - Authorization
     iamRoleStatements:
         - Effect: "Allow"
           Action:
