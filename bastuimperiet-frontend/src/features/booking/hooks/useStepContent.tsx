@@ -1,4 +1,4 @@
-import type { BookingFormData } from "../types/bookingTypes";
+import type { BookingFormData } from "../../../types/bookingTypes";
 import { StepDates } from "./../components/Steps/StepDates";
 import { StepContact } from "./../components/Steps/StepContact";
 import { StepSummary } from "./../components/Steps/StepSummary";

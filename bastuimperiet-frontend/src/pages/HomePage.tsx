@@ -26,7 +26,7 @@ export const HomePage = () => {
     const handleBookClick = () => scrollToSection("booking");
 
     return (
-        <main className="home_main">
+        <>
             <Hero />
             <MenuBar menuItems={publicItems} actionComponent={<BookNowButton onClick={handleBookClick} />} />
             <div className="page_container--center">
@@ -35,6 +35,6 @@ export const HomePage = () => {
                 <ContactSection />
                 <BookingSection />
             </div>
-        </main>
+        </>
     );
 };

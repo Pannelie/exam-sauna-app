@@ -1,6 +1,6 @@
 import "./steps.css";
 import { Stack } from "@mui/material";
-import type { BookingFormData } from "../../types/bookingTypes";
+import type { BookingFormData } from "../../../../types/bookingTypes";
 import { FormButton } from "../FormButton/FormButton";
 import { StyledTextField } from "../StyledTextField/StyledTextField";
 

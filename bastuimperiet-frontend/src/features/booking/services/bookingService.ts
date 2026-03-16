@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { ApiBookingData, BookingFormData } from "../types/bookingTypes";
+import type { ApiBookingData, BookingFormData } from "../../../types/bookingTypes";
 
 const baseUrl = import.meta.env.VITE_API_URL;
 

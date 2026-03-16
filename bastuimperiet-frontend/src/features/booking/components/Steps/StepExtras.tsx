@@ -6,8 +6,8 @@ import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 
-import { TransportType } from "../../types/bookingTypes";
-import type { BookingFormData } from "../../types/bookingTypes";
+import { TransportType } from "../../../../types/bookingTypes";
+import type { BookingFormData } from "../../../../types/bookingTypes";
 import { useBookingStore } from "../../stores/useBookingStore";
 
 const StyledPaper = styled(Paper)({

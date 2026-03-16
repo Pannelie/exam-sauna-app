@@ -71,21 +71,21 @@ export interface BookingPriceData {
     delivery: boolean;
 }
 
-export interface ApiBookingData extends BookingBase {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-    postalCode: string;
-    city: string;
+// export interface ApiBookingData extends BookingBase {
+//     id: string;
+//     name: string;
+//     email: string;
+//     phone: string;
+//     address: string;
+//     postalCode: string;
+//     city: string;
 
-    totalPrice: number;
-    status: BookingStatus;
-    integrations: {
-        calendarUpdated: boolean | null;
-        guestEmailSent: boolean | null;
-        calendarError?: string | null;
-        guestEmailError?: string | null;
-    };
-}
+//     totalPrice: number;
+//     status: BookingStatus;
+//     integrations: {
+//         calendarUpdated: boolean | null;
+//         guestEmailSent: boolean | null;
+//         calendarError?: string | null;
+//         guestEmailError?: string | null;
+//     };
+// }

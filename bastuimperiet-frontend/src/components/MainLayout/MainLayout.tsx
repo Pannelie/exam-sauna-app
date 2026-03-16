@@ -31,8 +31,7 @@ export const MainLayout = () => {
     return (
         <>
             <MenuBar menuItems={menuItems} actionComponent={actionComponent} showActionOnMobile={isAdmin} />
-            <main>
-                {/* Här renderas den specifika sidans innehåll */}
+            <main className={`home_main ${isAdmin ? "home_main--centered" : ""}`}>
                 <Outlet />
             </main>
         </>

@@ -1,5 +1,5 @@
 import { Stack, Typography, Divider } from "@mui/material";
-import type { ApiBookingData, BookingFormData } from "../../types/bookingTypes";
+import type { ApiBookingData, BookingFormData } from "../../../../types/bookingTypes";
 import { FormButton } from "../FormButton/FormButton";
 import { TotalPrice } from "../TotalPrice/TotalPrice";
 import { StyledTextField } from "../StyledTextField/StyledTextField";

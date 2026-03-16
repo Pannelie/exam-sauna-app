@@ -12,7 +12,7 @@ export const useAuth = () => {
         localStorage.setItem("adminEmail", email);
         setToken(token);
         setEmail(email);
-        navigate("/dashboard");
+        navigate("/admin/bookings");
     };
 
     const logout = () => {
@@ -20,7 +20,7 @@ export const useAuth = () => {
         localStorage.removeItem("adminEmail");
         setToken(null);
         setEmail(null);
-        navigate("/login");
+        navigate("/admin/login");
     };
     return { isLoggedIn: !!token, adminEmail: email, login, logout };
 };
