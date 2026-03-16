@@ -1,12 +1,10 @@
 import "./menuBar.css";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, type JSX } from "react";
 import bg from "../../assets/wood2.jpg";
-import { AppBar, Toolbar, IconButton, useMediaQuery, styled, Typography } from "@mui/material";
+import { AppBar, Toolbar, IconButton, useMediaQuery, styled, Typography, Box } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
-import { BookNowButton } from "../BookNowButton/BookNowButton";
-import { scrollToSection } from "../../utils/scrollToSection";
 import { MenuDrawer } from "../MenuDrawer/MenuDrawer";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -57,19 +55,22 @@ const StyledMenuButton = styled(IconButton)(({ theme }) => ({
     },
 }));
 
-export default function MenuBar() {
-    const navigate = useNavigate();
+type MenuItem = {
+    label: string;
+    onClick: () => void;
+};
+
+interface MenuBarProps {
+    menuItems: MenuItem[];
+    actionComponent: JSX.Element;
+    showActionOnMobile?: boolean; // Valfri prop för att visa actionComponent även på mobil
+}
+
+export default function MenuBar({ menuItems, actionComponent, showActionOnMobile = false }: MenuBarProps): JSX.Element {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     const [drawerOpen, setDrawerOpen] = useState(false);
 
-    const menuItems = [
-        { label: "Info", section: "info" },
-        { label: "Priser", section: "priser" },
-        { label: "Kontakt", section: "kontakt" },
-    ];
-
-    const handleBookClick = () => scrollToSection("booking");
     const handleDrawerToggle = () => setDrawerOpen(!drawerOpen);
 
     return (
@@ -78,15 +79,13 @@ export default function MenuBar() {
             {!isMobile && (
                 <StyledAppBar>
                     <StyledToolbar>
-                        <Typography variant="h1" onClick={() => navigate("/")}>
-                            Bastuimperiet
-                        </Typography>
+                        <Typography variant="h1">Bastuimperiet</Typography>
                         {menuItems.map((item) => (
-                            <MenuLink key={item.label} onClick={() => scrollToSection(item.section)}>
+                            <MenuLink key={item.label} onClick={item.onClick}>
                                 {item.label}
                             </MenuLink>
                         ))}
-                        <BookNowButton onClick={handleBookClick} />
+                        <Box>{actionComponent}</Box>
                     </StyledToolbar>
                 </StyledAppBar>
             )}
@@ -95,15 +94,14 @@ export default function MenuBar() {
             {isMobile && (
                 <>
                     <StyledMenuButton color="inherit" aria-label="open drawer" onClick={handleDrawerToggle}>
-                        <MenuIcon />
+                        {drawerOpen ? <CloseIcon /> : <MenuIcon />}
                     </StyledMenuButton>
 
                     <MenuDrawer
                         open={drawerOpen}
-                        onClose={handleDrawerToggle}
+                        onClose={() => setDrawerOpen(false)}
                         menuItems={menuItems}
-                        handleBookClick={handleBookClick}
-                        handleMenuItemClick={scrollToSection}
+                        actionComponent={showActionOnMobile ? actionComponent : undefined}
                     />
                 </>
             )}

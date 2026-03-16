@@ -15,28 +15,23 @@ const StyledBox = styled(Box)(() => ({
 interface MenuDrawerProps {
     open: boolean;
     onClose: () => void;
-    menuItems: { label: string; section: string }[];
-    handleBookClick: () => void;
-    handleMenuItemClick: (section: string) => void;
+    menuItems: { label: string; onClick: () => void }[];
+    actionComponent?: React.ReactNode; // Valfri för admin/user-logik
 }
 
-export const MenuDrawer = ({ open, onClose, menuItems, handleBookClick, handleMenuItemClick }: MenuDrawerProps) => {
+export const MenuDrawer = ({ open, onClose, menuItems, actionComponent }: MenuDrawerProps) => {
     return (
         <StyledDrawer anchor="right" open={open} onClose={onClose}>
             <StyledBox onClick={onClose}>
                 <List>
                     {menuItems.map((item) => (
                         <ListItem key={item.label} disablePadding>
-                            <ListItemButton onClick={() => handleMenuItemClick(item.section)}>
+                            <ListItemButton onClick={item.onClick}>
                                 <ListItemText primary={item.label} />
                             </ListItemButton>
                         </ListItem>
                     ))}
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={handleBookClick}>
-                            <ListItemText primary="Boka" />
-                        </ListItemButton>
-                    </ListItem>
+                    {actionComponent && <ListItem disablePadding>{actionComponent}</ListItem>}
                 </List>
             </StyledBox>
         </StyledDrawer>
