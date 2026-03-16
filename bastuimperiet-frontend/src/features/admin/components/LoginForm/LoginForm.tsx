@@ -50,7 +50,7 @@ const YellowButton = styled(Button)({
 
 // --- Själva Komponenten ---
 
-export const AdminLogin = () => {
+export const AdminLogin = ({ onLoginSuccess }: { onLoginSuccess: () => void }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -68,6 +68,9 @@ export const AdminLogin = () => {
 
             if (response.token) {
                 localStorage.setItem("adminToken", response.token);
+                localStorage.setItem("adminEmail", email);
+
+                onLoginSuccess();
             }
             console.log("Inloggad!", response);
             navigate("/dashboard");
