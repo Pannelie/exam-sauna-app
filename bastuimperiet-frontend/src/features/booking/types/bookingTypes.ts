@@ -52,11 +52,14 @@ export interface BookingState extends BookingBase {
     totalPrice: number;
     isLoading: boolean;
     error: string | null;
+    prices: Record<string, number> | null;
+    specialDays: string[];
 
     // Actions
-    reset: () => void;
+    fetchPrices: () => Promise<void>;
     setField: <K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) => void;
-    calculateTotal: () => Promise<void>;
+    calculateTotal: () => void;
+    reset: () => void;
 }
 
 export interface BookingPriceData {

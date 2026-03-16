@@ -7,9 +7,11 @@ interface MyDatePickerProps {
     value: string | null;
     onChange: (value: string) => void;
     label: string;
+    error?: boolean;
+    helperText?: string;
 }
 
-export const MyDatePicker: React.FC<MyDatePickerProps> = ({ value, onChange, label }) => {
+export const MyDatePicker: React.FC<MyDatePickerProps> = ({ value, onChange, label, error, helperText }) => {
     const dateValue = value ? new Date(value) : null;
 
     return (
@@ -22,7 +24,7 @@ export const MyDatePicker: React.FC<MyDatePickerProps> = ({ value, onChange, lab
                     onChange(newDate ? newDate.toISOString().split("T")[0] : "");
                 }}
                 slots={{
-                    textField: StyledTextField,
+                    textField: (params) => <StyledTextField {...params} error={error} helperText={helperText} />,
                 }}
             />
         </LocalizationProvider>

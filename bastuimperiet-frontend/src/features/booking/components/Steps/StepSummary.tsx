@@ -17,9 +17,10 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
     const [bookingResult, setBookingResult] = useState<ApiBookingData | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const handleSubmit = async () => {
-        // Logga alla fält innan submit
+        setIsSubmitting(true);
         console.log("BookingFormData skickas:", JSON.stringify(data, null, 2));
         setFieldErrors({});
         try {
@@ -42,6 +43,8 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
             } else {
                 setError(error instanceof Error ? error.message : "Något gick fel vid bokning");
             }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -177,8 +180,13 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
 
             <TotalPrice />
             <Stack direction="row" spacing={2} justifyContent={"space-between"}>
-                <FormButton variant="outlined" onClick={back} text="Tillbaka" />
-                <FormButton variant="contained" onClick={handleSubmit} text="Skicka förfrågan" />
+                <FormButton variant="outlined" onClick={back} text="Tillbaka" disabled={isSubmitting} />
+                <FormButton
+                    variant="contained"
+                    onClick={handleSubmit}
+                    text={isSubmitting ? "Skickar..." : "Skicka förfrågan"}
+                    disabled={isSubmitting}
+                />
             </Stack>
         </section>
     );

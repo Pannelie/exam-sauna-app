@@ -8,12 +8,13 @@ export const useStepContent = (
     formData: BookingFormData,
     updateField: <K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) => void,
     handlers: { next: () => void; back: () => void; complete: () => void; reset: () => void; isCompleted: boolean },
+    errors: Record<string, string>,
 ) => {
     const { next, back, complete, reset, isCompleted } = handlers;
 
     const stepMap = [
-        <StepDates key="dates" data={formData} updateField={updateField} next={next} />,
-        <StepContact key="contact" data={formData} updateField={updateField} next={next} back={back} />,
+        <StepDates key="dates" data={formData} updateField={updateField} next={next} errors={errors} />,
+        <StepContact key="contact" data={formData} updateField={updateField} next={next} back={back} errors={errors} />,
         <StepSummary key="summary" data={formData} back={back} complete={complete} reset={reset} isCompleted={isCompleted} />,
     ];
 

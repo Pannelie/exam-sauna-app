@@ -8,6 +8,7 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 
 import { TransportType } from "../../types/bookingTypes";
 import type { BookingFormData } from "../../types/bookingTypes";
+import { useBookingStore } from "../../stores/useBookingStore";
 
 const StyledPaper = styled(Paper)({
     padding: "1rem",
@@ -19,12 +20,13 @@ interface StepExtrasProps {
 }
 
 export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
-    const priceVed = 40;
-    const priceDoft = 30;
-    const priceCleaning = 995;
-    const deliveryStartFee = 1000; // startavgift
-    const priceOneWay = 40; // per km
-    const priceReturn = 80; // per km tur & retur
+    const { prices } = useBookingStore();
+    const priceVed = prices?.firewood || 40;
+    const priceDoft = prices?.scent || 30;
+    const priceCleaning = prices?.cleaning || 995;
+    const deliveryStartFee = prices?.deliveryStartFee || 1000; // startavgift
+    const priceOneWay = prices?.deliveryOneWay || 40; // per km
+    const priceReturn = prices?.deliveryReturn || 80; // per km tur & retur
 
     return (
         <>
