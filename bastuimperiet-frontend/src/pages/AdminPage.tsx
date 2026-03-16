@@ -13,6 +13,7 @@ export const AdminPage = () => {
         localStorage.removeItem("adminEmail"); // Rensa även email vid utloggning
         setIsLoggedIn(false);
     };
+
     return (
         <main className="home_main home_main--centered">
             {isLoggedIn ? (
