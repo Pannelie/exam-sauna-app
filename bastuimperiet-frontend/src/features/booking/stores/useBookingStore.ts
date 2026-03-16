@@ -1,9 +1,7 @@
 import { create } from "zustand";
-import { getPricePreview } from "../services/priceService";
-import type { BookingBase, BookingState } from "../types/bookingTypes";
-
-// ... samma imports som innan
-let priceDebounceTimer: ReturnType<typeof setTimeout>;
+import { getPriceList } from "../services/priceService";
+import type { BookingState } from "../types/bookingTypes";
+import { calculatePrice } from "../utils/priceEngine";
 
 export const useBookingStore = create<BookingState>((set, get) => ({
     // State
@@ -16,6 +14,66 @@ export const useBookingStore = create<BookingState>((set, get) => ({
     totalPrice: 0,
     isLoading: false,
     error: null,
+    prices: null,
+    specialDays: [],
+
+    fetchPrices: async () => {
+        if (get().prices) return;
+
+        set({ isLoading: true, error: null });
+        try {
+            const data = await getPriceList();
+            // Vi antar att getPriceList returnerar { prices, specialDays }
+            set({
+                prices: data.prices,
+                specialDays: data.specialDays || [],
+                isLoading: false,
+            });
+            get().calculateTotal();
+        } catch (error) {
+            set({ error: "Kunde inte hämta prislista", isLoading: false });
+        }
+    },
+
+    // Public action: Används av dina inputs
+    setField: (field, value) => {
+        set((state) => ({ ...state, [field]: value }));
+        get().calculateTotal();
+    },
+
+    // Intern action: Sköter debounce och API-anrop
+    calculateTotal: () => {
+        const state = get();
+
+        // Om prislistan inte landat än kan vi inte räkna
+        if (!state.prices) return;
+
+        // Kolla om vi har något att räkna på
+        const hasAnyValue = state.startDate || state.endDate || state.firewood > 0 || state.scent > 0 || state.cleaning || state.delivery;
+
+        if (!hasAnyValue) {
+            set({ totalPrice: 0 });
+            return;
+        }
+
+        try {
+            // Använd din synkade engine!
+            // Vi mappar state till det format calculatePrice förväntar sig (config)
+            const total = calculatePrice(state.prices, state.specialDays, {
+                startDate: state.startDate,
+                endDate: state.endDate,
+                cleaning: state.cleaning,
+                firewood: state.firewood,
+                scent: state.scent,
+                delivery: state.delivery,
+            });
+
+            set({ totalPrice: total, error: null });
+        } catch (error) {
+            console.error("Lokal prisberäkning misslyckades:", error);
+            set({ error: "Fel vid prisberäkning" });
+        }
+    },
 
     reset: () =>
         set({
@@ -29,40 +87,4 @@ export const useBookingStore = create<BookingState>((set, get) => ({
             isLoading: false,
             error: null,
         }),
-    // Public action: Används av dina inputs
-    setField: (field, value) => {
-        set((state) => ({ ...state, [field]: value }));
-
-        // Varje gång ett fält ändras, triggar vi den interna kalkylatorn
-        get().calculateTotal();
-    },
-
-    // Intern action: Sköter debounce och API-anrop
-    calculateTotal: async () => {
-        const state = get();
-
-        // 1. Snabbkoll: Har vi datum? Om inte, nollställ priset och avbryt.
-        if (!state.startDate || !state.endDate) {
-            set({ totalPrice: 0 });
-            return;
-        }
-
-        // 2. Debounce: Rensa tidigare timer
-        clearTimeout(priceDebounceTimer);
-
-        // 3. Starta timer för anrop
-        priceDebounceTimer = setTimeout(async () => {
-            set({ isLoading: true });
-
-            try {
-                // Vi skickar nuvarande state som bas för beräkningen
-                const total = await getPricePreview(get() as BookingBase);
-                set({ totalPrice: total });
-            } catch (error) {
-                console.error("Prisberäkningsfel:", error);
-            } finally {
-                set({ isLoading: false });
-            }
-        }, 400);
-    },
 }));
