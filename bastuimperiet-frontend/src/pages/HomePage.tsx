@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useBookingStore } from "../features/booking/stores/useBookingStore";
 import MenuBar from "../components/MenuBar/MenuBar";
 import Hero from "../components/Hero/Hero";
 import { InfoSection } from "../components/HomeSections/InfoSection/InfoSection";
@@ -7,6 +9,12 @@ import { BookingSection } from "../features/booking/BookingSection";
 import "./page.css";
 
 export const HomePage = () => {
+    const fetchPrices = useBookingStore((state) => state.fetchPrices);
+
+    useEffect(() => {
+        fetchPrices();
+    }, [fetchPrices]);
+
     return (
         <main className="home_main">
             <Hero />

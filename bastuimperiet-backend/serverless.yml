@@ -107,6 +107,12 @@ functions:
             - httpApi:
                   path: /bookings
                   method: POST
+    validateBookingStep:
+        handler: src/functions/Bookings/validateBookingStep.handler
+        events:
+            - httpApi:
+                  path: /bookings/validate
+                  method: POST
     getPrices:
         handler: src/functions/Price/getPrices.handler
         events:
@@ -119,6 +125,7 @@ functions:
             - httpApi:
                   path: /prices/calculate
                   method: POST
+
 #---------------------------------------------------------------------
 # DynamoDB Single Table Design
 resources:

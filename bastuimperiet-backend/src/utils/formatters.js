@@ -1,7 +1,7 @@
 export function formatBookingForFrontend(item) {
     return {
         id: item.id,
-        guestName: item.guestName,
+        name: item.name,
         email: item.email,
         phone: item.phone,
 

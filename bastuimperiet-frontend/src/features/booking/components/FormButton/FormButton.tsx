@@ -12,11 +12,12 @@ interface FormButtonProps {
     variant?: "text" | "outlined" | "contained";
     onClick: () => void;
     text: string;
+    disabled?: boolean;
 }
 
-export const FormButton = ({ variant = "text", onClick, text }: FormButtonProps) => {
+export const FormButton = ({ variant = "text", onClick, text, disabled }: FormButtonProps) => {
     return (
-        <StyledButton variant={variant} onClick={onClick}>
+        <StyledButton variant={variant} onClick={onClick} disabled={disabled}>
             {text}
         </StyledButton>
     );

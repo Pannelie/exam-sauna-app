@@ -9,27 +9,60 @@ interface StepContactProps {
     updateField: <K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) => void;
     back: () => void;
     next: () => void;
+    errors: Record<string, string>;
 }
 
-export const StepContact = ({ data, updateField, back, next }: StepContactProps) => {
+export const StepContact = ({ data, updateField, back, next, errors }: StepContactProps) => {
     return (
         <section className="step_container">
             <Stack spacing={2}>
                 <Stack direction="row" spacing={2}>
-                    <StyledTextField label="Namn" value={data.name} onChange={(e) => updateField("name", e.target.value)} />
-                    <StyledTextField label="Telefonnummer" value={data.phone} onChange={(e) => updateField("phone", e.target.value)} />
+                    <StyledTextField
+                        label="Namn"
+                        value={data.name}
+                        onChange={(e) => updateField("name", e.target.value)}
+                        error={!!errors.name}
+                        helperText={errors.name}
+                    />
+                    <StyledTextField
+                        label="Telefonnummer"
+                        value={data.phone}
+                        onChange={(e) => updateField("phone", e.target.value)}
+                        error={!!errors.phone}
+                        helperText={errors.phone}
+                    />
                 </Stack>
                 <Stack spacing={2}>
-                    <StyledTextField label="Epostadress" value={data.email} onChange={(e) => updateField("email", e.target.value)} />
-                    <StyledTextField label="Adress" value={data.address} onChange={(e) => updateField("address", e.target.value)} />
+                    <StyledTextField
+                        label="Epostadress"
+                        value={data.email}
+                        onChange={(e) => updateField("email", e.target.value)}
+                        error={!!errors.email}
+                        helperText={errors.email}
+                    />
+                    <StyledTextField
+                        label="Adress"
+                        value={data.address}
+                        onChange={(e) => updateField("address", e.target.value)}
+                        error={!!errors.address}
+                        helperText={errors.address}
+                    />
                 </Stack>
                 <Stack direction="row" spacing={2}>
                     <StyledTextField
                         label="Postnummer"
                         value={data.postalCode}
                         onChange={(e) => updateField("postalCode", e.target.value)}
+                        error={!!errors.postalCode}
+                        helperText={errors.postalCode}
                     />
-                    <StyledTextField label="Stad" value={data.city} onChange={(e) => updateField("city", e.target.value)} />
+                    <StyledTextField
+                        label="Stad"
+                        value={data.city}
+                        onChange={(e) => updateField("city", e.target.value)}
+                        error={!!errors.city}
+                        helperText={errors.city}
+                    />
                 </Stack>
             </Stack>
             <Stack direction="row" spacing={2} justifyContent={"space-between"}>

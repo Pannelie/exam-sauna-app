@@ -5,9 +5,9 @@ import { errorHandler } from "../../middlewares/errorHandler.js";
 
 export const handler = middy(async () => {
     try {
-        const prices = await getPrices(process.env.TABLE_NAME);
-        console.log("Prices retrieved:", prices);
-        return { statusCode: 200, body: JSON.stringify(prices) };
+        const data = await getPrices();
+        console.log("Data retrieved:", data);
+        return { statusCode: 200, body: JSON.stringify(data) };
     } catch (err) {
         return { statusCode: 500, body: JSON.stringify({ message: err.message }) };
     }

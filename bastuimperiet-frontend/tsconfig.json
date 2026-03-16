@@ -1,7 +1,13 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+    "files": [],
+    "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
+
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext", // Detta löser felet med 'bundler'
+        "moduleResolution": "bundler",
+        "allowJs": true, // Krävs för att TS ska acceptera din .mjs-fil
+        "noEmit": true, // Eftersom Vite sköter bygget, inte tsc
+        "isolatedModules": true
+    }
 }

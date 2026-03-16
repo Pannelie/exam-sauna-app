@@ -9,7 +9,7 @@ export const handler = async (event) => {
             return {
                 statusCode: 400,
                 body: JSON.stringify({
-                    message: "Missing required fields",
+                    message: "Saknade obligatoriska fält",
                 }),
             };
         }
@@ -20,7 +20,7 @@ export const handler = async (event) => {
         if (hasBookingOverlap(data.startDate, data.endDate, allBookings)) {
             return {
                 statusCode: 409,
-                body: JSON.stringify({ message: "Selected dates are already booked" }),
+                body: JSON.stringify({ message: "Valda datum är redan bokade" }),
             };
         }
 
@@ -29,7 +29,7 @@ export const handler = async (event) => {
         try {
             await sendNewBookingRequestToAdmin({
                 bookingId: booking.id,
-                ...bookingData,
+                ...booking,
             });
             console.log("Admin booking request email sent", {
                 bookingId: booking.id,

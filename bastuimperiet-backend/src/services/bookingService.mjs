@@ -1,6 +1,6 @@
 import { formatBookingForFrontend } from "../utils/formatters.js";
 import { dynamoClient as client } from "../clients/dynamodbClient.mjs";
-import { calculatePrice } from "../services/priceEngine.mjs";
+import { calculatePrice } from "../utils/priceEngine.mjs";
 import { getPrices } from "../services/priceService.mjs";
 import { v4 as uuidv4 } from "uuid";
 import { GetCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
@@ -56,7 +56,7 @@ export async function postBooking(tableName, bookingData) {
     const allBookings = await getAllBookings(tableName);
     const id = generateShortId(); // Generera id här
     const {
-        guestName,
+        name,
         email,
         phone,
         address,
@@ -77,9 +77,8 @@ export async function postBooking(tableName, bookingData) {
         throw error;
     }
 
-    const prices = await getPrices();
-    const specialDays = ["2026-04-18", "2026-06-06"];
-    const totalPrice = calculatePrice(prices, specialDays, {
+    const priceData = await getPrices();
+    const totalPrice = calculatePrice(priceData.prices, priceData.specialDays, {
         startDate,
         endDate,
         cleaning,
@@ -87,6 +86,12 @@ export async function postBooking(tableName, bookingData) {
         scent,
         delivery,
     });
+
+    if (isNaN(totalPrice)) {
+        console.error("Price Engine returned NaN. Check priceData:", priceData);
+        throw new Error("Kunde inte beräkna priset korrekt.");
+    }
+
     const status = "pending";
 
     const item = {
@@ -94,7 +99,7 @@ export async function postBooking(tableName, bookingData) {
         SK: "BOOKING",
 
         id,
-        guestName,
+        name,
         email,
         phone,
 
@@ -130,7 +135,7 @@ export async function postBooking(tableName, bookingData) {
             ConditionExpression: "attribute_not_exists(PK)", // skriv inte över
         }),
     );
-
+    console.log("Bokning skapad:", item);
     return formatBookingForFrontend(item);
 }
 

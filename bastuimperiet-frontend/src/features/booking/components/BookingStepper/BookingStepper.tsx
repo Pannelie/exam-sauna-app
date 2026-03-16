@@ -1,8 +1,9 @@
 import { Stepper, Step, StepLabel, Box, styled } from "@mui/material";
 import { useState } from "react";
-import type { BookingFormData, BookingState, BookingBase } from "../../types/bookingTypes";
+import type { BookingFormData, BookingBase } from "../../types/bookingTypes";
 import { useStepContent } from "../../hooks/useStepContent";
 import { useBookingStore } from "../../stores/useBookingStore";
+import { validateBookingService } from "../../services/bookingService";
 
 const StyledBox = styled(Box)(({ theme }) => ({
     display: "flex",
@@ -24,12 +25,12 @@ const StyledFormContent = styled(Box)({
 });
 
 export const BookingStepper = () => {
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const steps = ["Bokning", "Kontakt", "Skicka"];
     const [activeStep, setActiveStep] = useState<number>(0);
     const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
-    const setBookingField = useBookingStore((state) => state.setField);
-    const resetStore = useBookingStore((state) => state.reset);
+    const { setField, reset: resetStore } = useBookingStore();
 
     const initialFormData: BookingFormData = {
         firewood: 0,
@@ -49,15 +50,27 @@ export const BookingStepper = () => {
 
     function updateField<K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) {
         setFormData((prev) => ({ ...prev, [field]: value }));
-        const priceFields: (keyof BookingState)[] = ["startDate", "endDate", "cleaning", "firewood", "scent", "delivery"];
-        if (priceFields.includes(field as keyof BookingState)) {
-            setBookingField(field as keyof BookingBase, value as any);
+
+        // Uppdatera storen om fältet påverkar priset
+        const priceFields: (keyof BookingBase)[] = ["startDate", "endDate", "cleaning", "firewood", "scent", "delivery"];
+        if (priceFields.includes(field as any)) {
+            setField(field as any, value);
         }
     }
 
     // Handlers för navigation
     const handlers = {
-        next: () => setActiveStep((prev) => prev + 1),
+        next: async () => {
+            const result = await validateBookingService.validateStep(activeStep, formData);
+
+            if (result.success) {
+                setErrors({});
+                setActiveStep((prev) => prev + 1);
+            } else {
+                setErrors(result.errors);
+            }
+        },
+
         back: () => setActiveStep((prev) => prev - 1),
         complete: () => setIsCompleted(true),
         reset: () => {
@@ -69,7 +82,7 @@ export const BookingStepper = () => {
         isCompleted,
     };
     // Använd hooken för att få innehållet för aktuellt steg
-    const stepContent = useStepContent(activeStep, formData, updateField, handlers);
+    const stepContent = useStepContent(activeStep, formData, updateField, handlers, errors);
 
     return (
         <StyledBox>

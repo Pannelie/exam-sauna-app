@@ -46,7 +46,7 @@ export const handler = middy(async (event) => {
                 try {
                     const calendarEvent = await createBookingCalendarEvent({
                         bookingId: fullBooking.id,
-                        guestName: fullBooking.guestName,
+                        name: fullBooking.name,
                         email: fullBooking.email,
                         phone: fullBooking.phone,
 
@@ -75,7 +75,7 @@ export const handler = middy(async (event) => {
 
                 try {
                     await sendBookingConfirmedToGuest({
-                        guestName: fullBooking.guestName,
+                        name: fullBooking.name,
                         email: fullBooking.email,
                         startDate: fullBooking.startDate,
                         endDate: fullBooking.endDate,
@@ -96,7 +96,7 @@ export const handler = middy(async (event) => {
 
                 try {
                     await sendBookingDeclinedToGuest({
-                        guestName: fullBooking.guestName,
+                        name: fullBooking.name,
                         email: fullBooking.email,
                         startDate: fullBooking.startDate,
                         endDate: fullBooking.endDate,
@@ -129,7 +129,7 @@ export const handler = middy(async (event) => {
                 }
                 try {
                     await sendBookingCancelledToGuest({
-                        guestName: fullBooking.guestName,
+                        name: fullBooking.name,
                         email: fullBooking.email,
                         startDate: fullBooking.startDate,
                         endDate: fullBooking.endDate,
