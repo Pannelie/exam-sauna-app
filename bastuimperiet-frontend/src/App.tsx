@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
-import { HomePage, AdminPage, BookingDetailsPage } from "./pages";
+import { HomePage, AdminPage, BookingDetailsPage, BookingsPage } from "./pages";
 import { MainLayout } from "./components/MainLayout/MainLayout";
 
 export default function App() {
@@ -14,7 +14,7 @@ export default function App() {
                     <Route path="/admin/login" element={<AdminPage />} />
 
                     <Route element={<ProtectedRoute />}>
-                        <Route path="/admin/bookings" element={<AdminPage />} />
+                        <Route path="/admin/bookings" element={<BookingsPage />} />
                         <Route path="/admin/bookings/:id" element={<BookingDetailsPage />} />
                         <Route path="/admin/profiles" element={<AdminPage />} />
                     </Route>
