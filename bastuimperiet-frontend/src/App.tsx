@@ -12,7 +12,7 @@ export default function App() {
                 <Route path="/login" element={<AdminPage />} />
 
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/admin/bookings" element={<BookingsPage />} />
+                    <Route path="/dashboard" element={<BookingsPage />} />
                     <Route path="/admin/bookings/:id" element={<BookingDetailsPage />} />
                 </Route>
 
