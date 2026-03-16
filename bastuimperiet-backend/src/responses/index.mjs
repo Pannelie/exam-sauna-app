@@ -1,8 +1,9 @@
-export const sendResponse = (code, data) => {
+export function sendResponse(statusCode, body) {
     return {
-        statusCode: code,
-        body: JSON.stringify({
-            ...data,
-        }),
+        statusCode,
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
     };
-};
+}

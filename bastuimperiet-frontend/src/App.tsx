@@ -2,22 +2,21 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
-import { HomePage, LoginPage, BookingsPage, BookingDetailsPage } from "./pages";
+import { HomePage, AdminPage, BookingDetailsPage } from "./pages";
 
 export default function App() {
     return (
         <ThemeProvider theme={theme}>
             <Routes>
-                <Route path="/" element={<Navigate to="/home" replace />} />
-                <Route path="/home" element={<HomePage />} />
-                <Route path="/login" element={<LoginPage />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<AdminPage />} />
 
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/bookings" element={<BookingsPage />} />
-                    <Route path="/bookings/:id" element={<BookingDetailsPage />} />
+                    <Route path="/dashboard" element={<AdminPage />} />
+                    <Route path="/admin/bookings/:id" element={<BookingDetailsPage />} />
                 </Route>
 
-                <Route path="*" element={<Navigate to="/login" replace />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </ThemeProvider>
     );

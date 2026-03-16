@@ -31,7 +31,7 @@ export async function loginAdmin(tableName, email, password) {
             email: adminItem.email,
         },
         process.env.JWT_SECRET,
-        { expiresIn: "2h" },
+        { expiresIn: "1h" },
     );
 
     return {

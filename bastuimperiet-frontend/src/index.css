@@ -24,8 +24,14 @@ html {
 .home_main {
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
     background-image: url(../src/assets/wood2.jpg);
     padding-bottom: calc(64px + env(safe-area-inset-bottom));
+}
+.home_main--centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .page_container--center {
