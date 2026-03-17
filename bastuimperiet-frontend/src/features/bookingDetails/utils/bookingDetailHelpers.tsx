@@ -25,6 +25,7 @@ export const InfoTile = ({ icon, label, value }: { icon: React.ReactNode; label:
             display: "flex",
             flexDirection: "column",
             gap: 0.5,
+            bgcolor: "action.hover", // En lätt bakgrundsfärg för att markera dem
         }}
     >
         <Stack direction="row" spacing={1} alignItems="center">
@@ -37,4 +38,22 @@ export const InfoTile = ({ icon, label, value }: { icon: React.ReactNode; label:
             {value}
         </Typography>
     </Box>
+);
+
+// Hjälpkomponent för Systemstatus (små prickar)
+export const StatusIndicator = ({ label, active }: { label: string; active: boolean | null }) => (
+    <Stack direction="row" spacing={1} alignItems="center">
+        <Box
+            sx={{
+                width: 10,
+                height: 10,
+                borderRadius: "50%",
+                bgcolor: active === true ? "success.main" : active === false ? "error.main" : "warning.main",
+                boxShadow: active !== null ? "0 0 4px" + (active ? "#2e7d3280" : "#d32f2f80") : "none", // En liten aura
+            }}
+        />
+        <Typography variant="caption" color="text.secondary">
+            {label}
+        </Typography>
+    </Stack>
 );
