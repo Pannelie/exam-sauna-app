@@ -1,30 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { getAllBookings } from "./services/allBookingsService";
-import type { ApiBookingData } from "../../types/bookingTypes";
 import { BookingCard } from "./services/components/BookingCard/BookingCard";
 import { BookingCardSkeleton } from "../allBookings/services/components/BookingCardSkeleton/BookingCardSkeleton";
-import { Box, Typography, Paper, Tabs, Tab, styled } from "@mui/material";
+import { Box, Typography, Tabs } from "@mui/material";
 import { BookingLayout } from "./services/components/BookingLayout/BookingLayout";
 import { Outlet } from "react-router-dom";
-
-const StyledBox = styled(Box)(({ theme }) => ({
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-    gap: "1.5rem",
-    padding: theme.spacing(1),
-}));
-
-const ListContent = styled(Box)(({ theme }) => ({
-    flexGrow: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    backdropFilter: "blur(10px)",
-    borderRadius: "0 20px 20px 20px",
-    padding: theme.spacing(2),
-    overflowY: "auto",
-    boxShadow: "0px 10px 30px rgba(0,0,0,0.3)",
-    display: "flex",
-    flexDirection: "column",
-}));
+import * as S from "./AllBookings.styles";
+import { filterBookingsByTab } from "./utils/bookingHelpers";
+import type { ApiBookingData } from "../../types/bookingTypes";
 
 export default function AllBookings() {
     const [bookings, setBookings] = useState<ApiBookingData[]>([]);
@@ -55,53 +38,29 @@ export default function AllBookings() {
         console.log("Anropar API för att neka:", id);
     };
 
-    const filteredBookings = bookings.filter((b) => {
-        if (tabIndex === 1) return b.status === "pending";
-        if (tabIndex === 2) return b.status === "confirmed";
-        if (tabIndex === 3) return b.status === "declined";
-        if (tabIndex === 4) return b.status === "cancelled";
-        return true;
-    });
+    const filteredBookings = useMemo(() => filterBookingsByTab(bookings, tabIndex), [bookings, tabIndex]);
 
     return (
         <BookingLayout
             sidebar={
-                <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-                    {/* FLIKARNA (TABS) */}
+                <S.SidebarWrapper>
                     <Tabs
                         value={tabIndex}
                         onChange={(_, v) => setTabIndex(v)}
                         variant="scrollable"
                         scrollButtons="auto"
-                        sx={{
-                            "& .MuiTabs-indicator": { display: "none" },
-                            "& .MuiTab-root": {
-                                color: "rgba(255,255,255,0.7)",
-                                backgroundColor: "rgba(255,255,255,0.2)",
-                                backdropFilter: "blur(5px)",
-                                borderRadius: "12px 12px 0 0", // Runda bara toppen
-                                marginRight: "5px",
-                                transition: "all 0.2s",
-                                "&.Mui-selected": {
-                                    color: "#333",
-                                    // Samma färg som ListContent för att "smälta ihop"
-                                    backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                },
-                            },
-                        }}
+                        sx={{ "& .MuiTabs-indicator": { display: "none" } }}
                     >
-                        <Tab label="Alla" />
-                        <Tab label="Väntar" />
-                        <Tab label="Bekräftade" />
-                        <Tab label="Avböjda" />
-                        <Tab label="Avbokade" />
+                        <S.StyledTab label="Alla" />
+                        <S.StyledTab label="Väntar" />
+                        <S.StyledTab label="Bekräftade" />
+                        <S.StyledTab label="Avböjda" />
+                        <S.StyledTab label="Avbokade" />
                     </Tabs>
-
-                    <ListContent>
-                        <StyledBox>
+                    <S.ListContent>
+                        <S.StyledBox>
                             {loading
-                                ? // Renderar 8 skelett-kort medan vi laddar
-                                  Array.from(new Array(8)).map((_, index) => <BookingCardSkeleton key={index} />)
+                                ? Array.from(new Array(8)).map((_, i) => <BookingCardSkeleton key={i} />)
                                 : filteredBookings.map((b) => (
                                       <BookingCard
                                           key={b.id}
@@ -111,34 +70,30 @@ export default function AllBookings() {
                                           onDecline={handleDeclineBooking}
                                       />
                                   ))}
-                        </StyledBox>
+                        </S.StyledBox>
                         {!loading && filteredBookings.length === 0 && (
                             <Typography sx={{ p: 4, textAlign: "center", color: "gray" }}>Inga bokningar i denna kategori</Typography>
                         )}
-                    </ListContent>
-                </Box>
+                    </S.ListContent>
+                </S.SidebarWrapper>
             }
             // Höger sida: Kalender och Outlet för detaljer
             mainContent={
                 <>
-                    <Paper sx={{ p: 2 }}>
+                    <S.CalendarPaper>
                         <Typography variant="h6" gutterBottom>
                             Kalendervy
                         </Typography>
-                        {/* Här skickar du sen in din kalenderkomponent */}
-                        <Box sx={{ height: "300px", bgcolor: "#eee", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            [Kalender - Hovrat ID: {hoveredBookingId || "Ingen"}]
-                        </Box>
-                    </Paper>
+                        <S.CalendarPlaceholder>[Kalender - Hovrat ID: {hoveredBookingId || "Ingen"}]</S.CalendarPlaceholder>
+                    </S.CalendarPaper>
 
                     <Box>
                         <Typography variant="h6" gutterBottom>
                             Bokningsdetaljer
                         </Typography>
-                        <Paper sx={{ p: 2, minHeight: "200px" }}>
-                            {/* Skickar med bokningarna som context så detaljvyn kan hitta rätt person */}
+                        <S.DetailsPaper>
                             <Outlet context={{ bookings }} />
-                        </Paper>
+                        </S.DetailsPaper>
                     </Box>
                 </>
             }
