@@ -1,6 +1,7 @@
-import { Box, Button, IconButton, Paper, Typography, styled } from "@mui/material";
+import { Box, IconButton, Paper, Typography, styled } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
+import { LogoutBtn } from "../LogoutBtn/LogoutBtn";
 
 const DropdownCard = styled(Paper)(({ theme }) => ({
     position: "absolute",
@@ -46,13 +47,7 @@ export function ProfileMenuCard({ user }: { user: { name: string; email: string 
                     {user.email}
                 </Typography>
 
-                <Button
-                    variant="contained"
-                    sx={{ bgcolor: "#E9B85B", color: "white", borderRadius: "15px", px: 4, "&:hover": { bgcolor: "#d4a74a" } }}
-                    onClick={() => console.log("Logga ut")}
-                >
-                    LOGGA UT
-                </Button>
+                <LogoutBtn />
             </DropdownCard>
         </UserWrapper>
     );

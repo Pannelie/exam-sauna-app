@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
-import { HomePage, AdminPage, BookingDetailsPage, BookingsPage } from "./pages";
+import { HomePage, AdminPage, BookingDetailsPage, BookingsPage, LoginPage } from "./pages";
 import { MainLayout } from "./components/MainLayout/MainLayout";
 
 export default function App() {
@@ -11,7 +11,8 @@ export default function App() {
             <Routes>
                 <Route element={<MainLayout />}>
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/admin/login" element={<AdminPage />} />
+                    <Route path="/admin/login" element={<LoginPage />} />
+                    <Route path="/admin" element={<Navigate to="/admin/bookings" replace />} />
 
                     <Route element={<ProtectedRoute />}>
                         <Route path="/admin/bookings" element={<BookingsPage />} />
