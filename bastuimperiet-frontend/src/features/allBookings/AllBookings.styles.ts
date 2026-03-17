@@ -2,7 +2,7 @@ import { Box, Paper, Tab, styled } from "@mui/material";
 
 export const StyledBox = styled(Box)(({ theme }) => ({
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fill, minmax(225px, 1fr))",
     gap: "1.5rem",
     padding: theme.spacing(1),
 }));
