@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { getAllBookings } from "./services/allBookingsService";
 import { BookingCard } from "./components/BookingCard/BookingCard";
 import { BookingCardSkeleton } from "./components/BookingCardSkeleton/BookingCardSkeleton";
-import { Box, Typography, Tabs } from "@mui/material";
+import { Typography, Tabs } from "@mui/material";
 import { BookingLayout } from "./components/BookingLayout/BookingLayout";
 import { Outlet } from "react-router-dom";
 import * as S from "./AllBookings.styles";

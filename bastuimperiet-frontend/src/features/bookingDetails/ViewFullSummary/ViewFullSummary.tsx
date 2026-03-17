@@ -14,7 +14,7 @@ export const ViewFullSummary = ({ booking }: { booking: ApiBookingData }) => {
     console.log(booking);
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {/* Header: ID, Pris och Status */}
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <Box>
@@ -36,6 +36,19 @@ export const ViewFullSummary = ({ booking }: { booking: ApiBookingData }) => {
             <Divider />
 
             {/* Sektion 1: Datum och Kontaktuppgifter (Ersätter Grid med Flexbox) */}
+
+            {/* DATUM */}
+            <Box sx={{ flex: 1 }}>
+                <Typography variant="subtitle2" gutterBottom color="text.secondary">
+                    Datum
+                </Typography>
+                <Stack direction="row" spacing={2} alignItems="center">
+                    <Today color="action" />
+                    <Typography variant="body1">
+                        {booking.startDate} — {booking.endDate}
+                    </Typography>
+                </Stack>
+            </Box>
             <Box
                 sx={{
                     display: "flex",
@@ -43,21 +56,8 @@ export const ViewFullSummary = ({ booking }: { booking: ApiBookingData }) => {
                     gap: 4,
                 }}
             >
-                {/* DATUM */}
-                <Box sx={{ flex: 1 }}>
-                    <Typography variant="subtitle2" gutterBottom color="text.secondary">
-                        Datum
-                    </Typography>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                        <Today color="action" />
-                        <Typography variant="body1">
-                            {booking.startDate} — {booking.endDate}
-                        </Typography>
-                    </Stack>
-                </Box>
-
                 {/* KONTAKT */}
-                <Box sx={{ flex: 1 }}>
+                <Box>
                     <Typography variant="subtitle2" gutterBottom color="text.secondary">
                         Kontaktuppgifter
                     </Typography>
@@ -72,20 +72,19 @@ export const ViewFullSummary = ({ booking }: { booking: ApiBookingData }) => {
                         <Typography variant="body2">{booking.phone}</Typography>
                     </Stack>
                 </Box>
-            </Box>
-
-            {/* ADRESS */}
-            <Box>
-                <Typography variant="subtitle2" gutterBottom color="text.secondary">
-                    Adress
-                </Typography>
-                <Stack direction="row" spacing={2} alignItems="flex-start">
-                    <FmdGood color="action" />
-                    <Typography variant="body2">
-                        {booking.address},<br />
-                        {booking.postalCode} {booking.city}
+                {/* ADRESS */}
+                <Box>
+                    <Typography variant="subtitle2" gutterBottom color="text.secondary">
+                        Adress
                     </Typography>
-                </Stack>
+                    <Stack direction="row" spacing={2} alignItems="flex-start">
+                        <FmdGood color="action" />
+                        <Typography variant="body2">
+                            {booking.address},<br />
+                            {booking.postalCode} {booking.city}
+                        </Typography>
+                    </Stack>
+                </Box>
             </Box>
 
             <Divider />
