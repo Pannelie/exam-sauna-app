@@ -5,7 +5,6 @@ export const AdminPage = () => {
 
     return (
         <div className="admin-container">
-            <h1>Personaladministration</h1>
             <AdminList myEmail={loggedInEmail || ""} />
         </div>
     );

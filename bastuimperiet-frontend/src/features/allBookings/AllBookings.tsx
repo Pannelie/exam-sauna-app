@@ -8,11 +8,11 @@ import { Outlet } from "react-router-dom";
 
 const StyledBox = styled(Box)(({ theme }) => ({
     display: "grid",
-    // Skapar så många kolumner som får plats, minst 200px breda styck
     gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
     gap: "1.5rem",
     padding: theme.spacing(1),
 }));
+
 const ListContent = styled(Box)(({ theme }) => ({
     flexGrow: 1,
     backgroundColor: "rgba(255, 255, 255, 0.9)",
@@ -21,7 +21,6 @@ const ListContent = styled(Box)(({ theme }) => ({
     padding: theme.spacing(2),
     overflowY: "auto",
     boxShadow: "0px 10px 30px rgba(0,0,0,0.3)",
-    // Viktigt: Denna box tar upp resten av höjden i sidebaren
     display: "flex",
     flexDirection: "column",
 }));
@@ -70,7 +69,7 @@ export default function AllBookings() {
                             "& .MuiTabs-indicator": { display: "none" },
                             "& .MuiTab-root": {
                                 color: "rgba(255,255,255,0.7)",
-                                backgroundColor: "rgba(255,255,255,0.2)", // Genomskinliga flikar
+                                backgroundColor: "rgba(255,255,255,0.2)",
                                 backdropFilter: "blur(5px)",
                                 borderRadius: "12px 12px 0 0", // Runda bara toppen
                                 marginRight: "5px",

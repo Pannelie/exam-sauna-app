@@ -1,5 +1,4 @@
 import { Paper, styled, Box, Stack, Typography, Button } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import type { iBookingCard } from "../../../../../types/bookingTypes";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -11,7 +10,8 @@ const StyledPaper = styled(Paper, {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "space-between", // Sprider ut innehållet jämnt
+    justifyContent: "flex-start",
+    gap: "0.5rem",
     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
 
     // --- VIKTIGT: Fast höjd så de inte ändrar form ---
@@ -43,6 +43,10 @@ const StyledPaper = styled(Paper, {
         },
     },
 }));
+
+const StyledStack = styled(Stack)({
+    marginTop: "auto", // Tryck stacken till botten av kortet
+});
 
 export const BookingCard = ({ booking, onHover }: { booking: iBookingCard; onHover?: (id: string | null) => void }) => {
     const navigate = useNavigate();
@@ -97,7 +101,7 @@ export const BookingCard = ({ booking, onHover }: { booking: iBookingCard; onHov
             </Box>
 
             {booking.status === "pending" && (
-                <Stack className="action-stack" direction="row" spacing={1.5} alignItems="center">
+                <StyledStack className="action-stack" direction="row" spacing={1.5} alignItems="center">
                     <Button
                         size="small"
                         variant="contained"
@@ -122,10 +126,8 @@ export const BookingCard = ({ booking, onHover }: { booking: iBookingCard; onHov
                     >
                         Avböj
                     </Button>
-                </Stack>
+                </StyledStack>
             )}
-
-            {booking.status === "confirmed" && <CheckCircleIcon sx={{ mt: 2, color: "success.main", fontSize: "1.8rem", opacity: 0.8 }} />}
         </StyledPaper>
     );
 };

@@ -63,7 +63,7 @@ type MenuItem = {
 interface MenuBarProps {
     menuItems: MenuItem[];
     actionComponent: JSX.Element;
-    showActionOnMobile?: boolean; // Valfri prop för att visa actionComponent även på mobil
+    showActionOnMobile?: boolean;
 }
 
 export default function MenuBar({ menuItems, actionComponent, showActionOnMobile = false }: MenuBarProps): JSX.Element {
