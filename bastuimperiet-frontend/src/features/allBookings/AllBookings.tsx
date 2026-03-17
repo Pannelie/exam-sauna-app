@@ -88,10 +88,6 @@ export default function AllBookings() {
                     </S.ContentPaper>
 
                     <S.ContentPaper>
-                        <Typography variant="h6" gutterBottom>
-                            Bokningsdetaljer
-                        </Typography>
-
                         <Outlet context={{ bookings }} />
                     </S.ContentPaper>
                 </>

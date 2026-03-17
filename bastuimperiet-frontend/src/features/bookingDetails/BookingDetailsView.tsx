@@ -21,7 +21,6 @@ export const BookingDetailsView = () => {
     // kan du behöva mappa om 'selectedBooking' här.
     return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Typography variant="body1">Boknings-ID: {selectedBooking.id}</Typography>
             <ViewFullSummary booking={selectedBooking} />
         </Box>
     );
