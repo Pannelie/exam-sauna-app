@@ -52,9 +52,9 @@ export default function AllBookings() {
                         sx={{ "& .MuiTabs-indicator": { display: "none" } }}
                     >
                         <S.StyledTab label="Alla" />
-                        <S.StyledTab label="Väntar" />
+                        <S.StyledTab label="Förfrågningar" />
                         <S.StyledTab label="Bekräftade" />
-                        <S.StyledTab label="Avböjda" />
+                        <S.StyledTab label="Nekade" />
                         <S.StyledTab label="Avbokade" />
                     </Tabs>
                     <S.ListContent>
@@ -80,21 +80,20 @@ export default function AllBookings() {
             // Höger sida: Kalender och Outlet för detaljer
             mainContent={
                 <>
-                    <S.CalendarPaper>
+                    <S.ContentPaper>
                         <Typography variant="h6" gutterBottom>
                             Kalendervy
                         </Typography>
                         <S.CalendarPlaceholder>[Kalender - Hovrat ID: {hoveredBookingId || "Ingen"}]</S.CalendarPlaceholder>
-                    </S.CalendarPaper>
+                    </S.ContentPaper>
 
-                    <Box>
+                    <S.ContentPaper>
                         <Typography variant="h6" gutterBottom>
                             Bokningsdetaljer
                         </Typography>
-                        <S.DetailsPaper>
-                            <Outlet context={{ bookings }} />
-                        </S.DetailsPaper>
-                    </Box>
+
+                        <Outlet context={{ bookings }} />
+                    </S.ContentPaper>
                 </>
             }
         />

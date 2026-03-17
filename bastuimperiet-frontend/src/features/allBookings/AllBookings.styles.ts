@@ -25,7 +25,7 @@ export const SidebarWrapper = styled(Box)({
     height: "100%",
 });
 
-export const CalendarPaper = styled(Paper)(({ theme }) => ({
+export const ContentPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(2),
     marginBottom: theme.spacing(2),
 }));

@@ -19,12 +19,16 @@ export const BookingCard = ({ booking, onHover, onConfirm, onDecline }: BookingC
     const isActive = id === String(booking.id);
     const statusColor = getStatusColor({ booking });
 
+    const handleCardClick = () => {
+        navigate(`/admin/bookings/${booking.id}`);
+    };
+
     return (
         <S.StyledPaper
             elevation={0}
             isActive={isActive}
             statusColor={statusColor}
-            onClick={() => navigate(`/admin/bookings/${booking.id}`)}
+            onClick={handleCardClick}
             onMouseEnter={() => onHover?.(String(booking.id))}
             onMouseLeave={() => onHover?.(null)}
         >

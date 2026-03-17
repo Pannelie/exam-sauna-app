@@ -1,10 +1,12 @@
-import { Stack, Typography, Divider } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import type { ApiBookingData, BookingFormData } from "../../../../types/bookingTypes";
 import { FormButton } from "../FormButton/FormButton";
 import { TotalPrice } from "../TotalPrice/TotalPrice";
-import { StyledTextField } from "../StyledTextField/StyledTextField";
+
 import { postBooking } from "../../services/bookingService";
 import { useState } from "react";
+import { BookingSummary } from "../BookingSummary/BookingSummary";
+
 interface StepSummaryProps {
     data: BookingFormData;
     back: () => void;
@@ -85,98 +87,7 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
 
             {/* Innehåll */}
             <Stack spacing={2} gap={0.2}>
-                {/* Datum  */}
-                <Stack direction="row" spacing={2}>
-                    <StyledTextField label="Startdatum" value={data.startDate} disabled variant="outlined" size="small" />
-                    <StyledTextField label="Slutdatum" value={data.endDate} disabled variant="outlined" size="small" />
-                </Stack>
-                <Divider />
-
-                {/* Tillval*/}
-                <Stack direction="row" spacing={2}>
-                    <StyledTextField label="Ved" value={data.firewood} disabled variant="outlined" size="small" />
-                    <StyledTextField label="Doft" value={data.scent} disabled variant="outlined" size="small" />
-                    <StyledTextField label="Städning" value={data.cleaning ? "Ja" : "Nej"} disabled variant="outlined" size="small" />
-                </Stack>
-
-                {/* Visa deliveryType om utkörning är på */}
-                {data.delivery && (
-                    <Stack direction="row" spacing={2}>
-                        <StyledTextField label="Utkörning" value={data.delivery ? "Ja" : "Nej"} disabled variant="outlined" size="small" />
-
-                        <StyledTextField
-                            label="Typ av utkörning"
-                            value={data.transportType === "return" ? "Tur & Retur" : "Enkel"}
-                            disabled
-                            variant="outlined"
-                            size="small"
-                        />
-                    </Stack>
-                )}
-                <Divider />
-
-                {/* Kontaktinfo */}
-                <Stack direction="row" spacing={2}>
-                    <StyledTextField
-                        label="Namn"
-                        value={`${data.name}`}
-                        disabled
-                        variant="outlined"
-                        size="small"
-                        error={!!fieldErrors.name}
-                        helperText={fieldErrors.name}
-                    />
-                    <StyledTextField
-                        label="Telefon"
-                        value={data.phone}
-                        disabled
-                        variant="outlined"
-                        size="small"
-                        error={!!fieldErrors.phone}
-                        helperText={fieldErrors.phone}
-                    />
-                </Stack>
-
-                <StyledTextField
-                    label="Email"
-                    value={data.email}
-                    disabled
-                    variant="outlined"
-                    size="small"
-                    error={!!fieldErrors.email}
-                    helperText={fieldErrors.email}
-                />
-                <StyledTextField
-                    label="Adress"
-                    value={data.address}
-                    disabled
-                    variant="outlined"
-                    size="small"
-                    flex={2}
-                    error={!!fieldErrors.address}
-                    helperText={fieldErrors.address}
-                />
-
-                <Stack direction="row" spacing={2}>
-                    <StyledTextField
-                        label="Postnummer"
-                        value={data.postalCode}
-                        disabled
-                        variant="outlined"
-                        size="small"
-                        error={!!fieldErrors.postalCode}
-                        helperText={fieldErrors.postalCode}
-                    />
-                    <StyledTextField
-                        label="Stad"
-                        value={data.city}
-                        disabled
-                        variant="outlined"
-                        size="small"
-                        error={!!fieldErrors.city}
-                        helperText={fieldErrors.city}
-                    />
-                </Stack>
+                <BookingSummary booking={data} errors={fieldErrors} />
             </Stack>
 
             <TotalPrice />
