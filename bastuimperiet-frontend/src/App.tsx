@@ -9,8 +9,8 @@ export default function App() {
     return (
         <ThemeProvider theme={theme}>
             <Routes>
+                <Route path="/" element={<HomePage />} />
                 <Route element={<MainLayout />}>
-                    <Route path="/" element={<HomePage />} />
                     <Route path="/admin/login" element={<LoginPage />} />
                     <Route path="/admin" element={<Navigate to="/admin/bookings" replace />} />
 
