@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getAllBookings } from "./services/allBookingsService";
 import type { ApiBookingData } from "../../types/bookingTypes";
 import { BookingCard } from "./services/components/BookingCard/BookingCard";
+import { BookingCardSkeleton } from "../allBookings/services/components/BookingCardSkeleton/BookingCardSkeleton";
 import { Box, Typography, Paper, Tabs, Tab, styled } from "@mui/material";
 import { BookingLayout } from "./services/components/BookingLayout/BookingLayout";
 import { Outlet } from "react-router-dom";
@@ -62,8 +63,6 @@ export default function AllBookings() {
         return true;
     });
 
-    if (loading) return <div>Laddar bokningar...</div>;
-
     return (
         <BookingLayout
             sidebar={
@@ -100,17 +99,20 @@ export default function AllBookings() {
 
                     <ListContent>
                         <StyledBox>
-                            {filteredBookings.map((b) => (
-                                <BookingCard
-                                    key={b.id}
-                                    booking={b}
-                                    onHover={setHoveredBookingId}
-                                    onConfirm={handleConfirmBooking}
-                                    onDecline={handleDeclineBooking}
-                                />
-                            ))}
+                            {loading
+                                ? // Renderar 8 skelett-kort medan vi laddar
+                                  Array.from(new Array(8)).map((_, index) => <BookingCardSkeleton key={index} />)
+                                : filteredBookings.map((b) => (
+                                      <BookingCard
+                                          key={b.id}
+                                          booking={b}
+                                          onHover={setHoveredBookingId}
+                                          onConfirm={handleConfirmBooking}
+                                          onDecline={handleDeclineBooking}
+                                      />
+                                  ))}
                         </StyledBox>
-                        {filteredBookings.length === 0 && (
+                        {!loading && filteredBookings.length === 0 && (
                             <Typography sx={{ p: 4, textAlign: "center", color: "gray" }}>Inga bokningar i denna kategori</Typography>
                         )}
                     </ListContent>

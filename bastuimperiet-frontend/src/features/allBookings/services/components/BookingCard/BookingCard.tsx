@@ -50,13 +50,15 @@ export const BookingCard = ({ booking, onHover, onConfirm, onDecline }: BookingC
         if (booking.status === "confirmed") return "#4CAF50";
         if (booking.status === "pending") return "#FFC107";
         if (booking.status === "cancelled") return "#D32F2F";
+        if (booking.status === "declined") return "#F44336";
         return "#e0e0e0";
     };
 
     const getStatusText = () => {
         if (booking.status === "confirmed") return "Bekräftad";
         if (booking.status === "cancelled") return "Avbokad";
-        return "Nekad";
+        if (booking.status === "declined") return "Nekad";
+        return "Okänd";
     };
 
     return (
