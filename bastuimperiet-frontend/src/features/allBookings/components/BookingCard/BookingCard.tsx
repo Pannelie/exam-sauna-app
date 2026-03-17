@@ -1,9 +1,9 @@
 import { Stack, Typography, Tooltip } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import type { ApiBookingData } from "../../../../../types/bookingTypes";
+import type { ApiBookingData } from "../../../../types/bookingTypes";
 import { useNavigate, useParams } from "react-router-dom";
-import { getStatusColor, getStatusText } from "../../../utils/bookingHelpers";
+import { getStatusColor, getStatusText } from "../../utils/bookingHelpers";
 import * as S from "./BookingCard.styles";
 
 interface BookingCardProps {
