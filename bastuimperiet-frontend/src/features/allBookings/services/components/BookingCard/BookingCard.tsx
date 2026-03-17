@@ -1,22 +1,24 @@
-import { Paper, styled, Box, Stack, Typography, Button } from "@mui/material";
+import { Paper, styled, Box, Stack, Typography, Tooltip, IconButton } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import type { iBookingCard } from "../../../../../types/bookingTypes";
 import { useNavigate, useParams } from "react-router-dom";
 
 const StyledPaper = styled(Paper, {
     shouldForwardProp: (prop) => prop !== "statusColor" && prop !== "isActive",
 })<{ statusColor: string; isActive: boolean }>(({ theme, statusColor, isActive }) => ({
-    padding: theme.spacing(3),
+    padding: theme.spacing(2, 3), // Något mindre vertikal padding
     cursor: "pointer",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "flex-start",
-    gap: "0.5rem",
+    justifyContent: "space-between", // Sprid ut elementen: Topp, Mitten, Botten
     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
 
-    // --- VIKTIGT: Fast höjd så de inte ändrar form ---
-    height: "200px",
-    width: "100%", // Ta bort "280px", låt Gridden bestämma bredden!
+    // --- NY LOGIK FÖR HÖJD ---
+    minHeight: "160px", // Bas-höjd för alla kort
+    height: "auto",
+    width: "100%",
 
     backgroundColor: isActive ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.8)",
     backdropFilter: "blur(10px)",
@@ -25,30 +27,20 @@ const StyledPaper = styled(Paper, {
     border: isActive ? `2px solid #f0c05a` : "1px solid rgba(255,255,255,0.3)",
     boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
 
-    // För att knapparna inte ska flytta på texten när de visas:
-    "& .action-stack": {
-        opacity: 0,
-        visibility: "hidden",
-        transition: "all 0.2s ease",
-        transform: "translateY(10px)",
-    },
-
     "&:hover": {
-        transform: "scale(1.03) translateY(-4px)",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-        "& .action-stack": {
-            opacity: 1,
-            visibility: "visible",
-            transform: "translateY(0)",
-        },
+        transform: "scale(1.02) translateY(-4px)",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
     },
 }));
 
-const StyledStack = styled(Stack)({
-    marginTop: "auto", // Tryck stacken till botten av kortet
-});
+interface BookingCardProps {
+    booking: iBookingCard;
+    onHover?: (id: string | null) => void;
+    onConfirm?: (id: string) => void;
+    onDecline?: (id: string) => void;
+}
 
-export const BookingCard = ({ booking, onHover }: { booking: iBookingCard; onHover?: (id: string | null) => void }) => {
+export const BookingCard = ({ booking, onHover, onConfirm, onDecline }: BookingCardProps) => {
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -61,73 +53,95 @@ export const BookingCard = ({ booking, onHover }: { booking: iBookingCard; onHov
         return "#e0e0e0";
     };
 
+    const getStatusText = () => {
+        if (booking.status === "confirmed") return "Bekräftad";
+        if (booking.status === "cancelled") return "Avbokad";
+        return "Nekad";
+    };
+
     return (
         <StyledPaper
             elevation={0}
             isActive={isActive}
             statusColor={getStatusColor()}
-            onClick={() => navigate(`/bookings/${booking.id}`)} // Återinförd navigate
-            onMouseEnter={() => onHover?.(String(booking.id))} // Återinförd onHover
+            onClick={() => navigate(`/admin/bookings/${booking.id}`)}
+            onMouseEnter={() => onHover?.(String(booking.id))}
             onMouseLeave={() => onHover?.(null)}
         >
-            {/* Liten modern status-indikator överst */}
+            {/* TOPP: Den lilla status-indikatorn */}
             <Box
                 sx={{
                     width: "40px",
                     height: "4px",
                     borderRadius: "2px",
                     backgroundColor: getStatusColor(),
-                    mb: 2,
+                    mb: 1,
                 }}
             />
 
-            <Box sx={{ textAlign: "center" }}>
-                <Typography
-                    variant="h6"
-                    sx={{
-                        fontWeight: 800,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.5px",
-                        fontSize: "1.1rem",
-                    }}
-                >
+            {/* MITTEN: ID och Datum (centrerat vertikalt genom flex-grow) */}
+            <Box sx={{ textAlign: "center", flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <Typography variant="h6" sx={{ fontWeight: 800, textTransform: "uppercase", fontSize: "1.1rem" }}>
                     #{booking.id}
                 </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5 }}>
+                <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5, fontSize: "0.85rem" }}>
                     {new Date(booking.startDate).toLocaleDateString("sv-SE")}
                     {" — "}
                     {new Date(booking.endDate).toLocaleDateString("sv-SE")}
                 </Typography>
             </Box>
 
-            {booking.status === "pending" && (
-                <StyledStack className="action-stack" direction="row" spacing={1.5} alignItems="center">
-                    <Button
-                        size="small"
-                        variant="contained"
-                        color="success"
-                        sx={{ borderRadius: "20px", textTransform: "none", px: 3 }}
-                        onClick={(e) => {
-                            e.stopPropagation(); // Hindrar navigering till detaljvyn
-                            console.log("Confirm", booking.id);
+            {/* BOTTEN: Knappar ELLER Status-etikett */}
+            <Box sx={{ mt: 2, minHeight: "40px", display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+                {booking.status === "pending" ? (
+                    <Stack direction="row" spacing={1}>
+                        <Tooltip title="Bekräfta bokning" arrow>
+                            <IconButton
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onConfirm?.(String(booking.id));
+                                }}
+                                sx={{
+                                    color: "#4CAF50",
+                                    backgroundColor: "rgba(76, 175, 80, 0.1)",
+                                    "&:hover": { backgroundColor: "rgba(76, 175, 80, 0.2)" },
+                                }}
+                            >
+                                <CheckCircleIcon />
+                            </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title="Neka bokning" arrow>
+                            <IconButton
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDecline?.(String(booking.id));
+                                }}
+                                sx={{
+                                    color: "#D32F2F",
+                                    backgroundColor: "rgba(211, 47, 47, 0.1)",
+                                    "&:hover": { backgroundColor: "rgba(211, 47, 47, 0.2)" },
+                                }}
+                            >
+                                <CancelIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </Stack>
+                ) : (
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            fontWeight: 900,
+                            color: getStatusColor(),
+                            textTransform: "uppercase",
+                            letterSpacing: "1.5px", // Ger en "label"-känsla
+                            opacity: 0.8, // Gör den mindre dominant än knapparna
                         }}
                     >
-                        Bekräfta
-                    </Button>
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        color="error"
-                        sx={{ borderRadius: "20px", textTransform: "none", px: 3 }}
-                        onClick={(e) => {
-                            e.stopPropagation(); // Hindrar navigering till detaljvyn
-                            console.log("Decline", booking.id);
-                        }}
-                    >
-                        Avböj
-                    </Button>
-                </StyledStack>
-            )}
+                        {getStatusText()}
+                    </Typography>
+                )}
+            </Box>
         </StyledPaper>
     );
 };

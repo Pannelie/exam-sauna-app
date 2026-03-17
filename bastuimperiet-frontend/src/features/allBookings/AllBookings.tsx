@@ -45,6 +45,15 @@ export default function AllBookings() {
         fetchBookings();
     }, []);
 
+    const handleConfirmBooking = async (id: string) => {
+        console.log("Anropar API för att bekräfta:", id);
+        // Här gör du din fetch/axios: patch(`/api/bookings/${id}`, { status: 'confirmed' })
+    };
+
+    const handleDeclineBooking = async (id: string) => {
+        console.log("Anropar API för att neka:", id);
+    };
+
     const filteredBookings = bookings.filter((b) => {
         if (tabIndex === 1) return b.status === "pending";
         if (tabIndex === 2) return b.status === "confirmed";
@@ -92,7 +101,13 @@ export default function AllBookings() {
                     <ListContent>
                         <StyledBox>
                             {filteredBookings.map((b) => (
-                                <BookingCard key={b.id} booking={b} onHover={setHoveredBookingId} />
+                                <BookingCard
+                                    key={b.id}
+                                    booking={b}
+                                    onHover={setHoveredBookingId}
+                                    onConfirm={handleConfirmBooking}
+                                    onDecline={handleDeclineBooking}
+                                />
                             ))}
                         </StyledBox>
                         {filteredBookings.length === 0 && (
