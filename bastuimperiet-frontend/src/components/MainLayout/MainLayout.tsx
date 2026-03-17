@@ -8,7 +8,15 @@ export const MainLayout = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const isAdmin = pathname.startsWith("/admin");
+    const isLoginPage = pathname === "/admin/login";
 
+    if (isLoginPage) {
+        return (
+            <main className="home_main home_main--centered">
+                <Outlet />
+            </main>
+        );
+    }
     // Definiera meny-val baserat på URL
     const menuItems = isAdmin
         ? [
