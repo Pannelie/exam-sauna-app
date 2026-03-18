@@ -13,33 +13,6 @@ export const getStatusChip = (status: BookingStatus) => {
     return <Chip icon={icon} label={label} color={color as any} size="small" variant="outlined" />;
 };
 
-// En enkel, återanvändbar komponent för att visa ett tillval med ikon
-export const InfoTile = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | number }) => (
-    <Box
-        sx={{
-            border: "1px solid",
-            borderColor: "divider",
-            borderRadius: 1,
-            p: 1.5,
-            minWidth: 120,
-            display: "flex",
-            flexDirection: "column",
-            gap: 0.5,
-            bgcolor: "action.hover", // En lätt bakgrundsfärg för att markera dem
-        }}
-    >
-        <Stack direction="row" spacing={1} alignItems="center">
-            {icon}
-            <Typography variant="caption" color="text.secondary" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>
-                {label}
-            </Typography>
-        </Stack>
-        <Typography variant="body2" fontWeight="medium">
-            {value}
-        </Typography>
-    </Box>
-);
-
 // Hjälpkomponent för Systemstatus (små prickar)
 export const StatusIndicator = ({ label, active }: { label: string; active: boolean | null }) => (
     <Stack direction="row" spacing={1} alignItems="center">
