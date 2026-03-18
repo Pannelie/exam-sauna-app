@@ -22,7 +22,7 @@ export const StatusIndicator = ({ label, active }: { label: string; active: bool
                 height: 10,
                 borderRadius: "50%",
                 bgcolor: active === true ? "success.main" : active === false ? "error.main" : "warning.main",
-                boxShadow: active !== null ? "0 0 4px" + (active ? "#2e7d3280" : "#d32f2f80") : "none", // En liten aura
+                boxShadow: active !== null ? "0 0 4px" + (active ? "#2e7d3280" : "#d32f2f80") : "none",
             }}
         />
         <Typography variant="caption" color="text.secondary">
