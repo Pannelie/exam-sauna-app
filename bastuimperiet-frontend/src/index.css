@@ -41,7 +41,7 @@ html {
     height: calc(100vh - var(--menubar-height));
     background-image: url(../src/assets/wood2.jpg);
     overflow: hidden; /* Förhindra att main i sig scrollar */
-    padding: 4rem;
+    padding: 2rem 4rem 4rem;
 }
 
 .page_container--center {

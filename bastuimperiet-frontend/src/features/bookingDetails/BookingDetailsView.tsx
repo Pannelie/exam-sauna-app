@@ -12,14 +12,13 @@ export const BookingDetailsView = () => {
     const booking = bookings.find((b) => b.id === id);
 
     if (!booking) {
-        return null;
+        return <Typography>Laddar bokning...</Typography>;
     }
-
     const statusChip = getStatusChip(booking.status);
     const bookingChips = getBookingChips(booking);
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ width: "100%", display: "flex", flexDirection: "column", gap: 2 }}>
             {/* Header: ID, Pris och Status */}
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <Box>

@@ -172,22 +172,26 @@ export default function AllBookings() {
                             <S.CalendarPlaceholder>[Kalender]</S.CalendarPlaceholder>
                         </S.ContentPaper>
 
-                        <S.ContentPaper sx={{ minWidth: "420px" }}>
+                        <S.ContentPaper sx={{ flex: 1, minWidth: "400px" }}>
                             <Box
                                 sx={{
+                                    flex: 1,
                                     display: "flex",
-                                    height: "100%",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    color: "gray",
+                                    flexDirection: "column",
+                                    // Centrera bara om vi INTE har ett ID (alltså inget valt)
+                                    justifyContent: id ? "flex-start" : "center",
+                                    alignItems: id ? "stretch" : "center",
                                     p: 4,
-                                    textAlign: "center",
+                                    height: "100%",
+                                    overflowY: "auto", // Scrolla inuti boxen om innehållet är långt
                                 }}
                             >
                                 {id ? (
                                     <Outlet context={{ bookings }} />
                                 ) : (
-                                    <Typography variant="body1">Välj en bokning i listan till vänster för att se detaljer.</Typography>
+                                    <Typography variant="body1" color="text.secondary" sx={{ maxWidth: "250px", textAlign: "center" }}>
+                                        Välj en bokning i listan till vänster för att se detaljer.
+                                    </Typography>
                                 )}
                             </Box>
                         </S.ContentPaper>
