@@ -173,23 +173,23 @@ export default function AllBookings() {
                         </S.ContentPaper>
 
                         <S.ContentPaper sx={{ minWidth: "420px" }}>
-                            {id ? (
-                                <Outlet context={{ bookings }} />
-                            ) : (
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        height: "100%",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        color: "gray",
-                                        p: 4,
-                                        textAlign: "center",
-                                    }}
-                                >
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    height: "100%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    color: "gray",
+                                    p: 4,
+                                    textAlign: "center",
+                                }}
+                            >
+                                {id ? (
+                                    <Outlet context={{ bookings }} />
+                                ) : (
                                     <Typography variant="body1">Välj en bokning i listan till vänster för att se detaljer.</Typography>
-                                </Box>
-                            )}
+                                )}
+                            </Box>
                         </S.ContentPaper>
                     </>
                 )}

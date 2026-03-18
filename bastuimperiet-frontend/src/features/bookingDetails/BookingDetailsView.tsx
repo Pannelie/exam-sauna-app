@@ -1,27 +1,130 @@
 import { useOutletContext, useParams } from "react-router-dom";
-import { Typography, Box } from "@mui/material";
-import type { ApiBookingData } from "../../types/bookingTypes";
-import { ViewFullSummary } from "./ViewFullSummary/ViewFullSummary";
+import { Typography, Box, Stack, Divider, Paper } from "@mui/material";
+import { BookingStatus, type ApiBookingData } from "../../types/bookingTypes";
+import { Today, Person, FmdGood } from "@mui/icons-material";
+import { getStatusChip, StatusIndicator } from "./utils/bookingDetailHelpers";
+import { getBookingChips } from "./components/BookingChips/BookingChips";
 
 export const BookingDetailsView = () => {
     const { id } = useParams<{ id: string }>();
     const { bookings } = useOutletContext<{ bookings: ApiBookingData[] }>();
 
-    const selectedBooking = bookings.find((b) => b.id === id);
+    const booking = bookings.find((b) => b.id === id);
 
-    if (!selectedBooking) {
-        return (
-            <Box sx={{ p: 3, textAlign: "center" }}>
-                <Typography color="text.secondary">Välj en bokning i listan för att se detaljer.</Typography>
-            </Box>
-        );
+    if (!booking) {
+        return null;
     }
 
-    // Om din BookingSummary förväntar sig BookingFormData men ApiBookingData skiljer sig,
-    // kan du behöva mappa om 'selectedBooking' här.
+    const statusChip = getStatusChip(booking.status);
+    const bookingChips = getBookingChips(booking);
+
     return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <ViewFullSummary booking={selectedBooking} />
+            {/* Header: ID, Pris och Status */}
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ textTransform: "uppercase" }}>
+                        BOKNINGS-ID
+                    </Typography>
+                    <Typography variant="h5" fontWeight="bold">
+                        {booking.id}
+                    </Typography>
+                </Box>
+                <Stack spacing={1} alignItems="flex-end">
+                    <Typography variant="h5" color="primary.main" fontWeight="bold">
+                        {booking.totalPrice} kr
+                    </Typography>
+                    {statusChip}
+                </Stack>
+            </Box>
+
+            <Divider />
+
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    alignItems: "flex-start",
+                    gap: 4, // Mer utrymme mellan kolumnerna
+                }}
+            >
+                {/* VÄNSTER: Datum & Kontakt */}
+                <Stack spacing={2} sx={{ flex: 1 }}>
+                    <Box>
+                        <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+                            <Today fontSize="small" color="disabled" />
+                            <Typography variant="body2" fontSize={16} fontWeight="600">
+                                {booking.startDate} — {booking.endDate}
+                            </Typography>
+                        </Stack>
+                    </Box>
+                    <Divider />
+                    <Box>
+                        <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+                            <Person fontSize="small" color="disabled" />
+                            <Typography variant="body2" fontSize={16} fontWeight="600">
+                                {booking.name}
+                            </Typography>
+                        </Stack>
+
+                        <Typography variant="body2" color="text.secondary">
+                            {booking.email}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            {booking.phone}
+                        </Typography>
+                    </Box>
+                    <Divider />
+                    <Box>
+                        <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+                            <FmdGood fontSize="small" color="disabled" />
+                            <Typography variant="body2" fontSize={16} fontWeight="600">
+                                Adress
+                            </Typography>
+                        </Stack>
+                        <Typography variant="body2" fontWeight="500">
+                            {booking.address}
+                        </Typography>
+                        <Typography variant="body2" fontWeight="500">
+                            {booking.postalCode} {booking.city}
+                        </Typography>
+                    </Box>
+                </Stack>
+
+                {/* HÖGER: Tillval */}
+                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 1 }}>
+                    {bookingChips.length > 0 ? (
+                        bookingChips
+                    ) : (
+                        <Typography variant="body2" color="text.disabled" textAlign={"center"}>
+                            Inga tillval
+                        </Typography>
+                    )}
+                </Box>
+            </Box>
+
+            {/* Sektion 3: Integrationsstatus - visas endast om bokningen inte är väntande */}
+            {booking.status !== BookingStatus.Pending && (
+                <>
+                    <Divider />
+                    <Paper variant="outlined" sx={{ p: 2, bgcolor: "background.default", borderRadius: 1 }}>
+                        <Typography variant="body2" gutterBottom textAlign={"left"}>
+                            Systemstatus
+                        </Typography>
+                        <Stack direction="row" spacing={3}>
+                            <StatusIndicator label="Kalender synkad" active={booking.integrations?.calendarUpdated} />
+                            <StatusIndicator label="Gäst-email skickat" active={booking.integrations?.guestEmailSent} />
+                        </Stack>
+
+                        {/* Visa felmeddelanden om de finns */}
+                        {(booking.integrations?.calendarError || booking.integrations?.guestEmailError) && (
+                            <Typography variant="caption" color="error" sx={{ mt: 1, display: "block" }}>
+                                Obs! Ett eller flera fel uppstod vid synkronisering.
+                            </Typography>
+                        )}
+                    </Paper>
+                </>
+            )}
         </Box>
     );
 };
