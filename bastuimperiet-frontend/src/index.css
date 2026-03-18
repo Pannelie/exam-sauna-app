@@ -34,13 +34,26 @@ html {
     justify-content: center;
 }
 
+.admin_main {
+    display: flex;
+    flex-direction: column;
+    /* Dra av höjden för din MenuBar så att main får plats exakt på skärmen */
+    height: calc(100vh - var(--menubar-height));
+    background-image: url(../src/assets/wood2.jpg);
+    overflow: hidden; /* Förhindra att main i sig scrollar */
+    padding: 4rem;
+}
+
 .page_container--center {
     width: min(90%, 1100px);
     margin: 0 auto;
 }
 
-@media (min-width: 900px) {
+@media (max-width: 900px) {
     .home_main {
         padding-bottom: 0;
+    }
+    .admin_main {
+        height: 100%;
     }
 }

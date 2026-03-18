@@ -32,12 +32,8 @@ export const BookingCard = ({ booking, onHover, onConfirm, onDecline }: BookingC
             onMouseEnter={() => onHover?.(String(booking.id))}
             onMouseLeave={() => onHover?.(null)}
         >
-            {/* TOPP: Den lilla status-indikatorn */}
-            <S.TopIndicator statusColor={statusColor} />
-
             {/* MITTEN: ID och Datum (centrerat vertikalt genom flex-grow) */}
             <S.ContentBox>
-                {" "}
                 <Typography variant="h6" sx={{ fontWeight: 800, textTransform: "uppercase", fontSize: "1.1rem" }}>
                     #{booking.id}
                 </Typography>

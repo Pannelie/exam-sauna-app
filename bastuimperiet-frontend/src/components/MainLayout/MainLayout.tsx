@@ -27,7 +27,7 @@ export const MainLayout = () => {
     return (
         <>
             <MenuBar menuItems={menuItems} actionComponent={actionComponent} showActionOnMobile={isAdmin} />
-            <main className={`home_main home_main--centered`}>
+            <main className={`admin_main`}>
                 <Outlet />
             </main>
         </>
