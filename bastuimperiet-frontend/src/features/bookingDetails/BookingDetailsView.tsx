@@ -4,6 +4,7 @@ import { BookingStatus, type ApiBookingData } from "../../types/bookingTypes";
 import { Today, Person, FmdGood } from "@mui/icons-material";
 import { getStatusChip, StatusIndicator } from "./utils/bookingDetailHelpers";
 import { getBookingChips } from "./components/BookingChips/BookingChips";
+import { ActionButtons } from "../allBookings/components/ActionButtons/ActionButtons";
 
 export const BookingDetailsView = () => {
     const { id } = useParams<{ id: string }>();
@@ -101,7 +102,7 @@ export const BookingDetailsView = () => {
                     )}
                 </Box>
             </Box>
-
+            {booking.status === BookingStatus.Pending && <ActionButtons booking={booking} />}
             {/* Sektion 3: Integrationsstatus - visas endast om bokningen inte är väntande */}
             {booking.status !== BookingStatus.Pending && (
                 <>

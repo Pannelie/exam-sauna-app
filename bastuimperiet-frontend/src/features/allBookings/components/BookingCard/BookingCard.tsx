@@ -1,10 +1,9 @@
-import { Stack, Typography, Tooltip } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
+import { Typography } from "@mui/material";
 import type { ApiBookingData } from "../../../../types/bookingTypes";
 import { useNavigate, useParams } from "react-router-dom";
 import { getStatusColor, getStatusText } from "../../utils/bookingHelpers";
 import * as S from "./BookingCard.styles";
+import { ActionButtons } from "../ActionButtons/ActionButtons";
 
 interface BookingCardProps {
     booking: ApiBookingData;
@@ -47,31 +46,7 @@ export const BookingCard = ({ booking, onHover, onConfirm, onDecline }: BookingC
             {/* BOTTEN: Knappar ELLER Status-etikett */}
             <S.ActionWrapper>
                 {booking.status === "pending" ? (
-                    <Stack direction="row" spacing={1}>
-                        <Tooltip title="Bekräfta bokning" arrow>
-                            <S.ActionButton
-                                actionType="confirm"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onConfirm?.(String(booking.id));
-                                }}
-                            >
-                                <CheckCircleIcon />
-                            </S.ActionButton>
-                        </Tooltip>
-
-                        <Tooltip title="Neka bokning" arrow>
-                            <S.ActionButton
-                                actionType="decline"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onDecline?.(String(booking.id));
-                                }}
-                            >
-                                <CancelIcon />
-                            </S.ActionButton>
-                        </Tooltip>
-                    </Stack>
+                    <ActionButtons booking={booking} onConfirm={onConfirm} onDecline={onDecline} />
                 ) : (
                     <S.StatusLabel variant="caption" statusColor={statusColor}>
                         {getStatusText({ booking })}
