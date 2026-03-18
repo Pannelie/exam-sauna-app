@@ -77,12 +77,14 @@ provider:
 
 #---------------------------------------------------------------------
 functions:
+    #----------------admin----------------
     adminLogin:
         handler: src/functions/Admin/login.handler
         events:
             - httpApi:
                   path: /admin/login
                   method: POST
+    #----------------bookings----------------
     getBookings:
         handler: src/functions/Bookings/getBookings.handler
         events:
@@ -113,18 +115,26 @@ functions:
             - httpApi:
                   path: /bookings/validate
                   method: POST
+    #----------------prices----------------
     getPrices:
         handler: src/functions/Price/getPrices.handler
         events:
             - httpApi:
                   path: /prices
                   method: GET
-    calculatePrice: # NY FUNKTION
+    calculatePrice:
         handler: src/functions/Price/calculatePrice.handler
         events:
             - httpApi:
                   path: /prices/calculate
                   method: POST
+    #----------------calendar----------------
+    getCalendarEvents:
+        handler: src/functions/Calendar/getCalendarEvents.handler
+        events:
+            - httpApi:
+                  path: /calendar/events
+                  method: GET
 
 #---------------------------------------------------------------------
 # DynamoDB Single Table Design

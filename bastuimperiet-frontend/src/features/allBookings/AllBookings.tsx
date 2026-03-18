@@ -7,6 +7,7 @@ import { Outlet, useParams, useNavigate } from "react-router-dom";
 import * as S from "./AllBookings.styles";
 import { useBookings } from "./hooks/useBookings";
 import { ViewSwitcher } from "./components/ViewSwitcher/ViewSwitcher";
+import { GoogleCalendar } from "../calendar/components/GoogleCalendar";
 
 export default function AllBookings() {
     const { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings } = useBookings();
@@ -115,7 +116,7 @@ export default function AllBookings() {
                             <Typography variant="h6" p={2} fontWeight="bold">
                                 Kalenderöversikt
                             </Typography>
-                            <S.CalendarPlaceholder>[Kalender]</S.CalendarPlaceholder>
+                            <GoogleCalendar />
                         </S.ContentPaper>
 
                         <S.ContentPaper sx={{ flex: 1, maxWidth: "400px" }}>
@@ -150,7 +151,7 @@ export default function AllBookings() {
                         <Typography variant="h6" p={2} fontWeight="bold">
                             Kalender
                         </Typography>
-                        <S.CalendarPlaceholder>[Mobil-kalender]</S.CalendarPlaceholder>
+                        <GoogleCalendar />
                     </S.ContentPaper>
                 )}
             </Box>
