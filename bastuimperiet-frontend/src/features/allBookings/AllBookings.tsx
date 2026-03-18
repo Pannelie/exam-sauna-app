@@ -41,55 +41,57 @@ export default function AllBookings() {
                         sx={{
                             display: "flex",
                             flexDirection: "column",
-
-                            maxWidth: "400px",
+                            // flex: 1 gör att den tar tillgänglig plats
+                            flex: 1,
+                            // Ingen begränsning på mobil (xs), 400px på desktop (md)
+                            maxWidth: { xs: "none", md: "400px" },
+                            gap: 2,
+                            width: "100%",
                             minHeight: 0,
                             height: "100%",
                         }}
                     >
                         {/* FILTRERINGSDEL */}
-                        <Box sx={{ mb: 2 }}>
-                            {isMobile ? (
-                                <S.CategoryScrollContainer>
-                                    {categories.map((c, i) => (
-                                        <S.Pill key={c} active={tabIndex === i} onClick={() => setTabIndex(i)}>
-                                            {c}
-                                        </S.Pill>
-                                    ))}
-                                </S.CategoryScrollContainer>
-                            ) : (
-                                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                                    <TextField
-                                        placeholder="Sök namn eller ID..."
-                                        size="small"
-                                        fullWidth
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <SearchIcon fontSize="small" />
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                        sx={{ bgcolor: "white", borderRadius: "8px" }}
-                                    />
-                                    <FormControl fullWidth size="small">
-                                        <Select
-                                            value={tabIndex}
-                                            onChange={(e) => setTabIndex(Number(e.target.value))}
-                                            sx={{ bgcolor: "white", borderRadius: "8px", fontWeight: "bold" }}
-                                        >
-                                            {categories.map((c, i) => (
-                                                <MenuItem key={c} value={i}>
-                                                    {c}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Box>
-                            )}
-                        </Box>
+                        {isMobile ? (
+                            <S.CategoryScrollContainer>
+                                {categories.map((c, i) => (
+                                    <S.Pill key={c} active={tabIndex === i} onClick={() => setTabIndex(i)}>
+                                        {c}
+                                    </S.Pill>
+                                ))}
+                            </S.CategoryScrollContainer>
+                        ) : (
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                                <TextField
+                                    placeholder="Sök namn eller ID..."
+                                    size="small"
+                                    fullWidth
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon fontSize="small" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ bgcolor: "white", borderRadius: "8px" }}
+                                />
+                                <FormControl fullWidth size="small">
+                                    <Select
+                                        value={tabIndex}
+                                        onChange={(e) => setTabIndex(Number(e.target.value))}
+                                        sx={{ bgcolor: "white", borderRadius: "8px", fontWeight: "bold" }}
+                                    >
+                                        {categories.map((c, i) => (
+                                            <MenuItem key={c} value={i}>
+                                                {c}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        )}
 
                         {/* SJÄLVA LISTAN */}
                         <Box sx={{ flex: 1, overflowY: "auto", pr: 1, "&::-webkit-scrollbar": { display: "none" } }}>

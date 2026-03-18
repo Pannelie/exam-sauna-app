@@ -1,4 +1,15 @@
-import { styled, Tab, Tabs } from "@mui/material";
+import { Box, styled, Tab, Tabs } from "@mui/material";
+
+export const StyledSwitchContainer = styled(Box)({
+    display: "flex",
+    justifyContent: "center",
+    my: 1,
+    position: "absolute",
+    top: "2rem",
+    left: 0,
+    right: 0,
+    zIndex: 10,
+});
 
 export const StyledTabs = styled(Tabs)({
     minHeight: "36px", // Mycket lägre än standard (48px)

@@ -42,6 +42,7 @@ html {
     background-image: url(../src/assets/wood2.jpg);
     overflow: hidden; /* Förhindra att main i sig scrollar */
     padding: 2rem 4rem 4rem;
+    position: relative;
 }
 
 .page_container--center {
