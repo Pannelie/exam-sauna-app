@@ -1,64 +1,19 @@
-import { useState, useEffect, useMemo } from "react";
-import { getAllBookings } from "./services/allBookingsService";
+import { useState } from "react";
 import { BookingCard } from "./components/BookingCard/BookingCard";
 import { BookingCardSkeleton } from "./components/BookingCardSkeleton/BookingCardSkeleton";
-import {
-    Typography,
-    Tabs,
-    Tab,
-    Drawer,
-    useMediaQuery,
-    useTheme,
-    Box,
-    FormControl,
-    MenuItem,
-    Select,
-    TextField,
-    InputAdornment,
-} from "@mui/material";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import ListIcon from "@mui/icons-material/List";
+import { Typography, Drawer, useMediaQuery, useTheme, Box, FormControl, MenuItem, Select, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 import * as S from "./AllBookings.styles";
-import { filterBookingsByTab } from "./utils/bookingHelpers";
-import type { ApiBookingData } from "../../types/bookingTypes";
+import { useBookings } from "./hooks/useBookings";
+import { ViewSwitcher } from "./components/ViewSwitcher/ViewSwitcher";
 
 export default function AllBookings() {
-    const [bookings, setBookings] = useState<ApiBookingData[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [tabIndex, setTabIndex] = useState(0);
+    const { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings } = useBookings();
     const [mobileTab, setMobileTab] = useState(0);
-    const [searchTerm, setSearchTerm] = useState(""); // Ny state för sökning
-
     const { id } = useParams();
     const navigate = useNavigate();
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
-    useEffect(() => {
-        const fetchBookings = async () => {
-            try {
-                const data = await getAllBookings();
-                setBookings(data);
-            } catch (error) {
-                console.error("Misslyckades:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBookings();
-    }, []);
-
-    // Uppdaterad filtrering som tar hänsyn till både flik och sökord
-    const filteredBookings = useMemo(() => {
-        const tabFiltered = filterBookingsByTab(bookings, tabIndex);
-        if (!searchTerm) return tabFiltered;
-
-        return tabFiltered.filter(
-            (b) => b.id.toLowerCase().includes(searchTerm.toLowerCase()) || b.name.toLowerCase().includes(searchTerm.toLowerCase()),
-        );
-    }, [bookings, tabIndex, searchTerm]);
+    const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
 
     const categories = ["Alla", "Nya", "Bekräftade", "Nekade", "Avbokade"];
 
@@ -67,21 +22,9 @@ export default function AllBookings() {
             {/* MOBIL-ONLY: Switch högst upp */}
             {isMobile && (
                 <Box sx={{ display: "flex", justifyContent: "center", flexShrink: 0 }}>
-                    <Tabs
-                        value={mobileTab}
-                        onChange={(_, v) => setMobileTab(v)}
-                        sx={{
-                            bgcolor: "rgba(0,0,0,0.2)",
-                            borderRadius: "22px",
-                            "& .MuiTabs-indicator": { height: "100%", borderRadius: "20px", bgcolor: "white" },
-                        }}
-                    >
-                        <Tab icon={<ListIcon fontSize="small" />} value={0} />
-                        <Tab icon={<CalendarMonthIcon fontSize="small" />} value={1} />
-                    </Tabs>
+                    <ViewSwitcher value={mobileTab} onChange={setMobileTab} />
                 </Box>
             )}
-
             {/* HUVUDCONTAINER */}
             <Box
                 sx={{

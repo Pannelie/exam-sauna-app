@@ -2,6 +2,8 @@ import middy from "@middy/core";
 import { postBooking, hasBookingOverlap, getAllBookings } from "../../services/bookingService.mjs";
 import { validateBooking } from "../../middlewares/validateBooking.mjs";
 import { sendNewBookingRequestToAdmin } from "../../services/mailerService.mjs";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
+import { errorHandler } from "../../middlewares/errorHandler.js";
 
 export const handler = middy(async (event) => {
     try {

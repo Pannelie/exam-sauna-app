@@ -20,7 +20,7 @@ export const BookingDetailsView = () => {
 
     return (
         <Box sx={{ width: "100%", display: "flex", flexDirection: "column", gap: 2 }}>
-            {/* Header: ID, Pris och Status */}
+            {/*----------------------------Header: ID, Pris och Status--------------------------------------*/}
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <Box>
                     <Typography variant="caption" color="text.secondary" sx={{ textTransform: "uppercase" }}>
@@ -40,68 +40,66 @@ export const BookingDetailsView = () => {
 
             <Divider />
 
-            <Box
+            {/* <Box
                 sx={{
                     display: "flex",
-                    flexDirection: { xs: "column", sm: "row" },
+                    flexDirection: "row",
                     alignItems: "flex-start",
                     gap: 4, // Mer utrymme mellan kolumnerna
                 }}
-            >
-                {/* VÄNSTER: Datum & Kontakt */}
-                <Stack spacing={2} sx={{ flex: 1 }}>
-                    <Box>
-                        <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-                            <Today fontSize="small" color="disabled" />
-                            <Typography variant="body2" fontSize={16} fontWeight="600">
-                                {booking.startDate} — {booking.endDate}
-                            </Typography>
-                        </Stack>
-                    </Box>
-                    <Divider />
-                    <Box>
-                        <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-                            <Person fontSize="small" color="disabled" />
-                            <Typography variant="body2" fontSize={16} fontWeight="600">
-                                {booking.name}
-                            </Typography>
-                        </Stack>
+            > */}
+            {/* -------------------------------------Datum & Kontakt--------------------------------------*/}
 
-                        <Typography variant="body2" color="text.secondary">
-                            {booking.email}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {booking.phone}
-                        </Typography>
-                    </Box>
-                    <Divider />
-                    <Box>
-                        <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-                            <FmdGood fontSize="small" color="disabled" />
-                            <Typography variant="body2" fontSize={16} fontWeight="600">
-                                Adress
-                            </Typography>
-                        </Stack>
-                        <Typography variant="body2" fontWeight="500">
-                            {booking.address}
-                        </Typography>
-                        <Typography variant="body2" fontWeight="500">
-                            {booking.postalCode} {booking.city}
-                        </Typography>
-                    </Box>
+            <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+                <Today fontSize="small" color="disabled" />
+                <Typography variant="body2" fontSize={16} fontWeight="600">
+                    {booking.startDate} — {booking.endDate}
+                </Typography>
+            </Stack>
+
+            <Divider />
+            <Box>
+                <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+                    <Person fontSize="small" color="disabled" />
+                    <Typography variant="body2" fontSize={16} fontWeight="600">
+                        {booking.name}
+                    </Typography>
                 </Stack>
 
-                {/* HÖGER: Tillval */}
-                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 1 }}>
-                    {bookingChips.length > 0 ? (
-                        bookingChips
-                    ) : (
-                        <Typography variant="body2" color="text.disabled" textAlign={"center"}>
-                            Inga tillval
-                        </Typography>
-                    )}
-                </Box>
+                <Typography variant="body2" color="text.secondary">
+                    {booking.email}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    {booking.phone}
+                </Typography>
             </Box>
+            <Divider />
+            <Box>
+                <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+                    <FmdGood fontSize="small" color="disabled" />
+                    <Typography variant="body2" fontSize={16} fontWeight="600">
+                        Adress
+                    </Typography>
+                </Stack>
+                <Typography variant="body2" fontWeight="500">
+                    {booking.address}
+                </Typography>
+                <Typography variant="body2" fontWeight="500">
+                    {booking.postalCode} {booking.city}
+                </Typography>
+            </Box>
+
+            {/* -------------------------------------HÖGER: Tillval -------------------------------------- */}
+            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1 }}>
+                {bookingChips.length > 0 ? (
+                    bookingChips
+                ) : (
+                    <Typography variant="body2" color="text.disabled" textAlign={"center"}>
+                        Inga tillval
+                    </Typography>
+                )}
+            </Box>
+
             {booking.status === BookingStatus.Pending && <ActionButtons booking={booking} />}
             {/* Sektion 3: Integrationsstatus - visas endast om bokningen inte är väntande */}
             {booking.status !== BookingStatus.Pending && (
