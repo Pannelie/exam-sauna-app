@@ -1,9 +1,11 @@
+import middy from "@middy/core";
 import { postBooking, hasBookingOverlap, getAllBookings } from "../../services/bookingService.mjs";
+import { validateBooking } from "../../middlewares/validateBooking.mjs";
 import { sendNewBookingRequestToAdmin } from "../../services/mailerService.mjs";
 
-export const handler = async (event) => {
+export const handler = middy(async (event) => {
     try {
-        const data = JSON.parse(event.body);
+        const data = event.body;
 
         if (!data.name || !data.email || !data.phone || !data.startDate || !data.endDate) {
             return {
@@ -49,4 +51,7 @@ export const handler = async (event) => {
             body: JSON.stringify({ message: err.message }),
         };
     }
-};
+})
+    .use(httpJsonBodyParser())
+    .use(validateBooking())
+    .use(errorHandler());

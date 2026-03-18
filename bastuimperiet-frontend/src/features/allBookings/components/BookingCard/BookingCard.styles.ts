@@ -1,4 +1,4 @@
-import { styled, Paper, Box, IconButton, Typography } from "@mui/material";
+import { styled, Paper, Box, Typography } from "@mui/material";
 
 export const StyledPaper = styled(Paper)<{ isActive: boolean; statusColor: string }>`
     padding: 16px;
@@ -46,12 +46,4 @@ export const StatusLabel = styled(Typography)<{ statusColor: string }>(({ status
     letterSpacing: "1.5px",
     opacity: 0.8,
     fontSize: "0.75rem",
-}));
-
-export const ActionButton = styled(IconButton)<{ actionType: "confirm" | "decline" }>(({ actionType }) => ({
-    color: actionType === "confirm" ? "#4CAF50" : "#D32F2F",
-    backgroundColor: actionType === "confirm" ? "rgba(76, 175, 80, 0.1)" : "rgba(211, 47, 47, 0.1)",
-    "&:hover": {
-        backgroundColor: actionType === "confirm" ? "rgba(76, 175, 80, 0.2)" : "rgba(211, 47, 47, 0.2)",
-    },
 }));

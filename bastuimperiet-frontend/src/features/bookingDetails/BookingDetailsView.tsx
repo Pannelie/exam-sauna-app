@@ -4,7 +4,7 @@ import { BookingStatus, type ApiBookingData } from "../../types/bookingTypes";
 import { Today, Person, FmdGood } from "@mui/icons-material";
 import { getStatusChip, StatusIndicator } from "./utils/bookingDetailHelpers";
 import { getBookingChips } from "./components/BookingChips/BookingChips";
-import { ActionButtons } from "../allBookings/components/ActionButtons/ActionButtons";
+import { ActionButtons } from "../../components/ActionButtons/ActionButtons";
 
 export const BookingDetailsView = () => {
     const { id } = useParams<{ id: string }>();

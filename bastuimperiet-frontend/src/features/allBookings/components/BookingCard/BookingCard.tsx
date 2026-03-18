@@ -3,16 +3,14 @@ import type { ApiBookingData } from "../../../../types/bookingTypes";
 import { useNavigate, useParams } from "react-router-dom";
 import { getStatusColor, getStatusText } from "../../utils/bookingHelpers";
 import * as S from "./BookingCard.styles";
-import { ActionButtons } from "../ActionButtons/ActionButtons";
+import { ActionButtons } from "../../../../components/ActionButtons/ActionButtons";
 
 interface BookingCardProps {
     booking: ApiBookingData;
     onHover?: (id: string | null) => void;
-    onConfirm?: (id: string) => void;
-    onDecline?: (id: string) => void;
 }
 
-export const BookingCard = ({ booking, onHover, onConfirm, onDecline }: BookingCardProps) => {
+export const BookingCard = ({ booking, onHover }: BookingCardProps) => {
     const navigate = useNavigate();
     const { id } = useParams();
     const isActive = id === String(booking.id);
@@ -46,7 +44,7 @@ export const BookingCard = ({ booking, onHover, onConfirm, onDecline }: BookingC
             {/* BOTTEN: Knappar ELLER Status-etikett */}
             <S.ActionWrapper>
                 {booking.status === "pending" ? (
-                    <ActionButtons booking={booking} onConfirm={onConfirm} onDecline={onDecline} />
+                    <ActionButtons booking={booking} />
                 ) : (
                     <S.StatusLabel variant="caption" statusColor={statusColor}>
                         {getStatusText({ booking })}
