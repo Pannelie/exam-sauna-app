@@ -14,7 +14,6 @@ export const postBooking = async (bookingData: BookingFormData): Promise<ApiBook
         console.log("Bokning skapad:", response.data);
         return response.data;
     } catch (err: any) {
-        // Förbättrad felhantering
         console.error("Kunde inte skapa bokning:", err.response?.data || err.message);
         throw new Error(err.response?.data?.message || "Något gick fel vid skapande av bokning");
     }
@@ -23,7 +22,6 @@ export const postBooking = async (bookingData: BookingFormData): Promise<ApiBook
 export const validateBookingService = {
     validateStep: async (step: number, formData: BookingFormData) => {
         try {
-            // Använd samma bas-URL här
             const response = await axios.post(`${baseUrl}/bookings/validate`, {
                 step,
                 data: formData,
@@ -36,7 +34,6 @@ export const validateBookingService = {
         } catch (err: any) {
             return {
                 success: false,
-                // Viktigt: Se till att backend skickar just fältet "errors"
                 errors: err.response?.data?.errors || { general: "Ett oväntat fel uppstod" },
                 status: err.response?.status,
             };

@@ -1,10 +1,8 @@
-// backend/src/functions/validateStep.mjs
 import { bookingSchema } from "../../schemas/bookingSchema.mjs";
 
 export const handler = async (event) => {
     const { step, data } = JSON.parse(event.body);
 
-    // Definiera vilka fält som hör till vilket steg i frontenden
     const stepFields = {
         0: ["startDate", "endDate"],
         1: ["name", "email", "phone", "address", "postalCode", "city"],
@@ -12,8 +10,6 @@ export const handler = async (event) => {
 
     const currentFields = stepFields[step] || [];
 
-    // Vi validerar hela schemat men tillåter att fält saknas (presence: 'optional')
-    // och tillåter okända fält (allowUnknown)
     const { error } = bookingSchema.validate(data, {
         abortEarly: false,
         allowUnknown: true,
@@ -21,7 +17,7 @@ export const handler = async (event) => {
 
     if (error) {
         const errors = {};
-        // Vi filtrerar felen så att vi bara skickar tillbaka de som hör till JUST DETTA steg
+
         error.details.forEach((detail) => {
             const field = detail.path[0];
             if (currentFields.includes(field)) {
@@ -29,7 +25,6 @@ export const handler = async (event) => {
             }
         });
 
-        // Om vi hittade fel som hör till nuvarande steg, returnera dem
         if (Object.keys(errors).length > 0) {
             return {
                 statusCode: 400,

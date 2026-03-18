@@ -16,6 +16,7 @@ export const SidebarWrapper = styled(Box)({
 export const CategoryScrollContainer = styled(Box)(({ theme }) => ({
     display: "flex",
     gap: "8px",
+    zIndex: 100,
 
     // Mobil: Skrolla horisontellt
     overflowX: "auto",

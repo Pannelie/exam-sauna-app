@@ -116,7 +116,7 @@ export const handler = middy(async (event) => {
                 guestEmailSent = false;
                 calendarUpdated = false;
 
-                // Försök ta bort kalender-event
+                // Försök ta bort kalender-event om det finns
                 if (fullBooking.calendarEventId) {
                     try {
                         await deleteBookingCalendarEvent(fullBooking.calendarEventId);
