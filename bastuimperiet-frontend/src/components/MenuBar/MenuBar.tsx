@@ -1,4 +1,3 @@
-import "./menuBar.css";
 import { useState, type JSX } from "react";
 import bg from "../../assets/wood2.jpg";
 import { AppBar, Toolbar, IconButton, useMediaQuery, styled, Typography, Box } from "@mui/material";

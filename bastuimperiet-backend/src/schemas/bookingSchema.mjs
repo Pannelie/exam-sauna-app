@@ -59,13 +59,4 @@ export const bookingSchema = Joi.object({
     transportType: Joi.string().valid("oneWay", "return").allow(null).messages({
         "any.only": "transportType måste vara 'oneWay' eller 'return'",
     }),
-    totalPrice: Joi.number().min(0).required().messages({
-        "number.base": "Totalpris måste vara ett nummer",
-        "number.min": "Totalpris kan inte vara negativt",
-        "any.required": "Totalpris krävs",
-    }),
-    status: Joi.string().valid("pending", "confirmed", "declined", "cancelled").required().messages({
-        "any.only": "Status måste vara pending, confirmed, declined eller cancelled",
-        "any.required": "Status krävs",
-    }),
 });
