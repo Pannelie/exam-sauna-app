@@ -31,7 +31,7 @@ export default function AllBookings() {
                     flex: 1,
                     display: "flex",
                     flexDirection: isMobile ? "column" : "row",
-                    gap: 2,
+                    gap: isMobile ? 2 : 4,
                     overflow: "hidden",
                 }}
             >
@@ -39,9 +39,10 @@ export default function AllBookings() {
                 {(!isMobile || mobileTab === 0) && (
                     <Box
                         sx={{
-                            width: { xs: "100%", md: "320px" },
                             display: "flex",
                             flexDirection: "column",
+
+                            maxWidth: "400px",
                             minHeight: 0,
                             height: "100%",
                         }}
@@ -108,14 +109,14 @@ export default function AllBookings() {
                 {/* MITTEN & HÖGER (Desktop) */}
                 {!isMobile && (
                     <>
-                        <S.ContentPaper sx={{ flex: 1, minWidth: "400px" }}>
+                        <S.ContentPaper sx={{ flex: 1 }}>
                             <Typography variant="h6" p={2} fontWeight="bold">
                                 Kalenderöversikt
                             </Typography>
                             <S.CalendarPlaceholder>[Kalender]</S.CalendarPlaceholder>
                         </S.ContentPaper>
 
-                        <S.ContentPaper sx={{ flex: 1, minWidth: "400px" }}>
+                        <S.ContentPaper sx={{ flex: 1, maxWidth: "400px" }}>
                             <Box
                                 sx={{
                                     flex: 1,
