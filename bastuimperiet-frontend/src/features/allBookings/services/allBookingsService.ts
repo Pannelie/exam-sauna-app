@@ -21,13 +21,13 @@ export const getAllBookings = async (): Promise<ApiBookingData[]> => {
     }
 };
 
-export const updateBookingStatus = async (id: string, status: BookingStatus) => {
+export const updateBookingStatus = async (id: string, status: BookingStatus, force: boolean = false) => {
     const token = localStorage.getItem("adminToken");
-    console.log(`Uppdaterar bokning ${id} till status: ${status}`);
+    console.log(`Uppdaterar bokning ${id} till status: ${status}${force ? " (force)" : ""}`);
     try {
         const response = await axios.patch(
             `${baseUrl}/bookings/${id}`,
-            { status },
+            { status, ...(force ? { force: true } : {}) },
             {
                 headers: {
                     "Content-Type": "application/json",

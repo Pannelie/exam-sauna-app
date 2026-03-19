@@ -11,34 +11,37 @@ interface ActionButtonsProps {
 }
 
 export const ActionButtons = ({ booking, onStatusChange }: ActionButtonsProps) => {
-    const { handleConfirm, handleDecline, isUpdating } = useBookingActions(onStatusChange);
+    const { handleConfirm, handleDecline, isUpdating, ConfirmDialog } = useBookingActions(onStatusChange);
     return (
-        <Stack direction="row" spacing={1}>
-            <Tooltip title="Bekräfta bokning" arrow>
-                <S.ActionButton
-                    actionType="confirm"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleConfirm(booking);
-                    }}
-                    disabled={isUpdating}
-                >
-                    <CheckCircleIcon />
-                </S.ActionButton>
-            </Tooltip>
+        <>
+            <Stack direction="row" spacing={1}>
+                <Tooltip title="Bekräfta bokning" arrow>
+                    <S.ActionButton
+                        actionType="confirm"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleConfirm(booking);
+                        }}
+                        disabled={isUpdating}
+                    >
+                        <CheckCircleIcon />
+                    </S.ActionButton>
+                </Tooltip>
 
-            <Tooltip title="Neka bokning" arrow>
-                <S.ActionButton
-                    actionType="decline"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleDecline(String(booking.id));
-                    }}
-                    disabled={isUpdating}
-                >
-                    <CancelIcon />
-                </S.ActionButton>
-            </Tooltip>
-        </Stack>
+                <Tooltip title="Neka bokning" arrow>
+                    <S.ActionButton
+                        actionType="decline"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleDecline(String(booking.id));
+                        }}
+                        disabled={isUpdating}
+                    >
+                        <CancelIcon />
+                    </S.ActionButton>
+                </Tooltip>
+            </Stack>
+            <ConfirmDialog />
+        </>
     );
 };

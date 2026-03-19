@@ -1,6 +1,5 @@
 import middy from "@middy/core";
 import { errorHandler } from "../../middlewares/errorHandler.js";
-import { getAccessToken } from "../../utils/googleAuthHelper.js";
 import { fetchCalendarEvents } from "../../services/googleCalendarService.mjs";
 
 export const handler = middy(async () => {

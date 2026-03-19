@@ -36,12 +36,12 @@ export const handler = middy(async (event) => {
 
         // 3. Integrationer (Mjuka kontroller - vi loggar fel men fortsätter)
 
-        // Skapa Kalender-event (FÖRFRÅGAN)
+        // Skapa Kalender-event (Förfrågan)
         const calendarEvent = await runIntegration(
             "Google Calendar",
             createBookingCalendarEvent({
                 ...booking,
-                name: `FÖRFRÅGAN: ${booking.name}`,
+                name: `Förfrågan: ${booking.name}`,
                 calendarId: process.env.GOOGLE_PRIVATE_CALENDAR_ID,
             }),
         );

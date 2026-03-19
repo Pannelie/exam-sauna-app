@@ -25,6 +25,7 @@ export function useBookings() {
     useEffect(() => {
         refreshData();
     }, []);
+
     const filteredBookings = useMemo(() => {
         const tabFiltered = filterBookingsByTab(bookings, tabIndex);
         if (!searchTerm) return tabFiltered;
