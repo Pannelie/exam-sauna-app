@@ -28,13 +28,25 @@ export const GoogleCalendar = () => {
 
     // Custom renderare för händelser för att slippa den tråkiga standard-dotten
     const renderEventContent = (eventInfo: EventContentArg) => {
-        // Vi kollar om bokningen är bekräftad via extendedProps
-        const isConfirmed = eventInfo.event.extendedProps.status === "confirmed" || eventInfo.event.extendedProps.isConfirmed === true;
+        const title = eventInfo.event.title || "";
+
+        // Logga titeln för att se att "Bastu-bokning" faktiskt finns där
+        console.log("Hittade titel:", title);
+
+        // Om titeln innehåller "FÖRFRÅGAN" är den pending (grå)
+        // Om den innehåller "Bastu-bokning" är den confirmed (grön)
+        const isPending = title.includes("FÖRFRÅGAN");
+        const isConfirmed = title.includes("Bastu-bokning");
+
+        // Skapa klass-strängen
+        let statusClass = "is-neutral"; // Standard
+        if (isPending) statusClass = "is-pending";
+        if (isConfirmed) statusClass = "is-confirmed";
 
         return (
-            <div className={`custom-event-card ${isConfirmed ? "is-confirmed" : ""}`}>
+            <div className={`custom-event-card ${statusClass}`}>
                 <span className="event-time">{eventInfo.timeText}</span>
-                <b className="event-title">{eventInfo.event.title}</b>
+                <b className="event-title">{title.replace("FÖRFRÅGAN: ", "").replace("Bastu-bokning: ", "")}</b>
             </div>
         );
     };

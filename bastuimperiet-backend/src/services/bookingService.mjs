@@ -180,11 +180,12 @@ export async function saveCalendarEventId(tableName, bookingId, calendarEventId)
     await client.send(new UpdateCommand(params));
 }
 
-export function hasBookingOverlap(startDate, endDate, allBookings) {
+export function hasBookingOverlap(startDate, endDate, allBookings, currentBookingId = null) {
     const newStart = new Date(startDate).getTime();
     const newEnd = new Date(endDate).getTime();
 
     return allBookings.some((booking) => {
+        if (currentBookingId && booking.id === currentBookingId) return false;
         // Vi bryr oss bara om bokningar som är "confirmed"
         if (booking.status !== "confirmed") return false;
 

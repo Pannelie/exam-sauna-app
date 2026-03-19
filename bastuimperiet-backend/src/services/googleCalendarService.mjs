@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { title } from "node:process";
 
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 const GOOGLE_CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar";
@@ -131,6 +132,7 @@ export async function getCalendarBookings() {
 
     return data.items.map((event) => ({
         id: event.id,
+        title: event.summary,
         start: event.start.dateTime,
         end: event.end.dateTime,
     }));
@@ -155,17 +157,14 @@ export async function createBookingCalendarEvent({
 }) {
     const serviceAccount = parseServiceAccount();
     // calendarId kan skickas in, annars används GOOGLE_CALENDAR_ID
-    const calendarId =
-        typeof arguments[0].calendarId === "string" && arguments[0].calendarId.length > 0
-            ? arguments[0].calendarId
-            : process.env.GOOGLE_CALENDAR_ID || "primary";
+    const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";
     const timeZone = process.env.GOOGLE_CALENDAR_TIMEZONE || "Europe/Stockholm";
 
     const accessToken = await getAccessToken(serviceAccount);
     const range = buildCalendarDateRange(startDate, endDate);
 
     const eventBody = {
-        summary: `Bastu-bokning: ${name}`,
+        summary: name,
         description: `\nBokningsnummer: ${bookingId}\n\nKund:\n${name}\n${email}\n${phone}\n\nAdress:\n${address || "-"}\n${postalCode || ""} ${city || ""}\n\nTillägg:\nStädning: ${cleaning ? "Ja" : "Nej"}\nVed: ${firewood} paket\nDoft: ${scent || "Ingen"}\n\nTransport:\nUtkörning: ${delivery ? "Ja" : "Nej"}\nTyp: ${transportType || "-"}\n\nPris:\n${totalPrice} kr\n`,
         start: {
             dateTime: range.startDateTime,
@@ -195,6 +194,7 @@ export async function createBookingCalendarEvent({
     return JSON.parse(responseText);
 }
 export async function deleteBookingCalendarEvent(eventId) {
+    if (!eventId) return true;
     const serviceAccount = parseServiceAccount();
     const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";
     const accessToken = await getAccessToken(serviceAccount);
