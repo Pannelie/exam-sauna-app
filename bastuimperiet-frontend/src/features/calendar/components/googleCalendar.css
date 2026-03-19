@@ -1,0 +1,80 @@
+/* --- Neutral Bas för Kalendern --- */
+.fc {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 15px;
+    /* Mjukare skugga för en mer "clean" look */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee !important;
+}
+
+/* Neutrala veckodagar */
+.fc th {
+    background: #fdfdfd;
+    color: #666; /* Mjukare än mörkröd */
+    font-family: var(--font-accent);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    padding: 12px 0 !important;
+}
+
+/* Gör rutnätet nästan osynligt */
+.fc-theme-standard td,
+.fc-theme-standard th {
+    border-color: #f0f0f0 !important;
+}
+
+/* Siffrorna i kalendern */
+.fc .fc-daygrid-day-number {
+    font-family: var(--font-primary);
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* --- Händelsekort --- */
+
+/* Standard (Neutral/Okonfirmerad) */
+.custom-event-card {
+    background-color: #f3f4f6; /* Ljusgrå bas */
+    color: #4b5563; /* Mörkgrå text */
+    padding: 4px 8px;
+    border-radius: 4px;
+    border-left: 4px solid #d1d5db; /* Grå kant */
+    font-family: var(--font-primary);
+    transition: all 0.2s;
+}
+
+/* BEKRÄFTAD (Grön) */
+.custom-event-card.is-confirmed {
+    background-color: #ecfdf5; /* Mycket ljusgrön bakgrund */
+    color: #065f46; /* Mörkgrön text */
+    border-left: 4px solid #10b981; /* Den starka gröna färgen från din bild */
+}
+
+/* Hovring för att se att de är klickbara */
+.fc-daygrid-event:hover .custom-event-card {
+    filter: brightness(0.95);
+    transform: translateX(2px);
+}
+
+/* --- Knappar (Behåll din gula som accent, men gör dem mindre dominanta) --- */
+.fc .fc-button {
+    background-color: transparent !important;
+    border: 1px solid #e5e7eb !important;
+    color: #374151 !important;
+    font-family: var(--font-accent) !important;
+    font-size: 0.8rem !important;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+    background-color: var(--yellow) !important;
+    color: white !important;
+    border-color: var(--yellow) !important;
+}
+
+.fc .fc-toolbar-title {
+    font-family: var(--font-secondary);
+    color: var(--dark); /* Neutral titel */
+    font-size: 1.4rem !important;
+}

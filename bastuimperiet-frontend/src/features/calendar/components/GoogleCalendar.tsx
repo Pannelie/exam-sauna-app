@@ -1,8 +1,10 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-
+import interactionPlugin from "@fullcalendar/interaction"; // Bra att ha för klick
+import type { EventContentArg } from "@fullcalendar/core";
 import { getCalendarEvents } from "../services/calendarService";
 import { useState, useEffect } from "react";
+import "./googleCalendar.css"; // Vi skapar denna fil nedan
 
 export const GoogleCalendar = () => {
     const [events, setEvents] = useState([]);
@@ -13,6 +15,7 @@ export const GoogleCalendar = () => {
             setLoading(true);
             try {
                 const data = await getCalendarEvents();
+                console.log("Hämtade kalenderhändelser:", data[0]);
                 setEvents(data);
             } catch (err) {
                 console.error("Kunde inte hämta kalenderhändelser:", err);
@@ -23,17 +26,42 @@ export const GoogleCalendar = () => {
         fetchEvents();
     }, []);
 
+    // Custom renderare för händelser för att slippa den tråkiga standard-dotten
+    const renderEventContent = (eventInfo: EventContentArg) => {
+        // Vi kollar om bokningen är bekräftad via extendedProps
+        const isConfirmed = eventInfo.event.extendedProps.status === "confirmed" || eventInfo.event.extendedProps.isConfirmed === true;
+
+        return (
+            <div className={`custom-event-card ${isConfirmed ? "is-confirmed" : ""}`}>
+                <span className="event-time">{eventInfo.timeText}</span>
+                <b className="event-title">{eventInfo.event.title}</b>
+            </div>
+        );
+    };
+
     return (
-        <div style={{ height: "100%" }}>
+        <div className="calendar-container">
             {loading ? (
-                <p>Laddar kalender...</p>
+                <div className="loader">Laddar kalender...</div>
             ) : (
                 <FullCalendar
-                    plugins={[dayGridPlugin]}
+                    plugins={[dayGridPlugin, interactionPlugin]}
                     initialView="dayGridMonth"
                     locale="sv"
-                    events={events} // Här skickar vi in datan från Axios
-                    height="100%"
+                    events={events}
+                    height="auto"
+                    headerToolbar={{
+                        left: "prev,next today",
+                        center: "title",
+                        right: "dayGridMonth,dayGridWeek",
+                    }}
+                    buttonText={{
+                        today: "Idag",
+                        month: "Månad",
+                        week: "Vecka",
+                    }}
+                    eventContent={renderEventContent}
+                    eventDisplay="block" // Gör att händelserna ser ut som kort
                 />
             )}
         </div>
