@@ -15,6 +15,23 @@
     --yellow-hover: #ffc247;
     --dark: #000000;
     --light-grey: #f5f5f5;
+
+    /* --- FullCalendar mappning --- */
+    --fc-border-color: rgba(0, 0, 0, 0.1);
+    --fc-today-bg-color: rgba(233, 184, 92, 0.1); /* Ljus variant av din gula */
+
+    /* Knappar (använder din gula färg) */
+    --fc-button-bg-color: var(--yellow);
+    --fc-button-border-color: var(--yellow);
+    --fc-button-hover-bg-color: var(--yellow-hover);
+    --fc-button-hover-border-color: var(--yellow-hover);
+    --fc-button-active-bg-color: var(--dark-red);
+    --fc-button-active-border-color: var(--dark-red);
+
+    /* Händelser (använder din mörkröda färg) */
+    --fc-event-bg-color: var(--dark-red);
+    --fc-event-border-color: var(--dark-red);
+    --fc-event-text-color: var(--white);
 }
 
 html {
