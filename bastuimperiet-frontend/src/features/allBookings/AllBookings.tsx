@@ -135,9 +135,6 @@ export default function AllBookings() {
                 {!isMobile && (
                     <>
                         <S.ContentPaper sx={{ flex: 1 }}>
-                            <Typography variant="h6" p={2} fontWeight="bold">
-                                Kalenderöversikt
-                            </Typography>
                             <GoogleCalendar
                                 events={events}
                                 loading={calLoading}
