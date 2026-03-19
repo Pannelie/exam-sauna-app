@@ -9,9 +9,11 @@ interface BookingCardProps {
     booking: ApiBookingData;
     onHover?: (id: string | null) => void;
     onStatusChange?: () => void;
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
 }
 
-export const BookingCard = ({ booking, onHover, onStatusChange }: BookingCardProps) => {
+export const BookingCard = ({ booking, onHover, onStatusChange, onMouseEnter, onMouseLeave }: BookingCardProps) => {
     const navigate = useNavigate();
     const { id } = useParams();
     const isActive = id === String(booking.id);
@@ -27,8 +29,14 @@ export const BookingCard = ({ booking, onHover, onStatusChange }: BookingCardPro
             isActive={isActive}
             statusColor={statusColor}
             onClick={handleCardClick}
-            onMouseEnter={() => onHover?.(String(booking.id))}
-            onMouseLeave={() => onHover?.(null)}
+            onMouseEnter={() => {
+                onHover?.(String(booking.id));
+                onMouseEnter?.();
+            }}
+            onMouseLeave={() => {
+                onHover?.(null);
+                onMouseLeave?.();
+            }}
         >
             {/* MITTEN: ID och Datum (centrerat vertikalt genom flex-grow) */}
             <S.ContentBox>

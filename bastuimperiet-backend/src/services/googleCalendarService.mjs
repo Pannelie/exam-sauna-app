@@ -1,84 +1,12 @@
-import crypto from "node:crypto";
-import { title } from "node:process";
+import { getAccessToken } from "../utils/googleAuthHelper.js";
 
-const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
-const GOOGLE_CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar";
+const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";
+const timeZone = process.env.GOOGLE_CALENDAR_TIMEZONE || "Europe/Stockholm";
 
-function parseServiceAccount() {
-    const rawJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
-
-    if (!rawJson) {
-        throw new Error("Missing GOOGLE_SERVICE_ACCOUNT_JSON configuration");
-    }
-
-    try {
-        return JSON.parse(rawJson);
-    } catch {
-        throw new Error("Invalid GOOGLE_SERVICE_ACCOUNT_JSON value");
-    }
-}
-
-function toBase64Url(value) {
-    return Buffer.from(value).toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-}
-
-function createSignedJwt(serviceAccount) {
-    const now = Math.floor(Date.now() / 1000);
-
-    const header = {
-        alg: "RS256",
-        typ: "JWT",
-    };
-
-    const payload = {
-        iss: serviceAccount.client_email,
-        scope: GOOGLE_CALENDAR_SCOPE,
-        aud: GOOGLE_TOKEN_URL,
-        iat: now,
-        exp: now + 3600,
-    };
-
-    const encodedHeader = toBase64Url(JSON.stringify(header));
-    const encodedPayload = toBase64Url(JSON.stringify(payload));
-    const unsignedToken = `${encodedHeader}.${encodedPayload}`;
-
-    const signer = crypto.createSign("RSA-SHA256");
-    signer.update(unsignedToken);
-    signer.end();
-
-    const signature = signer.sign(serviceAccount.private_key);
-    const encodedSignature = signature.toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-
-    return `${unsignedToken}.${encodedSignature}`;
-}
-
-async function getAccessToken(serviceAccount) {
-    const assertion = createSignedJwt(serviceAccount);
-
-    const response = await fetch(GOOGLE_TOKEN_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-            grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-            assertion,
-        }),
-    });
-
-    if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(`Google token error (${response.status}): ${errorBody}`);
-    }
-
-    const data = await response.json();
-    return data.access_token;
-}
-
-function toEventDateTime(dateString, hour) {
-    // Skapa ISO-sträng med lokal tid (utan extra Z eller dubbla tider)
-    return `${dateString}T${String(hour).padStart(2, "0")}:00:00`;
-}
+// function toEventDateTime(dateString, hour) {
+//     // Skapa ISO-sträng med lokal tid (utan extra Z eller dubbla tider)
+//     return `${dateString}T${String(hour).padStart(2, "0")}:00:00`;
+// }
 
 function addDays(dateString, days) {
     const [year, month, day] = dateString.split("-").map(Number);
@@ -110,36 +38,38 @@ function buildCalendarDateRange(startDate, endDate) {
         endDateTime,
     };
 }
+export async function fetchCalendarEvents(timeMin) {
+    const accessToken = await getAccessToken();
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?timeMin=${encodeURIComponent(timeMin)}&singleEvents=true&orderBy=startTime`;
 
-export async function getCalendarBookings() {
-    const serviceAccount = parseServiceAccount();
-    const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";
-
-    const accessToken = await getAccessToken(serviceAccount);
-
-    const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`, {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-        },
+    const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(`Google Calendar fetch error (${response.status}): ${errorBody}`);
-    }
+    if (!response.ok) throw new Error(`Google API Error: ${await response.text()}`);
 
     const data = await response.json();
 
-    return data.items.map((event) => ({
-        id: event.id,
-        title: event.summary,
-        start: event.start.dateTime,
-        end: event.end.dateTime,
-    }));
+    // Mappa om Google-data till det format din Frontend vill ha
+    return (
+        data.items?.map((event) => {
+            console.log(`Event: ${event.summary}, Private Props:`, event.extendedProperties?.private);
+
+            return {
+                id: event.id,
+                title: event.summary || "Bokning",
+                start: event.start?.dateTime || event.start?.date,
+                end: event.end?.dateTime || event.end?.date,
+                extendedProps: {
+                    bookingId: event.extendedProperties?.private?.bookingId || null,
+                },
+            };
+        }) || []
+    );
 }
 
 export async function createBookingCalendarEvent({
-    bookingId,
+    id,
     name,
     email,
     phone,
@@ -155,17 +85,12 @@ export async function createBookingCalendarEvent({
     endDate,
     totalPrice,
 }) {
-    const serviceAccount = parseServiceAccount();
-    // calendarId kan skickas in, annars används GOOGLE_CALENDAR_ID
-    const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";
-    const timeZone = process.env.GOOGLE_CALENDAR_TIMEZONE || "Europe/Stockholm";
-
-    const accessToken = await getAccessToken(serviceAccount);
+    const accessToken = await getAccessToken();
     const range = buildCalendarDateRange(startDate, endDate);
 
     const eventBody = {
         summary: name,
-        description: `\nBokningsnummer: ${bookingId}\n\nKund:\n${name}\n${email}\n${phone}\n\nAdress:\n${address || "-"}\n${postalCode || ""} ${city || ""}\n\nTillägg:\nStädning: ${cleaning ? "Ja" : "Nej"}\nVed: ${firewood} paket\nDoft: ${scent || "Ingen"}\n\nTransport:\nUtkörning: ${delivery ? "Ja" : "Nej"}\nTyp: ${transportType || "-"}\n\nPris:\n${totalPrice} kr\n`,
+        description: `\nBokningsnummer: ${id}\n\nKund:\n${name}\n${email}\n${phone}\n\nAdress:\n${address || "-"}\n${postalCode || ""} ${city || ""}\n\nTillägg:\nStädning: ${cleaning ? "Ja" : "Nej"}\nVed: ${firewood} paket\nDoft: ${scent || "Ingen"}\n\nTransport:\nUtkörning: ${delivery ? "Ja" : "Nej"}\nTyp: ${transportType || "-"}\n\nPris:\n${totalPrice} kr\n`,
         start: {
             dateTime: range.startDateTime,
             timeZone,
@@ -173,6 +98,11 @@ export async function createBookingCalendarEvent({
         end: {
             dateTime: range.endDateTime,
             timeZone,
+        },
+        extendedProperties: {
+            private: {
+                bookingId: String(id), // Här sparar vi kopplingen!
+            },
         },
     };
     console.log("Google Calendar create eventBody:", eventBody);
@@ -195,9 +125,7 @@ export async function createBookingCalendarEvent({
 }
 export async function deleteBookingCalendarEvent(eventId) {
     if (!eventId) return true;
-    const serviceAccount = parseServiceAccount();
-    const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";
-    const accessToken = await getAccessToken(serviceAccount);
+    const accessToken = await getAccessToken();
 
     const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${eventId}`, {
         method: "DELETE",
