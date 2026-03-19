@@ -8,9 +8,10 @@ import { ActionButtons } from "../../../../components/ActionButtons/ActionButton
 interface BookingCardProps {
     booking: ApiBookingData;
     onHover?: (id: string | null) => void;
+    onStatusChange?: () => void;
 }
 
-export const BookingCard = ({ booking, onHover }: BookingCardProps) => {
+export const BookingCard = ({ booking, onHover, onStatusChange }: BookingCardProps) => {
     const navigate = useNavigate();
     const { id } = useParams();
     const isActive = id === String(booking.id);
@@ -44,7 +45,7 @@ export const BookingCard = ({ booking, onHover }: BookingCardProps) => {
             {/* BOTTEN: Knappar ELLER Status-etikett */}
             <S.ActionWrapper>
                 {booking.status === "pending" ? (
-                    <ActionButtons booking={booking} />
+                    <ActionButtons booking={booking} onStatusChange={onStatusChange} />
                 ) : (
                     <S.StatusLabel variant="caption" statusColor={statusColor}>
                         {getStatusText({ booking })}

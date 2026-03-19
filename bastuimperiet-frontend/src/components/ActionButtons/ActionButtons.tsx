@@ -5,8 +5,13 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import * as S from "./ActionButtons.styles";
 import { useBookingActions } from "../../features/allBookings/hooks/useActionButtons";
 
-export const ActionButtons = ({ booking }: { booking: ApiBookingData }) => {
-    const { handleConfirm, handleDecline, isUpdating } = useBookingActions();
+interface ActionButtonsProps {
+    booking: ApiBookingData;
+    onStatusChange?: () => void; // <--- Ny prop
+}
+
+export const ActionButtons = ({ booking, onStatusChange }: ActionButtonsProps) => {
+    const { handleConfirm, handleDecline, isUpdating } = useBookingActions(onStatusChange);
     return (
         <Stack direction="row" spacing={1}>
             <Tooltip title="Bekräfta bokning" arrow>
@@ -14,7 +19,7 @@ export const ActionButtons = ({ booking }: { booking: ApiBookingData }) => {
                     actionType="confirm"
                     onClick={(e) => {
                         e.stopPropagation();
-                        handleConfirm(String(booking.id));
+                        handleConfirm(booking);
                     }}
                     disabled={isUpdating}
                 >

@@ -1,12 +1,17 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { AdminLogin } from "../features/admin/components/LoginForm/LoginForm";
 
 export const LoginPage = () => {
+    const navigate = useNavigate();
     const isLoggedIn = !!localStorage.getItem("adminToken");
 
     if (isLoggedIn) {
         return <Navigate to="/admin/bookings" replace />;
     }
 
-    return <AdminLogin onLoginSuccess={() => window.location.reload()} />;
+    const handleLoginSuccess = () => {
+        navigate("/admin/bookings", { replace: true });
+    };
+
+    return <AdminLogin onLoginSuccess={handleLoginSuccess} />;
 };

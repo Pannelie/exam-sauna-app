@@ -8,15 +8,11 @@ export const LogoutBtn = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const handleLogout = () => {
-        // 1. Rensa data
+        // Rensa data
         localStorage.removeItem("adminToken");
         localStorage.removeItem("adminEmail");
 
-        // 2. Skicka användaren till login (med replace för att rensa historik)
         navigate("/admin/login", { replace: true });
-
-        // 3. Valfritt: Tvinga en reload om du inte använder Context/State
-        window.location.reload();
     };
     if (isMobile) {
         return (

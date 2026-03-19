@@ -10,7 +10,7 @@ import { ViewSwitcher } from "./components/ViewSwitcher/ViewSwitcher";
 import { GoogleCalendar } from "../calendar/components/GoogleCalendar";
 
 export default function AllBookings() {
-    const { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings } = useBookings();
+    const { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings, refreshData } = useBookings();
     const [mobileTab, setMobileTab] = useState(0);
     const { id } = useParams();
     const navigate = useNavigate();
@@ -98,7 +98,7 @@ export default function AllBookings() {
                         <Box sx={{ flex: 1, overflowY: "auto", pr: 1, "&::-webkit-scrollbar": { display: "none" } }}>
                             {loading
                                 ? Array.from(new Array(5)).map((_, i) => <BookingCardSkeleton key={i} />)
-                                : filteredBookings.map((b) => <BookingCard key={b.id} booking={b} />)}
+                                : filteredBookings.map((b) => <BookingCard key={b.id} booking={b} onStatusChange={refreshData} />)}
 
                             {!loading && filteredBookings.length === 0 && (
                                 <Typography variant="body2" sx={{ textAlign: "center", mt: 4, color: "rgba(255,255,255,0.6)" }}>
@@ -134,7 +134,7 @@ export default function AllBookings() {
                                 }}
                             >
                                 {id ? (
-                                    <Outlet context={{ bookings }} />
+                                    <Outlet context={{ bookings, refreshData }} />
                                 ) : (
                                     <Typography variant="body1" color="text.secondary" sx={{ maxWidth: "250px", textAlign: "center" }}>
                                         Välj en bokning i listan till vänster för att se detaljer.
@@ -164,7 +164,7 @@ export default function AllBookings() {
                 PaperProps={{ sx: { height: "85vh", borderTopLeftRadius: 32, borderTopRightRadius: 32 } }}
             >
                 <Box sx={{ p: 2 }}>
-                    <Outlet context={{ bookings }} />
+                    <Outlet context={{ bookings, refreshData }} />
                 </Box>
             </Drawer>
         </>

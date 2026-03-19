@@ -10,20 +10,21 @@ export function useBookings() {
     const [tabIndex, setTabIndex] = useState(0);
     const [searchTerm, setSearchTerm] = useState("");
 
-    useEffect(() => {
-        const fetchBookings = async () => {
-            try {
-                const data = await getAllBookings();
-                setBookings(data);
-            } catch (error) {
-                console.error("Misslyckades:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBookings();
-    }, []);
+    const refreshData = async () => {
+        try {
+            const data = await getAllBookings();
+            setBookings(data);
+        } catch (error) {
+            console.error("Misslyckades:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    // Hämta vid första renderingen
+    useEffect(() => {
+        refreshData();
+    }, []);
     const filteredBookings = useMemo(() => {
         const tabFiltered = filterBookingsByTab(bookings, tabIndex);
         if (!searchTerm) return tabFiltered;
@@ -32,5 +33,5 @@ export function useBookings() {
         );
     }, [bookings, tabIndex, searchTerm]);
 
-    return { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings };
+    return { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings, refreshData };
 }
