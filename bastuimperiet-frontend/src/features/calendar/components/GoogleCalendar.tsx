@@ -1,45 +1,43 @@
-// components/GoogleCalendar/GoogleCalendar.tsx
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import svLocale from "@fullcalendar/core/locales/sv";
 import { Box, useTheme } from "@mui/material";
+import { getCalendarEvents } from "../services/calendarService";
+import { useState, useEffect } from "react";
 
 export const GoogleCalendar = () => {
     const theme = useTheme();
 
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            setLoading(true);
+            try {
+                const data = await getCalendarEvents();
+                setEvents(data);
+            } catch (err) {
+                console.error("Kunde inte hämta kalenderhändelser:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchEvents();
+    }, []);
+
     return (
-        <Box
-            sx={{
-                p: 2,
-                height: "100%",
-                "& .fc": {
-                    // Lite enkel styling för att matcha ditt tema
-                    fontFamily: theme.typography.fontFamily,
-                    border: "none",
-                },
-                "& .fc-event": {
-                    cursor: "pointer",
-                    borderRadius: "4px",
-                    padding: "2px 4px",
-                },
-            }}
-        >
-            <FullCalendar
-                plugins={[dayGridPlugin]}
-                initialView="dayGridMonth"
-                locales={[svLocale]}
-                locale="sv"
-                // Här anropar vi din backend direkt som en källa
-                events={`${import.meta.env.VITE_API_URL}/calendar/events`}
-                headerToolbar={{
-                    left: "prev,next today",
-                    center: "title",
-                    right: "dayGridMonth",
-                }}
-                height="100%"
-                eventDisplay="block"
-                eventColor={theme.palette.primary.main}
-            />
-        </Box>
+        <div style={{ height: "100%" }}>
+            {loading ? (
+                <p>Laddar kalender...</p>
+            ) : (
+                <FullCalendar
+                    plugins={[dayGridPlugin]}
+                    initialView="dayGridMonth"
+                    locale="sv"
+                    events={events} // Här skickar vi in datan från Axios
+                    height="100%"
+                />
+            )}
+        </div>
     );
 };

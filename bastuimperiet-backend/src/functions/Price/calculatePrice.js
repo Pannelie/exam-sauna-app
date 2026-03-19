@@ -1,5 +1,4 @@
-import { calculatePrice } from "../../services/priceEngine.mjs";
-import { getPrices } from "../../services/priceService.mjs";
+import { getPrices, calculatePrice } from "../../services/priceService.mjs";
 
 export const handler = async (event) => {
     try {

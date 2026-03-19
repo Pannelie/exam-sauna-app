@@ -5,21 +5,20 @@ useDotenv: true
 #---------------------------------------------------------------------
 plugins:
     - serverless-offline
+
+build:
+    esbuild:
+        bundle: true
+        minify: true
+        target: node20
+        format: esm
+        platform: node
+        packages: external # Detta gör att den inte försöker packa ner tunga inbyggda moduler
+        exclude:
+            - "@aws-sdk/*" # AWS Lambdas miljö har redan dessa
 #---------------------------------------------------------------------
 package:
     individually: true
-
-# build:
-#     esbuild:
-#         bundle: true
-#         minify: false
-#         sourcemap: false
-#         target: node20
-#         platform: node
-#         format: esm
-#     external:
-#         - aws-sdk
-#         - jsonwebtoken
 
 #---------------------------------------------------------------------
 provider:
