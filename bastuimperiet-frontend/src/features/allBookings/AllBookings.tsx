@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BookingCard } from "./components/BookingCard/BookingCard";
 import { BookingCardSkeleton } from "./components/BookingCardSkeleton/BookingCardSkeleton";
 import { Typography, Drawer, useMediaQuery, useTheme, Box, FormControl, MenuItem, Select, TextField, InputAdornment } from "@mui/material";
@@ -8,15 +8,29 @@ import * as S from "./AllBookings.styles";
 import { useBookings } from "./hooks/useBookings";
 import { ViewSwitcher } from "./components/ViewSwitcher/ViewSwitcher";
 import { GoogleCalendar } from "../calendar/components/GoogleCalendar";
+import { useCalendar } from "../calendar/hooks/useCalendar";
 
 export default function AllBookings() {
     const { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings, refreshData } = useBookings();
+    const { events, loading: calLoading, refreshCalendar, clickedId, setClickedId, hoveredBookingId, setHoveredBookingId } = useCalendar();
     const [mobileTab, setMobileTab] = useState(0);
     const { id } = useParams();
     const navigate = useNavigate();
     const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
 
     const categories = ["Alla", "Nya", "Bekräftade", "Nekade", "Avbokade"];
+
+    useEffect(() => {
+        if (id) {
+            setClickedId(id);
+        } else {
+            setClickedId(null);
+        }
+    }, [id, setClickedId]);
+
+    const handleGlobalUpdate = async () => {
+        await Promise.all([refreshData(), refreshCalendar()]);
+    };
 
     return (
         <>
@@ -98,7 +112,15 @@ export default function AllBookings() {
                         <Box sx={{ flex: 1, overflowY: "auto", pr: 1, "&::-webkit-scrollbar": { display: "none" } }}>
                             {loading
                                 ? Array.from(new Array(5)).map((_, i) => <BookingCardSkeleton key={i} />)
-                                : filteredBookings.map((b) => <BookingCard key={b.id} booking={b} onStatusChange={refreshData} />)}
+                                : filteredBookings.map((b) => (
+                                      <BookingCard
+                                          key={b.id}
+                                          booking={b}
+                                          onStatusChange={handleGlobalUpdate}
+                                          onMouseEnter={() => setHoveredBookingId(b.id)}
+                                          onMouseLeave={() => setHoveredBookingId(null)}
+                                      />
+                                  ))}
 
                             {!loading && filteredBookings.length === 0 && (
                                 <Typography variant="body2" sx={{ textAlign: "center", mt: 4, color: "rgba(255,255,255,0.6)" }}>
@@ -116,7 +138,12 @@ export default function AllBookings() {
                             <Typography variant="h6" p={2} fontWeight="bold">
                                 Kalenderöversikt
                             </Typography>
-                            <GoogleCalendar />
+                            <GoogleCalendar
+                                events={events}
+                                loading={calLoading}
+                                clickedId={clickedId}
+                                hoveredBookingId={hoveredBookingId}
+                            />
                         </S.ContentPaper>
 
                         <S.ContentPaper sx={{ flex: 1, maxWidth: "400px" }}>
@@ -134,7 +161,7 @@ export default function AllBookings() {
                                 }}
                             >
                                 {id ? (
-                                    <Outlet context={{ bookings, refreshData }} />
+                                    <Outlet context={{ bookings, refreshData, refreshCalendar }} />
                                 ) : (
                                     <Typography variant="body1" color="text.secondary" sx={{ maxWidth: "250px", textAlign: "center" }}>
                                         Välj en bokning i listan till vänster för att se detaljer.
@@ -151,7 +178,7 @@ export default function AllBookings() {
                         <Typography variant="h6" p={2} fontWeight="bold">
                             Kalender
                         </Typography>
-                        <GoogleCalendar />
+                        <GoogleCalendar events={events} loading={calLoading} clickedId={clickedId} hoveredBookingId={hoveredBookingId} />
                     </S.ContentPaper>
                 )}
             </Box>
@@ -164,7 +191,7 @@ export default function AllBookings() {
                 PaperProps={{ sx: { height: "85vh", borderTopLeftRadius: 32, borderTopRightRadius: 32 } }}
             >
                 <Box sx={{ p: 2 }}>
-                    <Outlet context={{ bookings, refreshData }} />
+                    <Outlet context={{ bookings, refreshData, refreshCalendar }} />
                 </Box>
             </Drawer>
         </>

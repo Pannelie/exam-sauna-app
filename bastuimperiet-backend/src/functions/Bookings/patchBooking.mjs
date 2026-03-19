@@ -18,7 +18,7 @@ const ALLOWED_STATUSES = new Set(["pending", "confirmed", "declined", "cancelled
 
 export const handler = middy(async (event) => {
     const bookingId = event.pathParameters.id;
-    const { status } = event.body;
+    const { status, force } = event.body;
     const normalizedStatus = status?.trim().toLowerCase();
 
     if (!ALLOWED_STATUSES.has(normalizedStatus)) {
@@ -36,11 +36,19 @@ export const handler = middy(async (event) => {
             // Kolla krockar med ANDRA bekräftade bokningar
             const otherConfirmed = allBookings.filter((b) => b.id !== bookingId && b.status === "confirmed");
             if (hasBookingOverlap(fullBooking.startDate, fullBooking.endDate, otherConfirmed)) {
-                return { statusCode: 409, body: JSON.stringify({ message: "Datumen är redan upptagna av en annan bekräftad bokning." }) };
+                if (!force) {
+                    return {
+                        statusCode: 409,
+                        body: JSON.stringify({ message: "Datumen är redan upptagna av en annan bekräftad bokning.", warning: true }),
+                    };
+                }
+                warning = "Observera: Du bekräftar en bokning som krockar med en annan bekräftad bokning.";
             }
             const checkInDateTime = new Date(`${fullBooking.startDate}T15:00:00`);
             if (checkInDateTime < new Date()) {
-                warning = "Observera: Du bekräftar en bokning vars startdatum redan har passerat.";
+                warning = warning
+                    ? warning + " Samt: Du bekräftar en bokning vars startdatum redan har passerat."
+                    : "Observera: Du bekräftar en bokning vars startdatum redan har passerat.";
                 console.warn(`Admin bekräftade historisk bokning: ${bookingId}`);
             }
         }
