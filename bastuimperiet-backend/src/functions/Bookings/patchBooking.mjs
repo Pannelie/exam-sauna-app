@@ -44,27 +44,24 @@ export const handler = middy(async (event) => {
                 guestEmailSent = false;
 
                 try {
+                    // Skapa event i bastuimpertiet.se-kalender (publik)
                     const calendarEvent = await createBookingCalendarEvent({
                         bookingId: fullBooking.id,
                         name: fullBooking.name,
                         email: fullBooking.email,
                         phone: fullBooking.phone,
-
                         address: fullBooking.address,
                         postalCode: fullBooking.postalCode,
                         city: fullBooking.city,
-
                         startDate: fullBooking.startDate,
                         endDate: fullBooking.endDate,
-
                         cleaning: fullBooking.cleaning,
                         firewood: fullBooking.firewood,
                         scent: fullBooking.scent,
-
                         delivery: fullBooking.delivery,
                         transportType: fullBooking.transportType,
-
                         totalPrice: fullBooking.totalPrice,
+                        calendarId: process.env.GOOGLE_PUBLIC_CALENDAR_ID,
                     });
                     await saveCalendarEventId(process.env.TABLE_NAME, bookingId, calendarEvent.id);
                     calendarUpdated = true;

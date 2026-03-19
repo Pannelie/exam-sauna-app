@@ -13,9 +13,13 @@ build:
         target: node20
         format: esm
         platform: node
-        packages: external # Detta gör att den inte försöker packa ner tunga inbyggda moduler
+        packages: external
         exclude:
-            - "@aws-sdk/*" # AWS Lambdas miljö har redan dessa
+            - "@aws-sdk/*"
+            - "googleapis"
+            - "temp"
+            - "test"
+            - "node_modules/.bin"
 #---------------------------------------------------------------------
 package:
     individually: true

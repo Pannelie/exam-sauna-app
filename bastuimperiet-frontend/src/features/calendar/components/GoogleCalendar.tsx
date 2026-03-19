@@ -1,12 +1,10 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { Box, useTheme } from "@mui/material";
+
 import { getCalendarEvents } from "../services/calendarService";
 import { useState, useEffect } from "react";
 
 export const GoogleCalendar = () => {
-    const theme = useTheme();
-
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
 

@@ -75,6 +75,7 @@ async function getAccessToken(serviceAccount) {
 }
 
 function toEventDateTime(dateString, hour) {
+    // Skapa ISO-sträng med lokal tid (utan extra Z eller dubbla tider)
     return `${dateString}T${String(hour).padStart(2, "0")}:00:00`;
 }
 
@@ -91,18 +92,21 @@ function addDays(dateString, days) {
 }
 
 function buildCalendarDateRange(startDate, endDate) {
-    let calendarEndDate = endDate;
-    const startTs = Date.parse(toEventDateTime(startDate, 15));
-    let endTs = Date.parse(toEventDateTime(calendarEndDate, 11));
-
+    // Ta bort tid och .000Z om det finns
+    const cleanDate = (d) => d.split("T")[0];
+    let calendarStartDate = cleanDate(startDate);
+    let calendarEndDate = cleanDate(endDate);
+    const startTs = Date.parse(`${calendarStartDate}T15:00:00`);
+    let endTs = Date.parse(`${calendarEndDate}T11:00:00`);
     while (endTs <= startTs) {
         calendarEndDate = addDays(calendarEndDate, 1);
-        endTs = Date.parse(toEventDateTime(calendarEndDate, 11));
+        endTs = Date.parse(`${calendarEndDate}T11:00:00`);
     }
-
+    const startDateTime = `${calendarStartDate}T15:00:00`;
+    const endDateTime = `${calendarEndDate}T11:00:00`;
     return {
-        startDateTime: toEventDateTime(startDate, 15),
-        endDateTime: toEventDateTime(calendarEndDate, 11),
+        startDateTime,
+        endDateTime,
     };
 }
 
@@ -150,7 +154,11 @@ export async function createBookingCalendarEvent({
     totalPrice,
 }) {
     const serviceAccount = parseServiceAccount();
-    const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";
+    // calendarId kan skickas in, annars används GOOGLE_CALENDAR_ID
+    const calendarId =
+        typeof arguments[0].calendarId === "string" && arguments[0].calendarId.length > 0
+            ? arguments[0].calendarId
+            : process.env.GOOGLE_CALENDAR_ID || "primary";
     const timeZone = process.env.GOOGLE_CALENDAR_TIMEZONE || "Europe/Stockholm";
 
     const accessToken = await getAccessToken(serviceAccount);
@@ -158,30 +166,7 @@ export async function createBookingCalendarEvent({
 
     const eventBody = {
         summary: `Bastu-bokning: ${name}`,
-        description: `
-Bokningsnummer: ${bookingId}
-
-Kund:
-${name}
-${email}
-${phone}
-
-Adress:
-${address || "-"}
-${postalCode || ""} ${city || ""}
-
-Tillägg:
-Städning: ${cleaning ? "Ja" : "Nej"}
-Ved: ${firewood} paket
-Doft: ${scent || "Ingen"}
-
-Transport:
-Utkörning: ${delivery ? "Ja" : "Nej"}
-Typ: ${transportType || "-"}
-
-Pris:
-${totalPrice} kr
-`,
+        description: `\nBokningsnummer: ${bookingId}\n\nKund:\n${name}\n${email}\n${phone}\n\nAdress:\n${address || "-"}\n${postalCode || ""} ${city || ""}\n\nTillägg:\nStädning: ${cleaning ? "Ja" : "Nej"}\nVed: ${firewood} paket\nDoft: ${scent || "Ingen"}\n\nTransport:\nUtkörning: ${delivery ? "Ja" : "Nej"}\nTyp: ${transportType || "-"}\n\nPris:\n${totalPrice} kr\n`,
         start: {
             dateTime: range.startDateTime,
             timeZone,
@@ -191,7 +176,7 @@ ${totalPrice} kr
             timeZone,
         },
     };
-
+    console.log("Google Calendar create eventBody:", eventBody);
     const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`, {
         method: "POST",
         headers: {
@@ -201,14 +186,14 @@ ${totalPrice} kr
         body: JSON.stringify(eventBody),
     });
 
+    const responseText = await response.text();
+    console.log("Google Calendar create response:", response.status, responseText);
     if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(`Google Calendar API error (${response.status}): ${errorBody}`);
+        throw new Error(`Google Calendar API error (${response.status}): ${responseText}`);
     }
 
-    return response.json();
+    return JSON.parse(responseText);
 }
-
 export async function deleteBookingCalendarEvent(eventId) {
     const serviceAccount = parseServiceAccount();
     const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";

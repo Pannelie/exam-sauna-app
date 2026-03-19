@@ -71,6 +71,10 @@ export async function postBooking(tableName, bookingData) {
         transportType = null,
     } = bookingData;
 
+    // Spara startDate och endDate som bara datum (YYYY-MM-DD)
+    const bookingStartDate = startDate.split("T")[0];
+    const bookingEndDate = endDate.split("T")[0];
+
     if (hasBookingOverlap(startDate, endDate, allBookings)) {
         const error = new Error("Datumet är redan bokat");
         error.code = 409;
@@ -107,8 +111,8 @@ export async function postBooking(tableName, bookingData) {
         postalCode,
         city,
 
-        startDate,
-        endDate,
+        startDate: bookingStartDate,
+        endDate: bookingEndDate,
 
         scent,
         cleaning,
