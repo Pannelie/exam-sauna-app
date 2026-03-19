@@ -180,14 +180,18 @@ export async function saveCalendarEventId(tableName, bookingId, calendarEventId)
     await client.send(new UpdateCommand(params));
 }
 
-export function hasBookingOverlap(startDate, endDate, existingBookings) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+export function hasBookingOverlap(startDate, endDate, allBookings) {
+    const newStart = new Date(startDate).getTime();
+    const newEnd = new Date(endDate).getTime();
 
-    return existingBookings.some((booking) => {
-        const bookingStart = new Date(booking.startDate);
-        const bookingEnd = new Date(booking.endDate);
+    return allBookings.some((booking) => {
+        // Vi bryr oss bara om bokningar som är "confirmed"
+        if (booking.status !== "confirmed") return false;
 
-        return start < bookingEnd && end > bookingStart;
+        const existingStart = new Date(booking.startDate).getTime();
+        const existingEnd = new Date(booking.endDate).getTime();
+
+        // Standard krock-logik: (StartA < EndB) && (EndA > StartB)
+        return newStart < existingEnd && newEnd > existingStart;
     });
 }
