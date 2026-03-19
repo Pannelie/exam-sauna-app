@@ -1,5 +1,5 @@
 import middy from "@middy/core";
-import { postBooking, hasBookingOverlap, getAllBookings } from "../../services/bookingService.mjs";
+import { postBooking, hasBookingOverlap, getAllBookings, isPastDate, validateBookingRequest } from "../../services/bookingService.mjs";
 import { createBookingCalendarEvent } from "../../services/googleCalendarService.mjs";
 import { sendNewBookingRequestToAdmin } from "../../services/mailerService.mjs";
 import { validateBooking } from "../../middlewares/validateBooking.mjs";
@@ -23,8 +23,12 @@ export const handler = middy(async (event) => {
 
         const allBookings = await getAllBookings(process.env.TABLE_NAME);
 
-        if (hasBookingOverlap(data.startDate, data.endDate, allBookings)) {
-            return { statusCode: 409, body: JSON.stringify({ message: "Valda datum är bokade" }) };
+        const validation = validateBookingRequest(data, allBookings);
+        if (!validation.isValid) {
+            return {
+                statusCode: validation.status,
+                body: JSON.stringify({ message: validation.message }),
+            };
         }
 
         // 2. Spara i DB (Detta är vår "Single Source of Truth")

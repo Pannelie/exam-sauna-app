@@ -29,6 +29,7 @@ export const handler = middy(async (event) => {
         const fullBooking = await getBookingByIdInternal(process.env.TABLE_NAME, bookingId);
         if (!fullBooking) return { statusCode: 404, body: JSON.stringify({ message: "Hittades inte" }) };
 
+        let warning = null;
         // --- 1. SÄKERHETSKONTROLL FÖR CONFIRMED ---
         if (normalizedStatus === "confirmed") {
             const allBookings = await getAllBookings(process.env.TABLE_NAME);
@@ -36,6 +37,11 @@ export const handler = middy(async (event) => {
             const otherConfirmed = allBookings.filter((b) => b.id !== bookingId && b.status === "confirmed");
             if (hasBookingOverlap(fullBooking.startDate, fullBooking.endDate, otherConfirmed)) {
                 return { statusCode: 409, body: JSON.stringify({ message: "Datumen är redan upptagna av en annan bekräftad bokning." }) };
+            }
+            const checkInDateTime = new Date(`${fullBooking.startDate}T15:00:00`);
+            if (checkInDateTime < new Date()) {
+                warning = "Observera: Du bekräftar en bokning vars startdatum redan har passerat.";
+                console.warn(`Admin bekräftade historisk bokning: ${bookingId}`);
             }
         }
 
@@ -55,7 +61,7 @@ export const handler = middy(async (event) => {
                     "Create Confirmed Event",
                     createBookingCalendarEvent({
                         ...fullBooking,
-                        name: `Bastu-bokning: ${fullBooking.name}`,
+                        name: `Bokning: ${fullBooking.name}`,
                         calendarId: process.env.GOOGLE_PUBLIC_CALENDAR_ID,
                     }),
                 );
@@ -82,7 +88,7 @@ export const handler = middy(async (event) => {
 
         return {
             statusCode: 200,
-            body: JSON.stringify({ ...updatedBooking, integrations: results }),
+            body: JSON.stringify({ ...updatedBooking, integrations: results, warning }),
         };
     } catch (err) {
         return { statusCode: 500, body: JSON.stringify({ message: err.message }) };

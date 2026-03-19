@@ -30,13 +30,13 @@ export const GoogleCalendar = () => {
     const renderEventContent = (eventInfo: EventContentArg) => {
         const title = eventInfo.event.title || "";
 
-        // Logga titeln för att se att "Bastu-bokning" faktiskt finns där
+        // Logga titeln för att se att "BOKNING" faktiskt finns där
         console.log("Hittade titel:", title);
 
         // Om titeln innehåller "FÖRFRÅGAN" är den pending (grå)
-        // Om den innehåller "Bastu-bokning" är den confirmed (grön)
-        const isPending = title.includes("FÖRFRÅGAN");
-        const isConfirmed = title.includes("Bastu-bokning");
+        // Om den innehåller "BOKNING" är den confirmed (grön)
+        const isPending = title.includes("Förfrågan");
+        const isConfirmed = title.includes("Bokning");
 
         // Skapa klass-strängen
         let statusClass = "is-neutral"; // Standard
@@ -46,7 +46,7 @@ export const GoogleCalendar = () => {
         return (
             <div className={`custom-event-card ${statusClass}`}>
                 <span className="event-time">{eventInfo.timeText}</span>
-                <b className="event-title">{title.replace("FÖRFRÅGAN: ", "").replace("Bastu-bokning: ", "")}</b>
+                <b className="event-title">{title.replace("Förfrågan: ", "").replace("Bokning: ", "")}</b>
             </div>
         );
     };

@@ -181,18 +181,42 @@ export async function saveCalendarEventId(tableName, bookingId, calendarEventId)
 }
 
 export function hasBookingOverlap(startDate, endDate, allBookings, currentBookingId = null) {
-    const newStart = new Date(startDate).getTime();
-    const newEnd = new Date(endDate).getTime();
+    console.log("Kollar överlapp med start:", startDate, "och end:", endDate);
+    const newStart = new Date(`${startDate}T15:00:00`).getTime();
+    const newEnd = new Date(`${endDate}T11:00:00`).getTime();
 
     return allBookings.some((booking) => {
         if (currentBookingId && booking.id === currentBookingId) return false;
         // Vi bryr oss bara om bokningar som är "confirmed"
         if (booking.status !== "confirmed") return false;
 
-        const existingStart = new Date(booking.startDate).getTime();
-        const existingEnd = new Date(booking.endDate).getTime();
+        const existingStart = new Date(`${booking.startDate}T15:00:00`).getTime();
+        const existingEnd = new Date(`${booking.endDate}T11:00:00`).getTime();
 
         // Standard krock-logik: (StartA < EndB) && (EndA > StartB)
         return newStart < existingEnd && newEnd > existingStart;
     });
+}
+
+export function validateBookingRequest(data, allBookings) {
+    const now = new Date();
+    const start = new Date(`${data.startDate}T15:00:00`);
+    const end = new Date(`${data.endDate}T11:00:00`);
+
+    // Steg A: Kolla dåtid
+    if (start < now) {
+        return { isValid: false, message: "Datumet har redan passerat", status: 400 };
+    }
+
+    // Steg B: Kolla logik (minst 1 natt)
+    if (end <= start) {
+        return { isValid: false, message: "Utcheckning måste vara efter incheckning", status: 400 };
+    }
+
+    // Steg C: Kolla krockar (återanvänder funktionen ovan)
+    if (hasBookingOverlap(data.startDate, data.endDate, allBookings)) {
+        return { isValid: false, message: "Datumen är redan bokade", status: 409 };
+    }
+
+    return { isValid: true };
 }
