@@ -1,13 +1,11 @@
-// hooks/useBookingActions.ts
 import { useState } from "react";
 import { updateBookingStatus } from "../features/allBookings/services/allBookingsService";
 import { BookingStatus } from "../types/bookingTypes";
 import type { ApiBookingData } from "../types/bookingTypes";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import Button from "@mui/material/Button";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Tooltip, Stack, CircularProgress } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import * as S from "../components/ActionButtons/ActionButtons.styles";
 
 export const useBookingActions = (onSuccess?: () => void) => {
     const [isUpdating, setIsUpdating] = useState(false);
@@ -31,11 +29,7 @@ export const useBookingActions = (onSuccess?: () => void) => {
         setIsUpdating(true);
         try {
             await updateBookingStatus(booking.id, "confirmed" as BookingStatus, force);
-            if (onSuccess) {
-                onSuccess();
-            } else {
-                window.location.reload();
-            }
+            onSuccess ? onSuccess() : window.location.reload();
         } catch (error: any) {
             // Hantera 409/warning från backend
             if (error?.response?.status === 409 && error?.response?.data?.warning) {
@@ -55,18 +49,81 @@ export const useBookingActions = (onSuccess?: () => void) => {
         setIsUpdating(true);
         try {
             await updateBookingStatus(id, "declined" as BookingStatus);
-            if (onSuccess) {
-                onSuccess();
-            } else {
-                // Fallback om du inte har hunnit implementera refetch överallt
-                window.location.reload();
-            }
+            onSuccess ? onSuccess() : window.location.reload();
         } catch (error) {
             console.error("Kunde inte neka:", error);
         } finally {
             setIsUpdating(false);
         }
     };
+
+    const handleCancel = async (id: string) => {
+        setIsUpdating(true);
+        try {
+            await updateBookingStatus(id, "cancelled" as BookingStatus);
+            onSuccess ? onSuccess() : window.location.reload();
+        } catch (error) {
+            console.error("Kunde inte avboka:", error);
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const ActionBtn = ({
+        booking,
+        type,
+        title,
+        label,
+    }: {
+        booking: ApiBookingData;
+        type: "confirm" | "decline" | "cancelled";
+        title: string;
+        label?: string;
+    }) => {
+        const isLoading = isUpdating && pendingBooking?.id === booking.id;
+
+        return (
+            <Tooltip title={title} arrow>
+                <S.ActionButton
+                    actionType={type === "confirm" ? "confirm" : "decline"}
+                    disabled={isUpdating}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setPendingBooking(booking); // KRITISKT FÖR FORCE
+                        if (type === "confirm") handleConfirm(booking);
+                        if (type === "decline") handleDecline(String(booking.id));
+                        if (type === "cancelled") handleCancel(String(booking.id));
+                    }}
+                    sx={label ? { width: "auto", px: 2, borderRadius: 2 } : {}}
+                >
+                    <Stack direction="row" spacing={1} alignItems="center">
+                        {isLoading ? (
+                            <CircularProgress size={20} color="inherit" />
+                        ) : type === "confirm" ? (
+                            <CheckCircleIcon />
+                        ) : (
+                            <CancelIcon />
+                        )}
+                        {label && (
+                            <Typography variant="button" sx={{ fontWeight: 800 }}>
+                                {label}
+                            </Typography>
+                        )}
+                    </Stack>
+                </S.ActionButton>
+            </Tooltip>
+        );
+    };
+
+    const ConfirmBtn = ({ booking }: { booking: ApiBookingData }) => (
+        <ActionBtn booking={booking} type="confirm" title="Bekräfta bokning" />
+    );
+
+    const DeclineBtn = ({ booking }: { booking: ApiBookingData }) => <ActionBtn booking={booking} type="decline" title="Neka bokning" />;
+
+    const CancelBtn = ({ booking, showLabel = false }: { booking: ApiBookingData; showLabel?: boolean }) => (
+        <ActionBtn booking={booking} type="cancelled" title="Avboka bokning" label={showLabel ? "Avboka bokning" : undefined} />
+    );
 
     // Dialog-komponent för bekräftelse och force
     const ConfirmDialog = () => (
@@ -94,5 +151,5 @@ export const useBookingActions = (onSuccess?: () => void) => {
         </Dialog>
     );
 
-    return { handleConfirm, handleDecline, isUpdating, ConfirmDialog };
+    return { ConfirmBtn, DeclineBtn, CancelBtn, isUpdating, ConfirmDialog };
 };

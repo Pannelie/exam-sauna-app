@@ -4,11 +4,12 @@ import { BookingStatus, type ApiBookingData } from "../../types/bookingTypes";
 import { Today, Person, FmdGood } from "@mui/icons-material";
 import { getStatusChip, StatusIndicator } from "./utils/bookingDetailHelpers";
 import { getBookingChips } from "./components/BookingChips/BookingChips";
-import { ActionButtons } from "../../components/ActionButtons/ActionButtons";
+import { useBookingActions } from "../../hooks/useActionButtons";
 
 export const BookingDetailsView = () => {
     const { id } = useParams<{ id: string }>();
     const { bookings, refreshData } = useOutletContext<{ bookings: ApiBookingData[]; refreshData: () => void }>();
+    const { ConfirmBtn, DeclineBtn, CancelBtn } = useBookingActions(refreshData);
 
     const booking = bookings.find((b) => b.id === id);
 
@@ -19,7 +20,7 @@ export const BookingDetailsView = () => {
     const bookingChips = getBookingChips(booking);
 
     return (
-        <Box sx={{ width: "100%", display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ width: "100%", minHeight: "100%", display: "flex", flexDirection: "column", gap: 2 }}>
             {/*----------------------------Header: ID, Pris och Status--------------------------------------*/}
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <Box>
@@ -40,14 +41,6 @@ export const BookingDetailsView = () => {
 
             <Divider />
 
-            {/* <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "flex-start",
-                    gap: 4, // Mer utrymme mellan kolumnerna
-                }}
-            > */}
             {/* -------------------------------------Datum & Kontakt--------------------------------------*/}
 
             <Stack direction="row" spacing={1} alignItems="center" mb={1}>
@@ -82,15 +75,18 @@ export const BookingDetailsView = () => {
                     </Typography>
                 </Stack>
                 <Typography variant="body2" fontWeight="500">
-                    {booking.address}
-                </Typography>
-                <Typography variant="body2" fontWeight="500">
-                    {booking.postalCode} {booking.city}
+                    {booking.address}, {booking.postalCode} {booking.city}
                 </Typography>
             </Box>
 
             {/* -------------------------------------HÖGER: Tillval -------------------------------------- */}
-            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1 }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexWrap: "wrap", // Detta gör att de hoppar ner på nästa rad
+                    gap: 1,
+                }}
+            >
                 {bookingChips.length > 0 ? (
                     bookingChips
                 ) : (
@@ -100,7 +96,6 @@ export const BookingDetailsView = () => {
                 )}
             </Box>
 
-            {booking.status === BookingStatus.Pending && <ActionButtons booking={booking} onStatusChange={refreshData} />}
             {/* Sektion 3: Integrationsstatus - visas endast om bokningen inte är väntande */}
             {booking.status !== BookingStatus.Pending && (
                 <>
@@ -123,6 +118,16 @@ export const BookingDetailsView = () => {
                     </Paper>
                 </>
             )}
+
+            <Stack direction="row" justifyContent="center" spacing={1} marginTop={"auto"}>
+                {booking.status === BookingStatus.Pending && (
+                    <>
+                        <ConfirmBtn booking={booking} />
+                        <DeclineBtn booking={booking} />
+                    </>
+                )}
+                {booking.status === BookingStatus.Confirmed && <CancelBtn booking={booking} />}
+            </Stack>
         </Box>
     );
 };
