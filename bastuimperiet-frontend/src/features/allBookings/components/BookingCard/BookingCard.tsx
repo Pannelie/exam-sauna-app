@@ -1,9 +1,10 @@
-import { Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import type { ApiBookingData } from "../../../../types/bookingTypes";
 import { useNavigate, useParams } from "react-router-dom";
 import { getStatusColor, getStatusText } from "../../utils/bookingHelpers";
 import * as S from "./BookingCard.styles";
-import { ActionButtons } from "../../../../components/ActionButtons/ActionButtons";
+// import { ActionButtons } from "../../../../components/ActionButtons/ActionButtons";
+import { useBookingActions } from "../../../../hooks/useActionButtons";
 
 interface BookingCardProps {
     booking: ApiBookingData;
@@ -18,6 +19,7 @@ export const BookingCard = ({ booking, onHover, onStatusChange, onMouseEnter, on
     const { id } = useParams();
     const isActive = id === String(booking.id);
     const statusColor = getStatusColor({ booking });
+    const { ConfirmBtn, DeclineBtn } = useBookingActions(onStatusChange);
 
     const handleCardClick = () => {
         navigate(`/admin/bookings/${booking.id}`);
@@ -53,7 +55,10 @@ export const BookingCard = ({ booking, onHover, onStatusChange, onMouseEnter, on
             {/* BOTTEN: Knappar ELLER Status-etikett */}
             <S.ActionWrapper>
                 {booking.status === "pending" ? (
-                    <ActionButtons booking={booking} onStatusChange={onStatusChange} />
+                    <Stack direction="row" spacing={1}>
+                        <ConfirmBtn booking={booking} />
+                        <DeclineBtn booking={booking} />
+                    </Stack>
                 ) : (
                     <S.StatusLabel variant="caption" statusColor={statusColor}>
                         {getStatusText({ booking })}
