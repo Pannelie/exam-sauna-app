@@ -36,7 +36,6 @@ export const GoogleCalendar = ({ events, loading, clickedId, hoveredBookingId }:
 
     // 3. MANUELL MARKERING (Fixar Hover & Click utan omrendering)
     useEffect(() => {
-        // Rensa alla gamla markeringar
         document.querySelectorAll(".custom-event-card").forEach((el) => {
             el.classList.remove("is-hovered", "is-selected");
         });
