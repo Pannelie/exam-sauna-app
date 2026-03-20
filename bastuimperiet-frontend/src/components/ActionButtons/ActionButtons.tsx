@@ -3,7 +3,7 @@ import type { ApiBookingData } from "../../types/bookingTypes";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import * as S from "./ActionButtons.styles";
-import { useBookingActions } from "../../features/allBookings/hooks/useActionButtons";
+import { useBookingActions } from "../../hooks/useActionButtons";
 
 interface ActionButtonsProps {
     booking: ApiBookingData;

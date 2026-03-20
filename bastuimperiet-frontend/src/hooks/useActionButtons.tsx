@@ -1,8 +1,8 @@
 // hooks/useBookingActions.ts
 import { useState } from "react";
-import { updateBookingStatus } from "../services/allBookingsService";
-import { BookingStatus } from "../../../types/bookingTypes";
-import type { ApiBookingData } from "../../../types/bookingTypes";
+import { updateBookingStatus } from "../features/allBookings/services/allBookingsService";
+import { BookingStatus } from "../types/bookingTypes";
+import type { ApiBookingData } from "../types/bookingTypes";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
