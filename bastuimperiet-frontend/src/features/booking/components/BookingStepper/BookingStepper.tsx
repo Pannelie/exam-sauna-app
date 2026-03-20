@@ -1,8 +1,7 @@
 import { Stepper, Step, StepLabel, Box, styled } from "@mui/material";
 import { useState } from "react";
-import type { BookingFormData, BookingBase } from "../../../../types/bookingTypes";
+import type { BookingFormData } from "../../../../types/bookingTypes";
 import { useStepContent } from "../../hooks/useStepContent";
-import { useBookingStore } from "../../stores/useBookingStore";
 import { validateBookingService } from "../../services/bookingService";
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -24,39 +23,17 @@ const StyledFormContent = styled(Box)({
     flexDirection: "column",
 });
 
-export const BookingStepper = () => {
+interface BookingStepperProps {
+    formData: BookingFormData;
+    updateField: <K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) => void;
+    onReset?: () => void; // Ny prop för reset
+}
+
+export const BookingStepper = ({ formData, updateField, onReset }: BookingStepperProps) => {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const steps = ["Bokning", "Kontakt", "Skicka"];
     const [activeStep, setActiveStep] = useState<number>(0);
     const [isCompleted, setIsCompleted] = useState<boolean>(false);
-
-    const { setField, reset: resetStore } = useBookingStore();
-
-    const initialFormData: BookingFormData = {
-        firewood: 0,
-        scent: 0,
-        cleaning: false,
-        delivery: false,
-        name: "",
-        email: "",
-        phone: "",
-        address: "",
-        postalCode: "",
-        city: "",
-        startDate: "",
-        endDate: "",
-    };
-    const [formData, setFormData] = useState<BookingFormData>(initialFormData);
-
-    function updateField<K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) {
-        setFormData((prev) => ({ ...prev, [field]: value }));
-
-        // Uppdatera storen om fältet påverkar priset
-        const priceFields: (keyof BookingBase)[] = ["startDate", "endDate", "cleaning", "firewood", "scent", "delivery"];
-        if (priceFields.includes(field as any)) {
-            setField(field as any, value);
-        }
-    }
 
     // Handlers för navigation
     const handlers = {
@@ -75,9 +52,10 @@ export const BookingStepper = () => {
         complete: () => setIsCompleted(true),
         reset: () => {
             setActiveStep(0);
-            setFormData(initialFormData);
             setIsCompleted(false);
-            resetStore();
+            if (onReset) {
+                onReset();
+            }
         },
         isCompleted,
     };
