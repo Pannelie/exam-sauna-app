@@ -8,9 +8,12 @@ import { ActionButtons } from "../../../../components/ActionButtons/ActionButton
 interface BookingCardProps {
     booking: ApiBookingData;
     onHover?: (id: string | null) => void;
+    onStatusChange?: () => void;
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
 }
 
-export const BookingCard = ({ booking, onHover }: BookingCardProps) => {
+export const BookingCard = ({ booking, onHover, onStatusChange, onMouseEnter, onMouseLeave }: BookingCardProps) => {
     const navigate = useNavigate();
     const { id } = useParams();
     const isActive = id === String(booking.id);
@@ -26,8 +29,14 @@ export const BookingCard = ({ booking, onHover }: BookingCardProps) => {
             isActive={isActive}
             statusColor={statusColor}
             onClick={handleCardClick}
-            onMouseEnter={() => onHover?.(String(booking.id))}
-            onMouseLeave={() => onHover?.(null)}
+            onMouseEnter={() => {
+                onHover?.(String(booking.id));
+                onMouseEnter?.();
+            }}
+            onMouseLeave={() => {
+                onHover?.(null);
+                onMouseLeave?.();
+            }}
         >
             {/* MITTEN: ID och Datum (centrerat vertikalt genom flex-grow) */}
             <S.ContentBox>
@@ -44,7 +53,7 @@ export const BookingCard = ({ booking, onHover }: BookingCardProps) => {
             {/* BOTTEN: Knappar ELLER Status-etikett */}
             <S.ActionWrapper>
                 {booking.status === "pending" ? (
-                    <ActionButtons booking={booking} />
+                    <ActionButtons booking={booking} onStatusChange={onStatusChange} />
                 ) : (
                     <S.StatusLabel variant="caption" statusColor={statusColor}>
                         {getStatusText({ booking })}

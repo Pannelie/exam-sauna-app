@@ -8,7 +8,7 @@ import { ActionButtons } from "../../components/ActionButtons/ActionButtons";
 
 export const BookingDetailsView = () => {
     const { id } = useParams<{ id: string }>();
-    const { bookings } = useOutletContext<{ bookings: ApiBookingData[] }>();
+    const { bookings, refreshData } = useOutletContext<{ bookings: ApiBookingData[]; refreshData: () => void }>();
 
     const booking = bookings.find((b) => b.id === id);
 
@@ -100,7 +100,7 @@ export const BookingDetailsView = () => {
                 )}
             </Box>
 
-            {booking.status === BookingStatus.Pending && <ActionButtons booking={booking} />}
+            {booking.status === BookingStatus.Pending && <ActionButtons booking={booking} onStatusChange={refreshData} />}
             {/* Sektion 3: Integrationsstatus - visas endast om bokningen inte är väntande */}
             {booking.status !== BookingStatus.Pending && (
                 <>
