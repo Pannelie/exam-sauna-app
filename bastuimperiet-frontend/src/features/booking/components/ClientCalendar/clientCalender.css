@@ -1,0 +1,44 @@
+/* Ta bort FullCalendars standard-styling som skapar mellanrum mellan dagar */
+.fc-daygrid-event-harness {
+    margin: 0 !important; /* Tar bort glappet mellan dagarna */
+    padding: 0 !important;
+}
+
+.fc-daygrid-event {
+    border-radius: 0 !important; /* Gör bandet fyrkantigt så det flyter ihop */
+    margin: 1px 0 !important;
+}
+
+/* Din specifika klass för kundens bokningsband */
+.custom-event-card.client-booked-band {
+    background-color: #ecfdf5 !important; /* Samma gröna färg */
+    color: #065f46 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 0 !important;
+    font-size: 0.8rem;
+}
+
+/* Runda bara hörnen på absoluta starten och slutet av bandet */
+.fc-event-start .custom-event-card {
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    margin-left: 2px !important;
+}
+
+.fc-event-end .custom-event-card {
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    margin-right: 2px !important;
+}
+
+/* Se till att din gula markering (selection) fortfarande syns tydligt ovanpå eller under */
+.fc-highlight {
+    background: rgba(233, 184, 91, 0.4) !important;
+    z-index: 3;
+}
