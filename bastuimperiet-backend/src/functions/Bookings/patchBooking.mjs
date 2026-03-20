@@ -30,6 +30,7 @@ export const handler = middy(async (event) => {
         if (!fullBooking) return { statusCode: 404, body: JSON.stringify({ message: "Hittades inte" }) };
 
         let warning = null;
+
         // --- 1. SÄKERHETSKONTROLL FÖR CONFIRMED ---
         if (normalizedStatus === "confirmed") {
             const allBookings = await getAllBookings(process.env.TABLE_NAME);
@@ -59,18 +60,21 @@ export const handler = middy(async (event) => {
         let results = { calendar: null, email: null };
 
         switch (normalizedStatus) {
+            case "pending":
             case "confirmed":
-                // TA BORT FÖRFRÅGAN (den gråa)
+                // A. Städa bort eventuellt gammalt event först
                 if (fullBooking.calendarEventId) {
                     await runIntegration("Delete Old Event", deleteBookingCalendarEvent(fullBooking.calendarEventId));
                 }
-                // SKAPA BEKRÄFTELSE (den gröna)
+
+                const isConfirmed = normalizedStatus === "confirmed";
                 const newEvent = await runIntegration(
-                    "Create Confirmed Event",
+                    isConfirmed ? "Create Confirmed Event" : "Create Pending Event",
                     createBookingCalendarEvent({
                         ...fullBooking,
-                        name: `Bokning: ${fullBooking.name}`,
-                        calendarId: process.env.GOOGLE_PUBLIC_CALENDAR_ID,
+                        // Vi lägger till en prefix i titeln så admin ser skillnad direkt
+                        name: isConfirmed ? `Bokning: ${fullBooking.name}` : `Förfrågan: ${fullBooking.name}`,
+                        calendarId: isConfirmed ? process.env.GOOGLE_PUBLIC_CALENDAR_ID : "primary",
                     }),
                 );
 
@@ -78,12 +82,14 @@ export const handler = middy(async (event) => {
                     await saveCalendarEventId(process.env.TABLE_NAME, bookingId, newEvent.id);
                 }
 
-                results.email = await runIntegration("Confirm Email", sendBookingConfirmedToGuest({ ...fullBooking }));
+                // C. Skicka bekräftelsemejl ENDAST om den blev confirmed
+                if (isConfirmed) {
+                    results.email = await runIntegration("Confirm Email", sendBookingConfirmedToGuest({ ...fullBooking }));
+                }
                 break;
 
             case "declined":
             case "cancelled":
-                // STÄDA BORT EVENTET HELT FRÅN KALENDERN
                 if (fullBooking.calendarEventId) {
                     await runIntegration("Delete Event", deleteBookingCalendarEvent(fullBooking.calendarEventId));
                     await saveCalendarEventId(process.env.TABLE_NAME, bookingId, null);
