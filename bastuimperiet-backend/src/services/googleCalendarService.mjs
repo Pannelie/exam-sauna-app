@@ -3,11 +3,6 @@ import { getAccessToken } from "../utils/googleAuthHelper.js";
 const calendarId = process.env.GOOGLE_CALENDAR_ID || "primary";
 const timeZone = process.env.GOOGLE_CALENDAR_TIMEZONE || "Europe/Stockholm";
 
-// function toEventDateTime(dateString, hour) {
-//     // Skapa ISO-sträng med lokal tid (utan extra Z eller dubbla tider)
-//     return `${dateString}T${String(hour).padStart(2, "0")}:00:00`;
-// }
-
 function addDays(dateString, days) {
     const [year, month, day] = dateString.split("-").map(Number);
     const date = new Date(Date.UTC(year, month - 1, day));

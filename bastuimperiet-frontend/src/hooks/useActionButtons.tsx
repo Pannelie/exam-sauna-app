@@ -5,6 +5,7 @@ import type { ApiBookingData } from "../types/bookingTypes";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Tooltip, Stack, CircularProgress } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import * as S from "../components/ActionButtons/ActionButtons.styles";
 
 export const useBookingActions = (onSuccess?: () => void) => {
@@ -12,9 +13,30 @@ export const useBookingActions = (onSuccess?: () => void) => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [pendingBooking, setPendingBooking] = useState<ApiBookingData | null>(null);
     const [dialogMessage, setDialogMessage] = useState("");
+    const [isRestoring, setIsRestoring] = useState(false);
     const [forceMode, setForceMode] = useState(false);
 
+    const executeStatusUpdate = async (id: string, status: BookingStatus, force: boolean = false) => {
+        setIsUpdating(true);
+        try {
+            await updateBookingStatus(id, status, force);
+            onSuccess ? onSuccess() : window.location.reload();
+        } catch (error: any) {
+            if (error?.response?.status === 409 && error?.response?.data?.warning) {
+                setDialogMessage(error.response.data.message + " Vill du fortsätta ändå?");
+                setForceMode(true);
+                setDialogOpen(true);
+                // Vi sparar inte ner ny pendingBooking här eftersom den redan är satt i handleConfirm/Restore
+                return;
+            }
+            console.error(`Kunde inte uppdatera status till ${status}:`, error);
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
     const handleConfirm = async (booking: ApiBookingData, force: boolean = false) => {
+        console.log("HandleConfirm triggad för:", booking.id, "Status:", booking.status);
         const checkInDate = new Date(`${booking.startDate}T15:00:00`);
         const now = new Date();
 
@@ -26,84 +48,64 @@ export const useBookingActions = (onSuccess?: () => void) => {
             setDialogOpen(true);
             return;
         }
-        setIsUpdating(true);
-        try {
-            await updateBookingStatus(booking.id, "confirmed" as BookingStatus, force);
-            onSuccess ? onSuccess() : window.location.reload();
-        } catch (error: any) {
-            // Hantera 409/warning från backend
-            if (error?.response?.status === 409 && error?.response?.data?.warning) {
-                setDialogMessage(error.response.data.message + " Vill du bekräfta ändå?");
-                setPendingBooking(booking);
-                setForceMode(true);
-                setDialogOpen(true);
-                return;
-            }
-            console.error("Kunde inte bekräfta:", error);
-        } finally {
-            setIsUpdating(false);
-        }
+        await executeStatusUpdate(booking.id, "confirmed" as BookingStatus, force);
     };
 
-    const handleDecline = async (id: string) => {
-        setIsUpdating(true);
-        try {
-            await updateBookingStatus(id, "declined" as BookingStatus);
-            onSuccess ? onSuccess() : window.location.reload();
-        } catch (error) {
-            console.error("Kunde inte neka:", error);
-        } finally {
-            setIsUpdating(false);
+    const handleRestore = async (booking: ApiBookingData, force: boolean = false) => {
+        setPendingBooking(booking);
+
+        // Bestäm mål-status baserat på din logik
+        const targetStatus: BookingStatus = booking.status === "declined" ? ("pending" as BookingStatus) : ("confirmed" as BookingStatus);
+
+        const statusText = targetStatus === "pending" ? "väntande" : "bekräftad";
+
+        if (!force) {
+            setDialogMessage(
+                `Vill du återställa denna ${booking.status === "cancelled" ? "avbokade" : "nekade"} bokning till ${statusText}?`,
+            );
+            setForceMode(false);
+            setDialogOpen(true);
+            return;
         }
+
+        await executeStatusUpdate(booking.id, targetStatus, force);
     };
 
-    const handleCancel = async (id: string) => {
-        setIsUpdating(true);
-        try {
-            await updateBookingStatus(id, "cancelled" as BookingStatus);
-            onSuccess ? onSuccess() : window.location.reload();
-        } catch (error) {
-            console.error("Kunde inte avboka:", error);
-        } finally {
-            setIsUpdating(false);
-        }
-    };
+    const handleDecline = async (id: string) => executeStatusUpdate(id, "declined" as BookingStatus);
+    const handleCancel = async (id: string) => executeStatusUpdate(id, "cancelled" as BookingStatus);
 
-    const ActionBtn = ({
-        booking,
-        type,
-        title,
-        label,
-    }: {
+    interface ActionBtnProps {
         booking: ApiBookingData;
-        type: "confirm" | "decline" | "cancelled";
+        type: "confirm" | "decline" | "cancelled" | "restore";
         title: string;
         label?: string;
-    }) => {
+    }
+
+    const ActionBtn = ({ booking, type, title, label }: ActionBtnProps) => {
         const isLoading = isUpdating && pendingBooking?.id === booking.id;
 
+        const getIcon = () => {
+            if (isLoading) return <CircularProgress size={20} color="inherit" />;
+            if (type === "confirm") return <CheckCircleIcon />;
+            if (type === "restore") return <RestartAltIcon />; // Ikon för att "backa" status
+            return <CancelIcon />;
+        };
         return (
             <Tooltip title={title} arrow>
                 <S.ActionButton
-                    actionType={type === "confirm" ? "confirm" : "decline"}
+                    actionType={type === "confirm" || type === "restore" ? "confirm" : "decline"}
                     disabled={isUpdating}
                     onClick={(e) => {
                         e.stopPropagation();
-                        setPendingBooking(booking); // KRITISKT FÖR FORCE
                         if (type === "confirm") handleConfirm(booking);
+                        if (type === "restore") handleRestore(booking);
                         if (type === "decline") handleDecline(String(booking.id));
                         if (type === "cancelled") handleCancel(String(booking.id));
                     }}
                     sx={label ? { width: "auto", px: 2, borderRadius: 2 } : {}}
                 >
                     <Stack direction="row" spacing={1} alignItems="center">
-                        {isLoading ? (
-                            <CircularProgress size={20} color="inherit" />
-                        ) : type === "confirm" ? (
-                            <CheckCircleIcon />
-                        ) : (
-                            <CancelIcon />
-                        )}
+                        {getIcon()}
                         {label && (
                             <Typography variant="button" sx={{ fontWeight: 800 }}>
                                 {label}
@@ -125,11 +127,17 @@ export const useBookingActions = (onSuccess?: () => void) => {
         <ActionBtn booking={booking} type="cancelled" title="Avboka bokning" label={showLabel ? "Avboka bokning" : undefined} />
     );
 
+    const RestoreBtn = ({ booking, showLabel = false }: { booking: ApiBookingData; showLabel?: boolean }) => (
+        <ActionBtn booking={booking} type="restore" title="Återställ bokning" label={showLabel ? "Återställ bokning" : undefined} />
+    );
+
     // Dialog-komponent för bekräftelse och force
     const ConfirmDialog = () => (
         <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-            <DialogTitle>Bekräfta åtgärd</DialogTitle>
-            <DialogContent>{dialogMessage}</DialogContent>
+            <DialogTitle>Bekräfta ändring</DialogTitle>
+            <DialogContent>
+                <Typography>{dialogMessage}</Typography>
+            </DialogContent>
             <DialogActions>
                 <Button onClick={() => setDialogOpen(false)} color="inherit">
                     Avbryt
@@ -138,18 +146,23 @@ export const useBookingActions = (onSuccess?: () => void) => {
                     onClick={async () => {
                         setDialogOpen(false);
                         if (pendingBooking) {
-                            await handleConfirm(pendingBooking, true);
+                            if (pendingBooking.status === "cancelled" || pendingBooking.status === "declined") {
+                                await handleRestore(pendingBooking, true);
+                            } else {
+                                await handleConfirm(pendingBooking, true);
+                            }
                         }
                     }}
                     color="primary"
+                    variant="contained"
                     autoFocus
                     disabled={isUpdating}
                 >
-                    Bekräfta ändå
+                    Verkställ
                 </Button>
             </DialogActions>
         </Dialog>
     );
 
-    return { ConfirmBtn, DeclineBtn, CancelBtn, isUpdating, ConfirmDialog };
+    return { ConfirmBtn, DeclineBtn, CancelBtn, RestoreBtn, isUpdating, ConfirmDialog };
 };

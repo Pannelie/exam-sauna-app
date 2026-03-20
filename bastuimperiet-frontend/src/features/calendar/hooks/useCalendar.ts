@@ -7,7 +7,6 @@ export const useCalendar = () => {
     const [clickedId, setClickedId] = useState<string | null>(null);
     const [hoveredBookingId, setHoveredBookingId] = useState<string | null>(null);
 
-    // En samlad funktion för att hämta data
     const fetchEvents = async (showLoading = false) => {
         if (showLoading) setLoading(true);
         try {
