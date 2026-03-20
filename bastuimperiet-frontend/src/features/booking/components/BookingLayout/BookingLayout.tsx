@@ -4,7 +4,7 @@ import { BookingStepper } from "../BookingStepper/BookingStepper";
 import type { BookingFormData, BookingBase } from "../../../../types/bookingTypes";
 import { useCalendar } from "../../../calendar/hooks/useCalendar";
 import { useBookingStore } from "../../stores/useBookingStore";
-import { ClientCalendar } from "../ClientCalendar/ClientCalendar";
+import { ClientCalendarCustomer } from "../ClientCalendar/ClientCalendarCustomer";
 
 export const BookingLayout = () => {
     const { events, loading } = useCalendar();
@@ -62,7 +62,7 @@ export const BookingLayout = () => {
                 }}
             >
                 {!loading && (
-                    <ClientCalendar
+                    <ClientCalendarCustomer
                         events={events}
                         onDateSelect={handleCalendarSelect}
                         startDate={formData.startDate}

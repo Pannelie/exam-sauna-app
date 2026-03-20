@@ -1,24 +1,22 @@
 import { useEffect, useMemo, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
-import daygridPlugin from "@fullcalendar/daygrid";
+import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import type { EventContentArg } from "@fullcalendar/core";
-import "./clientCalender.css";
+import "./clientCalendarCustomer.css";
 
-// 1. Renderaren - nu använder vi faktiskt eventInfo!
-const renderClientEventContent = (eventInfo: EventContentArg) => {
-    // Vi kollar om detta specifika segment är början eller slutet på bokningen
-    const isStart = eventInfo.isStart;
-    const isEnd = eventInfo.isEnd;
-
+// Render only confirmed bookings, light red, partial day (15:00-11:00)
+const renderCustomerEventContent = (eventInfo: EventContentArg) => {
+    // Only show a bar for confirmed bookings
     return (
-        <div className={`client-booked-item ${isStart ? "fc-event-start" : ""} ${isEnd ? "fc-event-end" : ""}`}>
-            <b className="event-title">Bokat</b>
+        <div className="customer-booked-bar">
+            <p className="customer-booked-label">Bokat</p>
         </div>
     );
 };
 
-export const ClientCalendar = ({ events, onDateSelect, startDate, endDate }: any) => {
+export const ClientCalendarCustomer = ({ events, onDateSelect, startDate, endDate }: any) => {
+    console.log("[ClientCalendarCustomer] events:", events);
     const calendarRef = useRef<FullCalendar>(null);
 
     const handleDateClick = (arg: any) => {
@@ -48,23 +46,22 @@ export const ClientCalendar = ({ events, onDateSelect, startDate, endDate }: any
         }
     }, [startDate, endDate]);
 
+    // Only show confirmed bookings, and set time for partial day (15:00-11:00 next day)
     const memoEvents = useMemo(() => {
         if (!events || events.length === 0) return [];
-        return events.map((e: any) => ({
-            id: e.id,
-            // VIKTIGT: Mappa dina fält startDate/endDate till start/end för FullCalendar
-            start: e.startDate,
-            end: e.endDate,
-            allDay: true, // Krävs för sammanhängande band
-            display: "block",
-        }));
+        return events
+            .filter((e: any) => typeof e.title === "string" && e.title.startsWith("Bokning:"))
+            .map((e: any) => ({
+                ...e,
+                display: "block",
+            }));
     }, [events]);
 
     return (
         <div className="calendar-container">
             <FullCalendar
                 ref={calendarRef}
-                plugins={[daygridPlugin, interactionPlugin]}
+                plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
                 locale="sv"
                 events={memoEvents}
@@ -72,8 +69,9 @@ export const ClientCalendar = ({ events, onDateSelect, startDate, endDate }: any
                 selectable={true}
                 unselectAuto={false}
                 dateClick={handleDateClick}
-                eventContent={renderClientEventContent} // Använder vår funktion ovan
+                eventContent={renderCustomerEventContent}
                 eventDisplay="block"
+                eventClassNames={() => ["customer-booked-event"]}
             />
         </div>
     );

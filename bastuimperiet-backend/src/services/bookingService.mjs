@@ -72,10 +72,14 @@ export async function postBooking(tableName, bookingData) {
     } = bookingData;
 
     // Spara startDate och endDate som bara datum (YYYY-MM-DD)
-    const bookingStartDate = startDate.split("T")[0];
-    const bookingEndDate = endDate.split("T")[0];
+    const baseStart = startDate.split("T")[0];
+    const baseEnd = endDate.split("T")[0];
 
-    if (hasBookingOverlap(startDate, endDate, allBookings)) {
+    // 2. Bygg de korrekta tidssträngarna manuellt
+    const finalStart = `${baseStart}T15:00:00`;
+    const finalEnd = `${baseEnd}T11:00:00`;
+
+    if (hasBookingOverlap(finalStart, finalEnd, allBookings)) {
         const error = new Error("Datumet är redan bokat");
         error.code = 409;
         throw error;
@@ -111,8 +115,8 @@ export async function postBooking(tableName, bookingData) {
         postalCode,
         city,
 
-        startDate: bookingStartDate,
-        endDate: bookingEndDate,
+        startDate: finalStart,
+        endDate: finalEnd,
 
         scent,
         cleaning,
@@ -190,8 +194,8 @@ export function hasBookingOverlap(startDate, endDate, allBookings, currentBookin
         // Vi bryr oss bara om bokningar som är "confirmed"
         if (booking.status !== "confirmed") return false;
 
-        const existingStart = new Date(`${booking.startDate}T15:00:00`).getTime();
-        const existingEnd = new Date(`${booking.endDate}T11:00:00`).getTime();
+        const existingStart = new Date(booking.startDate).getTime();
+        const existingEnd = new Date(booking.endDate).getTime();
 
         // Standard krock-logik: (StartA < EndB) && (EndA > StartB)
         return newStart < existingEnd && newEnd > existingStart;

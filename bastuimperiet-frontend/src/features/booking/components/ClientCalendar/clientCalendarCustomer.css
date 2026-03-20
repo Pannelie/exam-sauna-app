@@ -1,0 +1,58 @@
+/* --- 1. Uppdaterad styling för bokade datum (Röda bandet) --- */
+.customer-booked-bar {
+    /* Ta bort marginalerna som skapade gapet */
+    margin: 0 !important;
+
+    color: #b91c1c !important;
+    border-radius: 8px;
+    min-height: 12px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    border: none;
+    padding: 0;
+
+    /* Grundfärg om den täcker hela dagen */
+    background: #ffe4e6 !important;
+}
+
+/* Om det är incheckningsdag (Start): Vänster halva genomskinlig, höger halva röd */
+.fc-event-start .customer-booked-bar {
+    background: linear-gradient(90deg, transparent 50%, #ffe4e6 50%) !important;
+}
+
+/* Om det är utcheckningsdag (Slut): Vänster halva röd, höger halva genomskinlig */
+.fc-event-end .customer-booked-bar {
+    background: linear-gradient(90deg, #ffe4e6 50%, transparent 50%) !important;
+}
+
+/* --- 2. Uppdaterad styling för ditt val (Gula bandet) --- */
+.fc-highlight {
+    /* Ta bort marginalerna */
+    margin: 0 !important;
+
+    border: none !important;
+    border-radius: 8px !important;
+    height: 16px !important;
+    margin-top: 2px !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+
+    /* Grundfärg (gul) */
+    background: rgba(233, 184, 91, 0.3) !important;
+}
+
+/* Samma gradient-logik för highlighter vid in/utcheckning på samma dag */
+.fc-daygrid-day-selected:not(.fc-event-start):not(.fc-event-end) .fc-highlight {
+    background: rgba(233, 184, 91, 0.3) !important;
+}
+
+.fc-event-start .fc-highlight {
+    background: linear-gradient(90deg, transparent 50%, rgba(233, 184, 91, 0.3) 50%) !important;
+}
+
+.fc-event-end .fc-highlight {
+    background: linear-gradient(90deg, rgba(233, 184, 91, 0.3) 50%, transparent 50%) !important;
+}

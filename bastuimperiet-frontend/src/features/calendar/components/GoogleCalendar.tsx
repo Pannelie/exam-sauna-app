@@ -13,10 +13,10 @@ const renderEventContent = (eventInfo: EventContentArg) => {
     const isPending = title.toLowerCase().includes("förfrågan");
     const isConfirmed = title.toLowerCase().includes("bokning");
     let statusClass = isPending ? "is-pending" : isConfirmed ? "is-confirmed" : "is-neutral";
-
+    console.log("[renderEventContent] eventInfo:", eventInfo, "statusClass:", statusClass);
     return (
         <div className={`custom-event-card ${statusClass} ${bId ? `id-${bId}` : ""}`}>
-            <span className="event-time">{eventInfo.timeText}</span>
+            <span className="event-time">{eventInfo.timeText} </span>
             <b className="event-title">{title.replace("Förfrågan: ", "").replace("Bokning: ", "")}</b>
         </div>
     );
