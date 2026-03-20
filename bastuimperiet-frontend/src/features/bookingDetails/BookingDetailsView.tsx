@@ -8,8 +8,27 @@ import { useBookingActions } from "../../hooks/useActionButtons";
 
 export const BookingDetailsView = () => {
     const { id } = useParams<{ id: string }>();
-    const { bookings, refreshData } = useOutletContext<{ bookings: ApiBookingData[]; refreshData: () => void }>();
-    const { ConfirmBtn, DeclineBtn, CancelBtn } = useBookingActions(refreshData);
+    const { bookings, refreshData, refreshCalendar } = useOutletContext<{
+        bookings: ApiBookingData[];
+        refreshData: () => Promise<void>;
+        refreshCalendar: () => Promise<void>;
+    }>();
+
+    const handleSuccess = async () => {
+        try {
+            await refreshData(); // Nu har await effekt!
+
+            // Vi väntar 800ms för att Google ska hinna med
+            setTimeout(async () => {
+                await refreshCalendar();
+                console.log("Kalender synkad");
+            }, 800);
+        } catch (error) {
+            console.error("Misslyckades att uppdatera vyerna:", error);
+        }
+    };
+
+    const { ConfirmBtn, DeclineBtn, CancelBtn, RestoreBtn, ConfirmDialog } = useBookingActions(handleSuccess);
 
     const booking = bookings.find((b) => b.id === id);
 
@@ -126,7 +145,18 @@ export const BookingDetailsView = () => {
                         <DeclineBtn booking={booking} />
                     </>
                 )}
-                {booking.status === BookingStatus.Confirmed && <CancelBtn booking={booking} />}
+                {booking.status === BookingStatus.Confirmed && (
+                    <>
+                        <CancelBtn booking={booking} />
+                        <ConfirmDialog />
+                    </>
+                )}
+                {(booking.status === BookingStatus.Cancelled || booking.status === BookingStatus.Declined) && (
+                    <>
+                        <RestoreBtn booking={booking} showLabel={true} />
+                        <ConfirmDialog />
+                    </>
+                )}
             </Stack>
         </Box>
     );
