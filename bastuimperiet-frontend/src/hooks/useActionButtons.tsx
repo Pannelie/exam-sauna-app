@@ -7,13 +7,13 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import * as S from "../components/ActionButtons/ActionButtons.styles";
+import { TooltipComponent } from "../components/Tooltip/Tooltip";
 
 export const useBookingActions = (onSuccess?: () => void) => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [pendingBooking, setPendingBooking] = useState<ApiBookingData | null>(null);
     const [dialogMessage, setDialogMessage] = useState("");
-    const [isRestoring, setIsRestoring] = useState(false);
     const [forceMode, setForceMode] = useState(false);
 
     const executeStatusUpdate = async (id: string, status: BookingStatus, force: boolean = false) => {
@@ -26,7 +26,6 @@ export const useBookingActions = (onSuccess?: () => void) => {
                 setDialogMessage(error.response.data.message + " Vill du fortsätta ändå?");
                 setForceMode(true);
                 setDialogOpen(true);
-                // Vi sparar inte ner ny pendingBooking här eftersom den redan är satt i handleConfirm/Restore
                 return;
             }
             console.error(`Kunde inte uppdatera status till ${status}:`, error);
@@ -54,7 +53,6 @@ export const useBookingActions = (onSuccess?: () => void) => {
     const handleRestore = async (booking: ApiBookingData, force: boolean = false) => {
         setPendingBooking(booking);
 
-        // Bestäm mål-status baserat på din logik
         const targetStatus: BookingStatus = booking.status === "declined" ? ("pending" as BookingStatus) : ("confirmed" as BookingStatus);
 
         const statusText = targetStatus === "pending" ? "väntande" : "bekräftad";
@@ -91,7 +89,7 @@ export const useBookingActions = (onSuccess?: () => void) => {
             return <CancelIcon />;
         };
         return (
-            <Tooltip title={title} arrow>
+            <TooltipComponent title={title}>
                 <S.ActionButton
                     actionType={type === "confirm" || type === "restore" ? "confirm" : "decline"}
                     disabled={isUpdating}
@@ -113,7 +111,7 @@ export const useBookingActions = (onSuccess?: () => void) => {
                         )}
                     </Stack>
                 </S.ActionButton>
-            </Tooltip>
+            </TooltipComponent>
         );
     };
 

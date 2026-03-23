@@ -186,8 +186,13 @@ export async function saveCalendarEventId(tableName, bookingId, calendarEventId)
 
 export function hasBookingOverlap(startDate, endDate, allBookings, currentBookingId = null) {
     console.log("Kollar överlapp med start:", startDate, "och end:", endDate);
-    const newStart = new Date(`${startDate}T15:00:00`).getTime();
-    const newEnd = new Date(`${endDate}T11:00:00`).getTime();
+    const newStart = new Date(startDate).getTime();
+    const newEnd = new Date(endDate).getTime();
+
+    if (isNaN(newStart) || isNaN(newEnd)) {
+        console.error("DEBUG: Ogiltiga datum i hasBookingOverlap:", { startDate, endDate });
+        return false;
+    }
 
     return allBookings.some((booking) => {
         if (currentBookingId && booking.id === currentBookingId) return false;
@@ -196,7 +201,7 @@ export function hasBookingOverlap(startDate, endDate, allBookings, currentBookin
 
         const existingStart = new Date(booking.startDate).getTime();
         const existingEnd = new Date(booking.endDate).getTime();
-
+        if (isNaN(existingStart) || isNaN(existingEnd)) return false;
         // Standard krock-logik: (StartA < EndB) && (EndA > StartB)
         return newStart < existingEnd && newEnd > existingStart;
     });
@@ -204,8 +209,11 @@ export function hasBookingOverlap(startDate, endDate, allBookings, currentBookin
 
 export function validateBookingRequest(data, allBookings) {
     const now = new Date();
-    const start = new Date(`${data.startDate}T15:00:00`);
-    const end = new Date(`${data.endDate}T11:00:00`);
+    const cleanStartStr = data.startDate.split("T")[0];
+    const cleanEndStr = data.endDate.split("T")[0];
+
+    const start = new Date(`${cleanStartStr}T15:00:00`);
+    const end = new Date(`${cleanEndStr}T11:00:00`);
 
     // Steg A: Kolla dåtid
     if (start < now) {
@@ -218,7 +226,7 @@ export function validateBookingRequest(data, allBookings) {
     }
 
     // Steg C: Kolla krockar (återanvänder funktionen ovan)
-    if (hasBookingOverlap(data.startDate, data.endDate, allBookings)) {
+    if (hasBookingOverlap(start.toISOString(), end.toISOString(), allBookings)) {
         return { isValid: false, message: "Datumen är redan bokade", status: 409 };
     }
 
