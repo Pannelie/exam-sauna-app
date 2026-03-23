@@ -13,7 +13,6 @@ export const getAllBookings = async (): Promise<ApiBookingData[]> => {
             },
         });
         const data: ApiBookingData[] = response.data;
-        console.log("Hämtade bokningar:", data);
         return data;
     } catch (error) {
         console.error(error);

@@ -1,6 +1,11 @@
 import { styled, Paper, Box, Typography } from "@mui/material";
 
-export const StyledPaper = styled(Paper)<{ isActive: boolean; statusColor: string }>`
+const slotProps = ["isActive", "statusColor"];
+
+export const StyledPaper = styled(Paper, {
+    // Only forward props to the DOM if they are NOT in our custom list
+    shouldForwardProp: (prop) => !slotProps.includes(prop as string),
+})<{ isActive: boolean; statusColor: string }>`
     padding: 16px;
     margin-bottom: 8px;
     cursor: pointer;
@@ -17,14 +22,6 @@ export const StyledPaper = styled(Paper)<{ isActive: boolean; statusColor: strin
     }
 `;
 
-// export const TopIndicator = styled(Box)<{ statusColor: string }>(({ statusColor }) => ({
-//     width: "40px",
-//     height: "4px",
-//     borderRadius: "2px",
-//     backgroundColor: statusColor,
-//     marginBottom: "8px",
-// }));
-
 export const ContentBox = styled(Box)`
     display: flex;
     flex-direction: column;
@@ -39,7 +36,9 @@ export const ActionWrapper = styled(Box)({
     width: "100%",
 });
 
-export const StatusLabel = styled(Typography)<{ statusColor: string }>(({ statusColor }) => ({
+export const StatusLabel = styled(Typography, {
+    shouldForwardProp: (prop) => !slotProps.includes(prop as string),
+})<{ statusColor: string }>(({ statusColor }) => ({
     fontWeight: 900,
     color: statusColor,
     textTransform: "uppercase",
