@@ -72,10 +72,14 @@ export async function postBooking(tableName, bookingData) {
     } = bookingData;
 
     // Spara startDate och endDate som bara datum (YYYY-MM-DD)
-    const bookingStartDate = startDate.split("T")[0];
-    const bookingEndDate = endDate.split("T")[0];
+    const baseStart = startDate.split("T")[0];
+    const baseEnd = endDate.split("T")[0];
 
-    if (hasBookingOverlap(startDate, endDate, allBookings)) {
+    // 2. Bygg de korrekta tidssträngarna manuellt
+    const finalStart = `${baseStart}T15:00:00`;
+    const finalEnd = `${baseEnd}T11:00:00`;
+
+    if (hasBookingOverlap(finalStart, finalEnd, allBookings)) {
         const error = new Error("Datumet är redan bokat");
         error.code = 409;
         throw error;
@@ -111,8 +115,8 @@ export async function postBooking(tableName, bookingData) {
         postalCode,
         city,
 
-        startDate: bookingStartDate,
-        endDate: bookingEndDate,
+        startDate: finalStart,
+        endDate: finalEnd,
 
         scent,
         cleaning,
@@ -182,17 +186,22 @@ export async function saveCalendarEventId(tableName, bookingId, calendarEventId)
 
 export function hasBookingOverlap(startDate, endDate, allBookings, currentBookingId = null) {
     console.log("Kollar överlapp med start:", startDate, "och end:", endDate);
-    const newStart = new Date(`${startDate}T15:00:00`).getTime();
-    const newEnd = new Date(`${endDate}T11:00:00`).getTime();
+    const newStart = new Date(startDate).getTime();
+    const newEnd = new Date(endDate).getTime();
+
+    if (isNaN(newStart) || isNaN(newEnd)) {
+        console.error("DEBUG: Ogiltiga datum i hasBookingOverlap:", { startDate, endDate });
+        return false;
+    }
 
     return allBookings.some((booking) => {
         if (currentBookingId && booking.id === currentBookingId) return false;
         // Vi bryr oss bara om bokningar som är "confirmed"
         if (booking.status !== "confirmed") return false;
 
-        const existingStart = new Date(`${booking.startDate}T15:00:00`).getTime();
-        const existingEnd = new Date(`${booking.endDate}T11:00:00`).getTime();
-
+        const existingStart = new Date(booking.startDate).getTime();
+        const existingEnd = new Date(booking.endDate).getTime();
+        if (isNaN(existingStart) || isNaN(existingEnd)) return false;
         // Standard krock-logik: (StartA < EndB) && (EndA > StartB)
         return newStart < existingEnd && newEnd > existingStart;
     });
@@ -200,8 +209,11 @@ export function hasBookingOverlap(startDate, endDate, allBookings, currentBookin
 
 export function validateBookingRequest(data, allBookings) {
     const now = new Date();
-    const start = new Date(`${data.startDate}T15:00:00`);
-    const end = new Date(`${data.endDate}T11:00:00`);
+    const cleanStartStr = data.startDate.split("T")[0];
+    const cleanEndStr = data.endDate.split("T")[0];
+
+    const start = new Date(`${cleanStartStr}T15:00:00`);
+    const end = new Date(`${cleanEndStr}T11:00:00`);
 
     // Steg A: Kolla dåtid
     if (start < now) {
@@ -214,7 +226,7 @@ export function validateBookingRequest(data, allBookings) {
     }
 
     // Steg C: Kolla krockar (återanvänder funktionen ovan)
-    if (hasBookingOverlap(data.startDate, data.endDate, allBookings)) {
+    if (hasBookingOverlap(start.toISOString(), end.toISOString(), allBookings)) {
         return { isValid: false, message: "Datumen är redan bokade", status: 409 };
     }
 

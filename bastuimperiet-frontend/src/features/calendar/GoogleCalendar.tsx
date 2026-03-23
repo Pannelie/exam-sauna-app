@@ -2,30 +2,13 @@ import { useEffect, useCallback, useMemo } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import type { EventContentArg } from "@fullcalendar/core";
 import { useNavigate } from "react-router-dom";
+import { renderEventContent } from "./components/RenderEventContent/RenderEventContent";
 import "./googleCalendar.css";
-
-// 1. Flytta ut denna. Notera att vi lägger till id-klassen här så vi kan hitta elementet senare.
-const renderEventContent = (eventInfo: EventContentArg) => {
-    const title = eventInfo.event.title || "";
-    const bId = eventInfo.event.extendedProps?.bookingId;
-    const isPending = title.toLowerCase().includes("förfrågan");
-    const isConfirmed = title.toLowerCase().includes("bokning");
-    let statusClass = isPending ? "is-pending" : isConfirmed ? "is-confirmed" : "is-neutral";
-
-    return (
-        <div className={`custom-event-card ${statusClass} ${bId ? `id-${bId}` : ""}`}>
-            <span className="event-time">{eventInfo.timeText}</span>
-            <b className="event-title">{title.replace("Förfrågan: ", "").replace("Bokning: ", "")}</b>
-        </div>
-    );
-};
 
 export const GoogleCalendar = ({ events, loading, clickedId, hoveredBookingId }: any) => {
     const navigate = useNavigate();
 
-    // 2. STABILISERA EVENT-CLICK
     const handleEventClick = useCallback(
         (info: any) => {
             const bId = info.event.extendedProps?.bookingId;
@@ -53,7 +36,7 @@ export const GoogleCalendar = ({ events, loading, clickedId, hoveredBookingId }:
                 el.classList.add("is-selected");
             });
         }
-    }, [hoveredBookingId, clickedId]); // Körs varje gång dessa ändras
+    }, [hoveredBookingId, clickedId]);
 
     const memoEvents = useMemo(() => events, [events]);
 

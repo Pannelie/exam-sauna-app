@@ -30,3 +30,12 @@ export const StatusIndicator = ({ label, active }: { label: string; active: bool
         </Typography>
     </Stack>
 );
+
+export const formatDateTime = (dateString: string) => {
+    return new Date(dateString).toLocaleString("sv-SE", {
+        day: "numeric",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+};
