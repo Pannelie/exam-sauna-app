@@ -2,34 +2,46 @@ import { useEffect, useMemo, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import type { EventContentArg } from "@fullcalendar/core";
+import { renderCustomerEventContent } from "../RenderCustomEventContent/RenderCustomEventContent";
 import "./clientCalendarCustomer.css";
-
-// Render only confirmed bookings, light red, partial day (15:00-11:00)
-const renderCustomerEventContent = (eventInfo: EventContentArg) => {
-    // Only show a bar for confirmed bookings
-    return (
-        <div className="customer-booked-bar">
-            <p className="customer-booked-label">Bokat</p>
-        </div>
-    );
-};
 
 export const ClientCalendarCustomer = ({ events, onDateSelect, startDate, endDate }: any) => {
     console.log("[ClientCalendarCustomer] events:", events);
     const calendarRef = useRef<FullCalendar>(null);
 
     const handleDateClick = (arg: any) => {
-        const clickedDate = arg.dateStr;
+        const clickedDate = arg.dateStr; // "YYYY-MM-DD"
+        const calendarApi = arg.view.calendar;
+        calendarApi.unselect();
+
+        // Hjälpfunktion för att få fram "dagen efter" som sträng
+        const getNextDay = (dateStr: string) => {
+            const d = new Date(dateStr);
+            d.setDate(d.getDate() + 1);
+            return d.toISOString().split("T")[0];
+        };
+
+        // Fall 1: Inget valt ännu, eller vi vill börja om (start & slut redan satta)
         if (!startDate || (startDate && endDate)) {
-            onDateSelect(clickedDate, "");
-        } else {
+            const nextDay = getNextDay(clickedDate);
+            // Vi sätter start till klickat datum och slut till nästa dag som default
+            onDateSelect(clickedDate, nextDay);
+        }
+        // Fall 2: Vi har ett startdatum och klickar på ett senare datum
+        else {
             const startTs = new Date(startDate).getTime();
             const clickedTs = new Date(clickedDate).getTime();
-            if (clickedTs < startTs) {
-                onDateSelect(clickedDate, "");
-            } else {
+
+            if (clickedTs > startTs) {
+                // Användaren väljer ett specifikt slutdatum (längre än 1 natt)
                 onDateSelect(startDate, clickedDate);
+            } else if (clickedDate === startDate) {
+                // Klick på samma dag igen -> rensa
+                onDateSelect("", "");
+            } else {
+                // Klick före startdatum -> sätt som nytt startdatum + 1 natt
+                const nextDay = getNextDay(clickedDate);
+                onDateSelect(clickedDate, nextDay);
             }
         }
     };
@@ -64,6 +76,19 @@ export const ClientCalendarCustomer = ({ events, onDateSelect, startDate, endDat
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
                 locale="sv"
+                buttonText={{
+                    today: "Idag",
+                    month: "Månad",
+                    week: "Vecka",
+                    day: "Dag",
+                    list: "Lista",
+                }}
+                buttonHints={{
+                    prev: "Föregående månad",
+                    next: "Nästa månad",
+                    today: "Gå till idag",
+                }}
+                firstDay={1}
                 events={memoEvents}
                 height="auto"
                 selectable={true}
