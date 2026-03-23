@@ -2,7 +2,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 import { Typography, Box, Stack, Divider, Paper } from "@mui/material";
 import { BookingStatus, type ApiBookingData } from "../../types/bookingTypes";
 import { Today, Person, FmdGood } from "@mui/icons-material";
-import { getStatusChip, StatusIndicator } from "./utils/bookingDetailHelpers";
+import { getStatusChip, StatusIndicator, formatDateTime } from "./utils/bookingDetailHelpers";
 import { getBookingChips } from "./components/BookingChips/BookingChips";
 import { useBookingActions } from "../../hooks/useActionButtons";
 
@@ -16,9 +16,8 @@ export const BookingDetailsView = () => {
 
     const handleSuccess = async () => {
         try {
-            await refreshData(); // Nu har await effekt!
+            await refreshData();
 
-            // Vi väntar 800ms för att Google ska hinna med
             setTimeout(async () => {
                 await refreshCalendar();
                 console.log("Kalender synkad");
@@ -65,7 +64,7 @@ export const BookingDetailsView = () => {
             <Stack direction="row" spacing={1} alignItems="center" mb={1}>
                 <Today fontSize="small" color="disabled" />
                 <Typography variant="body2" fontSize={16} fontWeight="600">
-                    {booking.startDate} — {booking.endDate}
+                    {formatDateTime(booking.startDate)} — {formatDateTime(booking.endDate)}
                 </Typography>
             </Stack>
 
@@ -98,11 +97,11 @@ export const BookingDetailsView = () => {
                 </Typography>
             </Box>
 
-            {/* -------------------------------------HÖGER: Tillval -------------------------------------- */}
+            {/* -------------------------------------Tillval -------------------------------------- */}
             <Box
                 sx={{
                     display: "flex",
-                    flexWrap: "wrap", // Detta gör att de hoppar ner på nästa rad
+                    flexWrap: "wrap",
                     gap: 1,
                 }}
             >
@@ -115,7 +114,7 @@ export const BookingDetailsView = () => {
                 )}
             </Box>
 
-            {/* Sektion 3: Integrationsstatus - visas endast om bokningen inte är väntande */}
+            {/* Integrationsstatus - visas endast om bokningen inte är väntande */}
             {booking.status !== BookingStatus.Pending && (
                 <>
                     <Divider />

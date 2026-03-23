@@ -1,0 +1,74 @@
+/* -------------------  KALENDER LAYOUT & RAMVERK (Neutral bas) ------------------- */
+.fc {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee !important;
+}
+
+/* Rutnät & Kantlinjer */
+.fc-theme-standard td,
+.fc-theme-standard th {
+    border-color: #f0f0f0 !important;
+}
+
+/* Container-nivå för händelser (Gör FullCalendars standard-divar osynliga) */
+.fc-daygrid-event,
+.fc-v-event,
+.fc-h-event {
+    background: transparent !important;
+    border: none !important;
+    display: block !important;
+}
+
+.calendar-container,
+.fc-event {
+    cursor: pointer !important;
+}
+
+.fc-event:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* -------------------  TYPOGRAFI & DATUM ------------------- */
+.fc .fc-toolbar-title {
+    font-family: var(--font-secondary);
+    color: var(--dark);
+    font-size: 1.4rem !important;
+}
+
+/* Veckodagar */
+.fc th {
+    background: #fdfdfd;
+    color: #666;
+    font-family: var(--font-accent);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    padding: 12px 0 !important;
+}
+
+/* Dagssiffror */
+.fc .fc-daygrid-day-number {
+    font-family: var(--font-primary);
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* -------------------- NAVIGATION & KNAPPAR---------------------*/
+.fc .fc-button {
+    background-color: transparent !important;
+    border: 1px solid #e5e7eb !important;
+    color: #374151 !important;
+    font-family: var(--font-accent) !important;
+    font-size: 0.8rem !important;
+}
+
+/* Aktiva knappar & Tryck-state */
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+    background-color: var(--yellow) !important;
+    color: white !important;
+    border-color: var(--yellow) !important;
+}

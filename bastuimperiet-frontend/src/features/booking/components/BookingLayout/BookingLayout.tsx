@@ -4,7 +4,7 @@ import { BookingStepper } from "../BookingStepper/BookingStepper";
 import type { BookingFormData, BookingBase } from "../../../../types/bookingTypes";
 import { useCalendar } from "../../../calendar/hooks/useCalendar";
 import { useBookingStore } from "../../stores/useBookingStore";
-import { ClientCalendarCustomer } from "../ClientCalendar/ClientCalendarCustomer";
+import { ClientCalendarCustomer } from "../ClientCalendar/ClientCalendar";
 
 export const BookingLayout = () => {
     const { events, loading } = useCalendar();
@@ -42,8 +42,8 @@ export const BookingLayout = () => {
     };
 
     const resetForm = () => {
-        setFormData(initialFormData); // Se till att initialFormData är tillgänglig här
-        resetStore(); // Från useBookingStore
+        setFormData(initialFormData);
+        resetStore();
     };
     return (
         <section className="booking_layout">

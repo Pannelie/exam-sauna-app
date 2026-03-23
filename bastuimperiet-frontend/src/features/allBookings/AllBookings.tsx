@@ -7,7 +7,7 @@ import { Outlet, useParams, useNavigate } from "react-router-dom";
 import * as S from "./AllBookings.styles";
 import { useBookings } from "./hooks/useBookings";
 import { ViewSwitcher } from "./components/ViewSwitcher/ViewSwitcher";
-import { GoogleCalendar } from "../calendar/components/GoogleCalendar";
+import { GoogleCalendar } from "../calendar/GoogleCalendar";
 import { useCalendar } from "../calendar/hooks/useCalendar";
 
 export default function AllBookings() {

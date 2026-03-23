@@ -1,79 +1,86 @@
 import { useEffect, useMemo, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
-import daygridPlugin from "@fullcalendar/daygrid";
+import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import type { EventContentArg } from "@fullcalendar/core";
-import "./clientCalender.css";
+import { toDateStr, getNextDay, calculateBlockedDates, hasOverlap } from "../../utils/calendarutils";
+import "./clientCalendar.css";
 
-// 1. Renderaren - nu använder vi faktiskt eventInfo!
-const renderClientEventContent = (eventInfo: EventContentArg) => {
-    // Vi kollar om detta specifika segment är början eller slutet på bokningen
-    const isStart = eventInfo.isStart;
-    const isEnd = eventInfo.isEnd;
-
-    return (
-        <div className={`client-booked-item ${isStart ? "fc-event-start" : ""} ${isEnd ? "fc-event-end" : ""}`}>
-            <b className="event-title">Bokat</b>
-        </div>
-    );
-};
-
-export const ClientCalendar = ({ events, onDateSelect, startDate, endDate }: any) => {
+export const ClientCalendarCustomer = ({ events, onDateSelect, startDate, endDate }: any) => {
     const calendarRef = useRef<FullCalendar>(null);
+
+    const blockedDates = useMemo(() => {
+        return calculateBlockedDates(events);
+    }, [events]);
 
     const handleDateClick = (arg: any) => {
         const clickedDate = arg.dateStr;
+
+        if (blockedDates.has(clickedDate)) return;
+
+        // Om inget startdatum finns ELLER om vi börjar om en ny bokning
         if (!startDate || (startDate && endDate)) {
-            onDateSelect(clickedDate, "");
-        } else {
-            const startTs = new Date(startDate).getTime();
-            const clickedTs = new Date(clickedDate).getTime();
-            if (clickedTs < startTs) {
-                onDateSelect(clickedDate, "");
+            onDateSelect(`${clickedDate} 15:00`, "");
+        }
+        // Om vi har ett startdatum och väntar på slutdatum
+        else if (startDate && !endDate) {
+            const startDayStr = toDateStr(startDate);
+
+            if (clickedDate > startDayStr) {
+                // Använd helper för att kolla krockar i intervallet
+                if (hasOverlap(startDayStr, clickedDate, blockedDates)) {
+                    onDateSelect(`${clickedDate} 15:00`, "");
+                } else {
+                    onDateSelect(startDate, `${clickedDate} 11:00`);
+                }
+            } else if (clickedDate < startDayStr) {
+                onDateSelect(`${clickedDate} 15:00`, "");
             } else {
-                onDateSelect(startDate, clickedDate);
+                onDateSelect("", "");
             }
         }
     };
 
     useEffect(() => {
-        const calendarApi = calendarRef.current?.getApi();
-        if (!calendarApi) return;
-        calendarApi.unselect();
+        const api = calendarRef.current?.getApi();
+        if (!api) return;
+
+        api.unselect();
+
         if (startDate) {
-            const endRef = endDate ? new Date(endDate) : new Date(startDate);
-            const visualEnd = new Date(endRef);
-            visualEnd.setDate(visualEnd.getDate() + 1);
-            calendarApi.select(startDate, visualEnd.toISOString().split("T")[0]);
+            const sDay = toDateStr(startDate);
+            if (endDate) {
+                api.select(sDay, getNextDay(toDateStr(endDate)));
+            } else {
+                api.select(sDay, getNextDay(sDay));
+            }
         }
     }, [startDate, endDate]);
-
-    const memoEvents = useMemo(() => {
-        if (!events || events.length === 0) return [];
-        return events.map((e: any) => ({
-            id: e.id,
-            // VIKTIGT: Mappa dina fält startDate/endDate till start/end för FullCalendar
-            start: e.startDate,
-            end: e.endDate,
-            allDay: true, // Krävs för sammanhängande band
-            display: "block",
-        }));
-    }, [events]);
 
     return (
         <div className="calendar-container">
             <FullCalendar
                 ref={calendarRef}
-                plugins={[daygridPlugin, interactionPlugin]}
+                plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
                 locale="sv"
-                events={memoEvents}
+                firstDay={1}
                 height="auto"
                 selectable={true}
                 unselectAuto={false}
+                headerToolbar={{ left: "prev,next today", center: "title", right: "" }}
+                // RÖDA DAGAR + TOOLTIP
+                dayCellDidMount={(arg) => {
+                    const dateStr = toDateStr(arg.date);
+                    if (blockedDates.has(dateStr)) {
+                        arg.el.style.backgroundColor = "#ffcccc";
+                        arg.el.style.cursor = "not-allowed";
+                        arg.el.setAttribute("title", "Bokad");
+                    }
+                }}
+                // SPÄRR: Hindra markering över blockerade datum
+                selectAllow={(selectInfo) => !blockedDates.has(toDateStr(selectInfo.start))}
                 dateClick={handleDateClick}
-                eventContent={renderClientEventContent} // Använder vår funktion ovan
-                eventDisplay="block"
+                events={[]}
             />
         </div>
     );
