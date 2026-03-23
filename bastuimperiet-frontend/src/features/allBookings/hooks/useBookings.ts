@@ -1,38 +1,51 @@
 import { useState } from "react";
-import type { ApiBookingData } from "../../../types/bookingTypes";
 import { useEffect, useMemo } from "react";
-import { getAllBookings } from "../services/allBookingsService";
-import { filterBookingsByTab } from "../utils/bookingHelpers";
+import { useBookingListStore } from "../../../stores/useBookingListStore";
+// import { useCalendar } from "../../calendar/hooks/useCalendar";
 
 export function useBookings() {
-    const [bookings, setBookings] = useState<ApiBookingData[]>([]);
-    const [loading, setLoading] = useState(true);
+    // Global data från Zustand
+    const { bookings, loading, selectedBooking, setSelectedBooking, fetchBookings } = useBookingListStore();
+    // const { refreshCalendar } = useCalendar();
+    // Lokal UI-state (behålls här!)
     const [tabIndex, setTabIndex] = useState(0);
     const [searchTerm, setSearchTerm] = useState("");
 
-    const refreshData = async () => {
-        try {
-            const data = await getAllBookings();
-            setBookings(data);
-        } catch (error) {
-            console.error("Misslyckades:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const statusMap = useMemo(() => ["pending", "confirmed", "declined", "cancelled", null], []);
+    const currentStatus = statusMap[tabIndex];
 
-    // Hämta vid första renderingen
+    // 1. Vanlig fetch när vi byter flik (visar loading)
     useEffect(() => {
-        refreshData();
-    }, []);
+        fetchBookings(currentStatus);
+    }, [currentStatus, fetchBookings]);
 
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            // Här tvingar vi den att använda flikens status!
+            await fetchBookings(currentStatus, true);
+        }, 60000);
+
+        return () => clearInterval(interval);
+    }, [currentStatus, fetchBookings]);
+
+    // Söklogiken stannar här
     const filteredBookings = useMemo(() => {
-        const tabFiltered = filterBookingsByTab(bookings, tabIndex);
-        if (!searchTerm) return tabFiltered;
-        return tabFiltered.filter(
+        if (!searchTerm) return bookings;
+        return bookings.filter(
             (b) => b.id.toLowerCase().includes(searchTerm.toLowerCase()) || b.name.toLowerCase().includes(searchTerm.toLowerCase()),
         );
-    }, [bookings, tabIndex, searchTerm]);
+    }, [bookings, searchTerm]);
 
-    return { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings, refreshData };
+    return {
+        bookings,
+        loading,
+        tabIndex,
+        setTabIndex,
+        searchTerm,
+        setSearchTerm,
+        filteredBookings,
+        refreshData: fetchBookings,
+        selectedBooking,
+        setSelectedBooking,
+    };
 }

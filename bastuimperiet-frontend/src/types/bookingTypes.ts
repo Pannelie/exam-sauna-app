@@ -47,6 +47,7 @@ export interface ApiBookingData extends BookingBase {
         calendarError?: string | null;
         guestEmailError?: string | null;
     };
+    createdAt: string; // Lägg till createdAt för att kunna avgöra "nya" bokningar
 }
 
 export interface BookingState extends BookingBase {

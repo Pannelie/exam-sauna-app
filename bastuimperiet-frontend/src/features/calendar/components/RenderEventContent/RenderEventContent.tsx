@@ -7,7 +7,7 @@ export const renderEventContent = (eventInfo: EventContentArg) => {
     const isPending = title.toLowerCase().includes("förfrågan");
     const isConfirmed = title.toLowerCase().includes("bokning");
     let statusClass = isPending ? "is-pending" : isConfirmed ? "is-confirmed" : "is-neutral";
-    console.log("[renderEventContent] eventInfo:", eventInfo, "statusClass:", statusClass);
+
     return (
         <div className={`custom-event__card ${statusClass} ${bId ? `id-${bId}` : ""}`}>
             <span className="custom-event__time">{eventInfo.timeText} </span>

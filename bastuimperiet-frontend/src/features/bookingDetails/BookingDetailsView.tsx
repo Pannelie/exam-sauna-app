@@ -1,27 +1,30 @@
 import { useOutletContext, useParams } from "react-router-dom";
 import { Typography, Box, Stack, Divider, Paper } from "@mui/material";
-import { BookingStatus, type ApiBookingData } from "../../types/bookingTypes";
+import { BookingStatus } from "../../types/bookingTypes";
 import { Today, Person, FmdGood } from "@mui/icons-material";
 import { getStatusChip, StatusIndicator, formatDateTime } from "./utils/bookingDetailHelpers";
 import { getBookingChips } from "./components/BookingChips/BookingChips";
 import { useBookingActions } from "../../hooks/useActionButtons";
+import { useBookingListStore } from "../../stores/useBookingListStore";
+import { useEffect } from "react";
 
 export const BookingDetailsView = () => {
     const { id } = useParams<{ id: string }>();
-    const { bookings, refreshData, refreshCalendar } = useOutletContext<{
-        bookings: ApiBookingData[];
+    const { selectedBooking, fetchBookingById } = useBookingListStore();
+    const { refreshData } = useOutletContext<{
         refreshData: () => Promise<void>;
-        refreshCalendar: () => Promise<void>;
     }>();
+
+    useEffect(() => {
+        // Om vi har ett ID i URL:en men ingen bokning laddad i storen
+        if (id && (!selectedBooking || String(selectedBooking.id) !== id)) {
+            fetchBookingById(id);
+        }
+    }, [id, selectedBooking, fetchBookingById]);
 
     const handleSuccess = async () => {
         try {
             await refreshData();
-
-            setTimeout(async () => {
-                await refreshCalendar();
-                console.log("Kalender synkad");
-            }, 800);
         } catch (error) {
             console.error("Misslyckades att uppdatera vyerna:", error);
         }
@@ -29,7 +32,7 @@ export const BookingDetailsView = () => {
 
     const { ConfirmBtn, DeclineBtn, CancelBtn, RestoreBtn, ConfirmDialog } = useBookingActions(handleSuccess);
 
-    const booking = bookings.find((b) => b.id === id);
+    const booking = selectedBooking;
 
     if (!booking) {
         return <Typography>Laddar bokning...</Typography>;

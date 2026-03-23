@@ -1,5 +1,5 @@
 export interface PillProps {
-    active?: boolean;
+    $active?: boolean;
 }
 
 export interface MainContainerProps {

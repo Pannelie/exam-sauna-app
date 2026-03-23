@@ -2,7 +2,7 @@ import { useState } from "react";
 import { updateBookingStatus } from "../features/allBookings/services/allBookingsService";
 import { BookingStatus } from "../types/bookingTypes";
 import type { ApiBookingData } from "../types/bookingTypes";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Tooltip, Stack, CircularProgress } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Stack, CircularProgress } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
