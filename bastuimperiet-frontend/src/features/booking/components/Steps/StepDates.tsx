@@ -2,7 +2,7 @@ import { Stack } from "@mui/material";
 import { FormButton } from "../FormButton/FormButton";
 import type { BookingFormData } from "../../../../types/bookingTypes";
 import { TotalPrice } from "../TotalPrice/TotalPrice";
-import { MyDatePicker } from "../DatePicker/DatePicker";
+import { MyDateInput } from "../MyDateInput/MyDateInput";
 import { StepExtras } from "./StepExtras";
 interface StepDatesProps {
     data: BookingFormData;
@@ -16,14 +16,14 @@ export const StepDates = ({ data, updateField, next, errors }: StepDatesProps) =
         <section className="step_container">
             <Stack direction="column" spacing={2}>
                 <Stack direction="row" spacing={2}>
-                    <MyDatePicker
+                    <MyDateInput
                         label="Startdatum"
                         value={data.startDate || null}
                         onChange={(val) => updateField("startDate", val)}
                         error={!!errors.startDate}
                         helperText={errors.startDate}
                     />
-                    <MyDatePicker
+                    <MyDateInput
                         label="Slutdatum"
                         value={data.endDate || null}
                         onChange={(val) => updateField("endDate", val)}
