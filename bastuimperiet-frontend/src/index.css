@@ -63,6 +63,9 @@ html {
 }
 
 .page_container--center {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
     width: min(90%, 1100px);
     margin: 0 auto;
 }

@@ -5,6 +5,7 @@ import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { HomePage, AdminPage, BookingsPage, LoginPage } from "./pages";
 import { BookingDetailsView } from "./features/bookingDetails/BookingDetailsView";
 import { MainLayout } from "./components/MainLayout/MainLayout";
+import { NewBookingPage } from "./pages/NewBookingPage";
 
 export default function App() {
     return (
@@ -19,6 +20,7 @@ export default function App() {
                         <Route path="/admin/bookings" element={<BookingsPage />}>
                             <Route path="/admin/bookings/:id" element={<BookingDetailsView />} />
                         </Route>
+                        <Route path="/admin/new-booking" element={<NewBookingPage />} />
                         <Route path="/admin/profiles" element={<AdminPage />} />
                     </Route>
 

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { toDateStr, getNextDay, calculateBlockedDates, hasOverlap } from "../../utils/calendarutils";
+import { toDateStr, getNextDay, calculateBlockedDates, hasOverlap } from "../../utils/calendarUtils";
 import "./clientCalendar.css";
 
 export const ClientCalendarCustomer = ({ events, onDateSelect, startDate, endDate }: any) => {

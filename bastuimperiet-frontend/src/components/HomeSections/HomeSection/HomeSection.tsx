@@ -1,4 +1,5 @@
 import "./HomeSection.css";
+import React from "react";
 
 type HomeSectionProps = {
     id?: string;
@@ -6,8 +7,11 @@ type HomeSectionProps = {
     className?: string;
 };
 
-export function HomeSection({ id, children, className }: HomeSectionProps) {
+export const HomeSection = React.forwardRef<HTMLElement, HomeSectionProps>(({ id, children, className }, ref) => {
     const sectionClassName = className ? `home_basic-section ${className}` : "home_basic-section";
-
-    return <section id={id} className={sectionClassName}>{children}</section>;
-}
+    return (
+        <section id={id} className={sectionClassName} ref={ref}>
+            {children}
+        </section>
+    );
+});
