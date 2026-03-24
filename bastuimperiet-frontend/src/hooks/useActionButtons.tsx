@@ -31,6 +31,7 @@ export const useBookingActions = (onSuccess?: () => void) => {
                 setDialogMessage(errorMessage + " Vill du fortsätta ändå?");
                 setForceMode(true);
                 setIsError(false); // Detta är en varning, inte ett stopp-fel
+                setPendingBooking((prev) => prev); // Behåll ev. pendingBooking
                 setDialogOpen(true);
                 return;
             }
@@ -39,6 +40,7 @@ export const useBookingActions = (onSuccess?: () => void) => {
             setDialogMessage(errorMessage || "Ett oväntat fel uppstod.");
             setIsError(true);
             setForceMode(false);
+            setPendingBooking(null); // Viktigt: nollställ pendingBooking så dialogen inte "blinkar"
             setDialogOpen(true);
 
             console.error(`Kunde inte uppdatera status:`, error);

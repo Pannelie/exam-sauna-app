@@ -32,12 +32,6 @@ export default function AllBookings() {
         await refreshData(currentStatus, true);
     };
 
-    // Funktion för att kolla om en bokning är "ny" (t.ex. skapad senaste 10 minuterna)
-    const isRecent = (createdAt: string) => {
-        const diff = Date.now() - new Date(createdAt).getTime();
-        return diff < 600000; // 10 minuter
-    };
-
     return (
         <>
             {isMobile && (
@@ -60,7 +54,7 @@ export default function AllBookings() {
                             isMobile={isMobile}
                         />
 
-                        <S.ScrollableList>
+                        <S.ScrollableList onMouseLeave={() => setHoveredBookingId(null)}>
                             {loading
                                 ? Array.from(new Array(5)).map((_, i) => <BookingCardSkeleton key={i} />)
                                 : filteredBookings.map((b) => (
@@ -70,7 +64,6 @@ export default function AllBookings() {
                                           onStatusChange={handleGlobalUpdate}
                                           onMouseEnter={() => setHoveredBookingId(b.id)}
                                           onMouseLeave={() => setHoveredBookingId(null)}
-                                          $isNew={isRecent(b.createdAt)} // Din logik för 10 minuter
                                           onClick={() => setSelectedBooking(b)} // Spara i storen!
                                       />
                                   ))}

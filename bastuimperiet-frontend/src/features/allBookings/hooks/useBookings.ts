@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useEffect, useMemo } from "react";
 import { useBookingListStore } from "../../../stores/useBookingListStore";
+import { filterBookingsByTab } from "../utils/bookingHelpers";
 // import { useCalendar } from "../../calendar/hooks/useCalendar";
 
 export function useBookings() {
@@ -28,13 +29,18 @@ export function useBookings() {
         return () => clearInterval(interval);
     }, [currentStatus, fetchBookings]);
 
-    // Söklogiken stannar här
+    // Filtrera först på tabb/status, sedan på sökterm
     const filteredBookings = useMemo(() => {
-        if (!searchTerm) return bookings;
-        return bookings.filter(
-            (b) => b.id.toLowerCase().includes(searchTerm.toLowerCase()) || b.name.toLowerCase().includes(searchTerm.toLowerCase()),
-        );
-    }, [bookings, searchTerm]);
+        // Filtrera på status/tabb
+        let filtered = filterBookingsByTab(bookings, tabIndex);
+        // Filtrera på sökterm om det finns
+        if (searchTerm) {
+            filtered = filtered.filter(
+                (b) => b.id.toLowerCase().includes(searchTerm.toLowerCase()) || b.name.toLowerCase().includes(searchTerm.toLowerCase()),
+            );
+        }
+        return filtered;
+    }, [bookings, searchTerm, tabIndex]);
 
     return {
         bookings,

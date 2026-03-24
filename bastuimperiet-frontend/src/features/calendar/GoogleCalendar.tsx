@@ -29,7 +29,7 @@ export const GoogleCalendar = ({ events, loading, clickedId, hoveredBookingId }:
 
     // 3. MANUELL MARKERING (Fixar Hover & Click utan omrendering)
     useEffect(() => {
-        document.querySelectorAll(".custom-event-card").forEach((el) => {
+        document.querySelectorAll(".custom-event__card").forEach((el) => {
             el.classList.remove("is-hovered", "is-selected");
         });
 
@@ -47,6 +47,15 @@ export const GoogleCalendar = ({ events, loading, clickedId, hoveredBookingId }:
             });
         }
     }, [hoveredBookingId, clickedId]);
+
+    // Extra säkerhet: ta alltid bort hover om hoveredBookingId är null
+    useEffect(() => {
+        if (hoveredBookingId === null) {
+            document.querySelectorAll(".custom-event__card.is-hovered").forEach((el) => {
+                el.classList.remove("is-hovered");
+            });
+        }
+    }, [hoveredBookingId]);
 
     const memoEvents = useMemo(() => events, [events]);
 

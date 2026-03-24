@@ -28,9 +28,16 @@ export const useBookingListStore = create<BookingListState>((set, get) => ({
         if (!isSilent) set({ loading: true });
         try {
             const data = await getAllBookings(status ?? undefined);
-            set({ bookings: data, loading: false, lastUpdated: Date.now() });
+            const prev = get().bookings;
+            // Jämför bokningsdata, om ändrad: uppdatera lastUpdated, annars inte
+            const isSame = prev.length === data.length && prev.every((b, i) => JSON.stringify(b) === JSON.stringify(data[i]));
+            if (!isSame) {
+                set({ bookings: data, loading: false, lastUpdated: Date.now() });
+            } else {
+                set({ bookings: data, loading: false });
+            }
         } catch (error) {
-            set({ error: "Fel vid hämtning", loading: false, lastUpdated: Date.now() });
+            set({ error: "Fel vid hämtning", loading: false });
         }
     },
     fetchBookingById: async (id: string) => {

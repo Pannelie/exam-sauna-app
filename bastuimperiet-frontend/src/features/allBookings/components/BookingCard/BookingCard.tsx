@@ -11,11 +11,10 @@ interface BookingCardProps {
     onStatusChange?: () => void;
     onMouseEnter?: () => void;
     onMouseLeave?: () => void;
-    $isNew?: boolean; // Lägg till denna
     onClick?: () => void; // Lägg till denna
 }
 
-export const BookingCard = ({ booking, onHover, onStatusChange, onMouseEnter, onMouseLeave, $isNew, onClick }: BookingCardProps) => {
+export const BookingCard = ({ booking, onHover, onStatusChange, onMouseEnter, onMouseLeave, onClick }: BookingCardProps) => {
     const navigate = useNavigate();
     const { id } = useParams();
     const isActive = id === String(booking.id);
@@ -41,7 +40,6 @@ export const BookingCard = ({ booking, onHover, onStatusChange, onMouseEnter, on
                 onHover?.(null);
                 onMouseLeave?.();
             }}
-            $isNew={$isNew} // Skicka ner $isNew som prop
         >
             {/* MITTEN: ID och Datum (centrerat vertikalt genom flex-grow) */}
             <S.ContentBox>
