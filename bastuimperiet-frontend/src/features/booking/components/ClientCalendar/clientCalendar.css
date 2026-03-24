@@ -3,3 +3,13 @@
 .fc-highlight {
     background: rgba(73, 214, 120, 0.5) !important;
 }
+
+/* kalenderdagar, ta bort margin bottom */
+.fc-daygrid-day-events {
+    margin-bottom: 0 !important;
+}
+
+/* veckodagar, ta bort padding */
+.fc th {
+    padding: 0 !important;
+}
