@@ -4,8 +4,8 @@ import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
-import img1 from "../../assets/OutsideParking.jpg";
-import img2 from "../../assets/hero.png";
+import img1 from "../../assets/OutsideParking.webp";
+import img2 from "../../assets/hero.webp";
 
 const images = [img1, img2];
 
