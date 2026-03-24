@@ -9,13 +9,33 @@ export const useStepContent = (
     updateField: <K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) => void,
     handlers: { next: () => void; back: () => void; complete: () => void; reset: () => void; isCompleted: boolean },
     errors: Record<string, string>,
+    // Ny parameter för extra data
+    mobileData: { isMobile: boolean; calendarEvents: any[] },
 ) => {
     const { next, back, complete, reset, isCompleted } = handlers;
+    const { isMobile, calendarEvents } = mobileData;
 
     const stepMap = [
-        <StepDates key="dates" data={formData} updateField={updateField} next={next} errors={errors} />,
-        <StepContact key="contact" data={formData} updateField={updateField} next={next} back={back} errors={errors} />,
-        <StepSummary key="summary" data={formData} back={back} complete={complete} reset={reset} isCompleted={isCompleted} />,
+        <StepDates
+            key="dates"
+            data={formData}
+            updateField={updateField}
+            next={next}
+            errors={errors}
+            // Skicka ner datan till StepDates
+            isMobile={isMobile}
+            events={calendarEvents}
+        />,
+        <StepContact key="contact" data={formData} updateField={updateField} next={next} back={back} errors={errors} isMobile={isMobile} />,
+        <StepSummary
+            key="summary"
+            data={formData}
+            back={back}
+            complete={complete}
+            reset={reset}
+            isCompleted={isCompleted}
+            isMobile={isMobile}
+        />,
     ];
 
     return stepMap[activeStep];

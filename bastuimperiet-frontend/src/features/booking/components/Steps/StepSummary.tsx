@@ -13,9 +13,10 @@ interface StepSummaryProps {
     complete: () => void;
     reset: () => void;
     isCompleted: boolean;
+    isMobile: boolean;
 }
 
-export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSummaryProps) => {
+export const StepSummary = ({ data, back, complete, reset, isCompleted, isMobile }: StepSummaryProps) => {
     const [bookingResult, setBookingResult] = useState<ApiBookingData | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -73,7 +74,7 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
                     </Typography>
                 </Stack>
                 <Stack direction="row" spacing={2} justifyContent="flex-end">
-                    <FormButton variant="contained" onClick={reset} text="Ny förfrågan" />
+                    <FormButton variant="contained" onClick={reset} text="Ny förfrågan" isMobile={isMobile} />
                 </Stack>
             </div>
         );
@@ -97,12 +98,13 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted }: StepSu
                 </Typography>
             )}
             <Stack direction="row" spacing={2} justifyContent={"space-between"}>
-                <FormButton variant="outlined" onClick={back} text="Tillbaka" disabled={isSubmitting} />
+                <FormButton variant="outlined" onClick={back} text="Tillbaka" disabled={isSubmitting} isMobile={isMobile} type="back" />
                 <FormButton
                     variant="contained"
                     onClick={handleSubmit}
                     text={isSubmitting ? "Skickar..." : "Skicka förfrågan"}
                     disabled={isSubmitting}
+                    type="send"
                 />
             </Stack>
         </section>

@@ -10,9 +10,10 @@ interface StepContactProps {
     back: () => void;
     next: () => void;
     errors: Record<string, string>;
+    isMobile: boolean;
 }
 
-export const StepContact = ({ data, updateField, back, next, errors }: StepContactProps) => {
+export const StepContact = ({ data, updateField, back, next, errors, isMobile }: StepContactProps) => {
     return (
         <section className="step_container">
             <Stack spacing={2}>
@@ -66,8 +67,8 @@ export const StepContact = ({ data, updateField, back, next, errors }: StepConta
                 </Stack>
             </Stack>
             <Stack direction="row" spacing={2} justifyContent={"space-between"}>
-                <FormButton variant="outlined" onClick={back} text="Tillbaka" />
-                <FormButton variant="contained" onClick={next} text="Nästa steg" />
+                <FormButton type="back" variant="outlined" onClick={back} text="Tillbaka" isMobile={isMobile} />
+                <FormButton type="next" variant="contained" onClick={next} text="Nästa steg" isMobile={isMobile} />
             </Stack>
         </section>
     );
