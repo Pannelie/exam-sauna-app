@@ -4,7 +4,7 @@ import { PriceContainer } from "../PriceContainer/PriceContainer";
 import { HomeSection } from "./HomeSection/HomeSection";
 import { TextBox } from "../TextBox/TextBox";
 
-export const PricesSection = React.forwardRef<HTMLElement>((props, ref) => {
+export const PricesSection = React.forwardRef<HTMLElement>((__, ref) => {
     return (
         <HomeSection id="priser" className="home_prices-section" ref={ref}>
             <div className="home_prices--group">

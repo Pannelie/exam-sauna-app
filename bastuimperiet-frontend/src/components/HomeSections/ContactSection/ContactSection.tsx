@@ -1,12 +1,12 @@
 import React from "react";
 import { HomeSection } from "../HomeSection/HomeSection";
-import image from "../../../assets/OutsideParking.jpg";
+import image from "../../../assets/OutsideParking.webp";
 import PhoneIcon from "@mui/icons-material/Phone";
 import * as S from "./contactSection.style";
 
 // Återanvänd layout från InfoSection
 
-export const ContactSection = React.forwardRef<HTMLElement>((props, ref) => {
+export const ContactSection = React.forwardRef<HTMLElement>((__, ref) => {
     return (
         <HomeSection id="kontakt" ref={ref}>
             <S.StyledBox>
