@@ -14,7 +14,7 @@ export function calculatePrice(prices, specialDays, config) {
     if (startDate && endDate) {
         const start = new Date(startDate);
         const end = new Date(endDate);
-        const dayCount = Math.floor((end - start) / (1000 * 60 * 60 * 24));
+        const dayCount = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
         if (dayCount > 0) {
             let remainingDays = dayCount;

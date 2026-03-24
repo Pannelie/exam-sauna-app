@@ -5,10 +5,14 @@ import type { BookingFormData, BookingBase } from "../../types/bookingTypes";
 import { useCalendar } from "../calendar/hooks/useCalendar";
 import { useBookingFormStore } from "../../stores/useBookingFormStore";
 import { ClientCalendarCustomer } from "./components/ClientCalendar/ClientCalendar";
+import { useMediaQuery, useTheme, Box } from "@mui/material";
 
 export const BookingLayout = () => {
     const { events, loading } = useCalendar();
     const { setField, reset: resetStore } = useBookingFormStore();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+    const [activeStep, setActiveStep] = useState<number>(0);
 
     const initialFormData: BookingFormData = {
         firewood: 0,
@@ -44,37 +48,43 @@ export const BookingLayout = () => {
     const resetForm = () => {
         setFormData(initialFormData);
         resetStore();
+        setActiveStep(0);
     };
     return (
-        <section className="booking_layout">
+        <Box
+            className="booking_layout"
+            sx={{
+                display: "flex",
+                flexDirection: isMobile ? "column" : "row", // Stacka vertikalt på mobil
+                gap: theme.spacing(4),
+                padding: theme.spacing(isMobile ? 2 : 4),
+            }}
+        >
             {/* Kalender */}
-            <div
-                style={{
-                    flex: 1,
-                    minWidth: 0,
-                    background: "white",
-                    borderRadius: 16,
-                    padding: 16,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100%",
-                }}
-            >
-                {!loading && (
+            {!loading && !isMobile && (
+                <Box sx={{ flex: 1, minWidth: 0 }}>
                     <ClientCalendarCustomer
                         events={events}
                         onDateSelect={handleCalendarSelect}
                         startDate={formData.startDate}
                         endDate={formData.endDate}
                     />
-                )}
-            </div>
-
+                </Box>
+            )}
             {/* Formulär */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-                <BookingStepper formData={formData} updateField={updateField} onReset={resetForm} />
-            </div>
-        </section>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+                <BookingStepper
+                    formData={formData}
+                    updateField={updateField}
+                    onReset={resetForm}
+                    // Skicka ner nödvändig data för mobil-modalen
+                    isMobile={isMobile}
+                    calendarEvents={events}
+                    // Kontrollera steget utifrån
+                    activeStep={activeStep}
+                    setActiveStep={setActiveStep}
+                />
+            </Box>
+        </Box>
     );
 };

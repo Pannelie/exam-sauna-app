@@ -1,5 +1,5 @@
 import { useState, type JSX } from "react";
-import bg from "../../assets/wood2.jpg";
+import bg from "../../assets/wood2.webp";
 import { AppBar, Toolbar, IconButton, useMediaQuery, styled, Typography, Box } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";

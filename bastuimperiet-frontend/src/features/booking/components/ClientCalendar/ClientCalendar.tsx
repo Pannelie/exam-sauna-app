@@ -4,13 +4,17 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { toDateStr, getNextDay, calculateBlockedDates, hasOverlap } from "../../utils/calendarUtils";
 import "./clientCalendar.css";
+import { useCalendar } from "../../../calendar/hooks/useCalendar";
 
-export const ClientCalendarCustomer = ({ events, onDateSelect, startDate, endDate }: any) => {
+export const ClientCalendarCustomer = ({ onDateSelect, startDate, endDate }: any) => {
     const calendarRef = useRef<FullCalendar>(null);
+    const { events } = useCalendar();
 
     const blockedDates = useMemo(() => {
         return calculateBlockedDates(events);
     }, [events]);
+
+    const calendarKey = useMemo(() => `calendar-${events?.length || 0}`, [events]);
 
     const handleDateClick = (arg: any) => {
         const clickedDate = arg.dateStr;
@@ -57,31 +61,39 @@ export const ClientCalendarCustomer = ({ events, onDateSelect, startDate, endDat
     }, [startDate, endDate]);
 
     return (
-        <div className="calendar-container">
-            <FullCalendar
-                ref={calendarRef}
-                plugins={[dayGridPlugin, interactionPlugin]}
-                initialView="dayGridMonth"
-                locale="sv"
-                firstDay={1}
-                height="auto"
-                selectable={true}
-                unselectAuto={false}
-                headerToolbar={{ left: "prev,next today", center: "title", right: "" }}
-                // RÖDA DAGAR + TOOLTIP
-                dayCellDidMount={(arg) => {
-                    const dateStr = toDateStr(arg.date);
-                    if (blockedDates.has(dateStr)) {
-                        arg.el.style.backgroundColor = "#ffcccc";
-                        arg.el.style.cursor = "not-allowed";
-                        arg.el.setAttribute("title", "Bokad");
-                    }
-                }}
-                // SPÄRR: Hindra markering över blockerade datum
-                selectAllow={(selectInfo) => !blockedDates.has(toDateStr(selectInfo.start))}
-                dateClick={handleDateClick}
-                events={[]}
-            />
-        </div>
+        <FullCalendar
+            key={calendarKey}
+            ref={calendarRef}
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            locale="sv"
+            firstDay={1}
+            height="auto"
+            selectable={true}
+            unselectAuto={false}
+            headerToolbar={{ left: "prev,next", center: "title", right: "today" }}
+            // RÖDA DAGAR + TOOLTIP
+            dayCellDidMount={(arg) => {
+                const dateStr = toDateStr(arg.date);
+                if (blockedDates.has(dateStr)) {
+                    arg.el.style.backgroundColor = "#ffcccc";
+                    arg.el.style.cursor = "not-allowed";
+                    arg.el.setAttribute("title", "Bokad");
+                }
+            }}
+            buttonText={{
+                today: "Idag",
+                month: "Månad",
+                week: "Vecka",
+                day: "Dag",
+                list: "Lista",
+            }}
+            // SPÄRR: Hindra markering över blockerade datum
+            selectAllow={(selectInfo) => !blockedDates.has(toDateStr(selectInfo.start))}
+            dateClick={handleDateClick}
+            events={events}
+            eventContent={() => null} // Returnerar inget innehåll för eventsen = ingen vit text
+            displayEventTime={false} // Säkerställer att ingen tid visas
+        />
     );
 };

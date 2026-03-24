@@ -14,7 +14,7 @@ export const GoogleCalendar = () => {
     const lastDateRef = useRef<Date>(new Date());
 
     // Hämta events, loading, clickedId, hoveredBookingId från global store/hook
-    const { events, loading, clickedId, setClickedId, hoveredBookingId, setHoveredBookingId } = useCalendar();
+    const { events, loading, clickedId, setClickedId, hoveredBookingId } = useCalendar();
 
     const handleViewChange = useCallback((arg: any) => {
         lastViewRef.current = arg.view.type;
@@ -71,9 +71,11 @@ export const GoogleCalendar = () => {
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, interactionPlugin]}
+                    headerToolbar={{ left: "prev,next", center: "title", right: "today" }}
                     initialView={lastViewRef.current}
                     initialDate={lastDateRef.current}
                     locale="sv"
+                    firstDay={1}
                     events={memoEvents}
                     height="auto"
                     eventClick={handleEventClick}
@@ -81,6 +83,13 @@ export const GoogleCalendar = () => {
                     eventDisplay="block"
                     eventClassNames={() => []}
                     viewDidMount={handleViewChange}
+                    buttonText={{
+                        today: "Idag",
+                        month: "Månad",
+                        week: "Vecka",
+                        day: "Dag",
+                        list: "Lista",
+                    }}
                     datesSet={handleViewChange}
                 />
             )}

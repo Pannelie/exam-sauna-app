@@ -4,7 +4,7 @@ import { HomeSection } from "../HomeSection/HomeSection";
 import * as S from "./infoSection.style";
 import React from "react";
 
-export const InfoSection = React.forwardRef<HTMLElement>((props, ref) => {
+export const InfoSection = React.forwardRef<HTMLElement>((__, ref) => {
     return (
         <HomeSection id="info" ref={ref}>
             <S.StyledBox>

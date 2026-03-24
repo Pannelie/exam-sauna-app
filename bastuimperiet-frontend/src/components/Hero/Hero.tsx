@@ -1,16 +1,10 @@
-import "./hero.css";
 import { useEffect, useState } from "react";
-import logo from "../../assets/hero.png";
-import signLogo from "../../assets/wood__logo.jpg";
+import logo from "../../assets/hero.webp";
 import { BookNowButton } from "../BookNowButton/BookNowButton";
-import { scrollToSection } from "../../utils/scrollToSection";
-import { Typography, styled, useMediaQuery, useTheme } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
+import * as S from "./hero.style";
 
-const StyledTypography = styled(Typography)(({ theme }) => ({
-    color: theme.palette.secondary.main,
-}));
-
-function Hero() {
+function Hero({ handleBookClick }: { handleBookClick: () => void }) {
     const [isBookingVisible, setIsBookingVisible] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -22,9 +16,7 @@ function Hero() {
         }
 
         const bookingSection = document.getElementById("booking");
-        if (!bookingSection) {
-            return;
-        }
+        if (!bookingSection) return;
 
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -37,29 +29,21 @@ function Hero() {
         );
 
         observer.observe(bookingSection);
-
         return () => observer.disconnect();
     }, [isMobile]);
 
-    const handleBookClick = () => {
-        scrollToSection("booking");
-    };
-
     return (
-        <section className="hero_section">
-            <div className={`hero_overlay ${isMobile ? "hero_overlay--mobile" : "hero_overlay--desktop"}`}>
-                {isMobile ? (
-                    <img src={signLogo} alt="Bastuimperiet skylt" className="hero_sign" />
-                ) : (
-                    <StyledTypography variant="h2" className="hero_title">
-                        Välkommen till Bastuimperiet
-                    </StyledTypography>
-                )}
+        <S.HeroSection>
+            <S.HeroContent>
+                <S.StyledTitle variant={"h2"}>Din lugna stund med Bastuimperiet</S.StyledTitle>
+
                 {!isMobile && <BookNowButton onClick={handleBookClick} styleVariant="heroDesktop" />}
-            </div>
-            <img src={logo} alt="Hero Image" className={`hero_image ${isMobile ? "hero_image--mobile" : "hero_image--desktop"}`} />
+            </S.HeroContent>
+
+            <S.HeroImage src={logo} alt="Hero Image" />
+
             {isMobile && !isBookingVisible && <BookNowButton onClick={handleBookClick} styleVariant="heroMobile" />}
-        </section>
+        </S.HeroSection>
     );
 }
 

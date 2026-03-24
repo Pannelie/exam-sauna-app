@@ -1,20 +1,19 @@
-import { Stack, Typography, Paper, styled } from "@mui/material";
+import { Stack, Typography, styled } from "@mui/material";
 import { useBookingFormStore } from "../../../../stores/useBookingFormStore";
 
-const StyledPaper = styled(Paper)({
-    padding: "1rem",
-    marginTop: "auto",
+const StyledTypography = styled(Typography)({
+    fontWeight: "bold",
 });
 
 export const TotalPrice = () => {
     const { totalPrice } = useBookingFormStore();
 
     return (
-        <StyledPaper>
-            <Stack direction="row" justifyContent="space-between">
-                <Typography>Totalt</Typography>
-                <Typography>{totalPrice} kr</Typography>
-            </Stack>
-        </StyledPaper>
+        <Stack direction="column" justifyContent="flex-end" alignItems="flex-end">
+            <StyledTypography variant="caption" color="text.secondary">
+                ATT BETALA
+            </StyledTypography>
+            <Typography variant="h4">{totalPrice} kr</Typography>
+        </Stack>
     );
 };
