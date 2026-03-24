@@ -5,12 +5,15 @@ import { useStepContent } from "../../hooks/useStepContent";
 import { validateBookingService } from "../../services/bookingService";
 
 const StyledBox = styled(Box)(({ theme }) => ({
+    flex: 1,
     display: "flex",
     flexDirection: "column",
     background: "rgba(255,255,255,0.9)",
     borderRadius: "24px",
     padding: theme.spacing(4),
     height: "100%",
+    width: "100%",
+    minWidth: 520,
 }));
 
 const StyledStepper = styled(Stepper)(({ theme }) => ({

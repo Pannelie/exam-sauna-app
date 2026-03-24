@@ -57,38 +57,36 @@ export const ClientCalendarCustomer = ({ events, onDateSelect, startDate, endDat
     }, [startDate, endDate]);
 
     return (
-        <div className="calendar-container">
-            <FullCalendar
-                ref={calendarRef}
-                plugins={[dayGridPlugin, interactionPlugin]}
-                initialView="dayGridMonth"
-                locale="sv"
-                firstDay={1}
-                height="auto"
-                selectable={true}
-                unselectAuto={false}
-                headerToolbar={{ left: "prev,next", center: "title", right: "today" }}
-                // RÖDA DAGAR + TOOLTIP
-                dayCellDidMount={(arg) => {
-                    const dateStr = toDateStr(arg.date);
-                    if (blockedDates.has(dateStr)) {
-                        arg.el.style.backgroundColor = "#ffcccc";
-                        arg.el.style.cursor = "not-allowed";
-                        arg.el.setAttribute("title", "Bokad");
-                    }
-                }}
-                buttonText={{
-                    today: "Idag",
-                    month: "Månad",
-                    week: "Vecka",
-                    day: "Dag",
-                    list: "Lista",
-                }}
-                // SPÄRR: Hindra markering över blockerade datum
-                selectAllow={(selectInfo) => !blockedDates.has(toDateStr(selectInfo.start))}
-                dateClick={handleDateClick}
-                events={[]}
-            />
-        </div>
+        <FullCalendar
+            ref={calendarRef}
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            locale="sv"
+            firstDay={1}
+            height="auto"
+            selectable={true}
+            unselectAuto={false}
+            headerToolbar={{ left: "prev,next", center: "title", right: "today" }}
+            // RÖDA DAGAR + TOOLTIP
+            dayCellDidMount={(arg) => {
+                const dateStr = toDateStr(arg.date);
+                if (blockedDates.has(dateStr)) {
+                    arg.el.style.backgroundColor = "#ffcccc";
+                    arg.el.style.cursor = "not-allowed";
+                    arg.el.setAttribute("title", "Bokad");
+                }
+            }}
+            buttonText={{
+                today: "Idag",
+                month: "Månad",
+                week: "Vecka",
+                day: "Dag",
+                list: "Lista",
+            }}
+            // SPÄRR: Hindra markering över blockerade datum
+            selectAllow={(selectInfo) => !blockedDates.has(toDateStr(selectInfo.start))}
+            dateClick={handleDateClick}
+            events={[]}
+        />
     );
 };
