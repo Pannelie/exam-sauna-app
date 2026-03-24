@@ -18,7 +18,7 @@ export const MainLayout = () => {
     // Definiera meny-val baserat på URL
     const menuItems = [
         { label: "Bokningar", onClick: () => navigate("/admin/bookings") },
-        { label: "Profiler", onClick: () => navigate("/admin/profiles") },
+        { label: "Ny bokning", onClick: () => navigate("/admin/new-booking") },
     ];
 
     // Bestäm vilken knapp som ska synas till höger

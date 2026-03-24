@@ -1,5 +1,13 @@
-import { BookingSection } from "../features/booking/BookingSection";
+import { BookingLayout } from "../features/booking/BookingLayout";
+import { useEffect } from "react";
+import { useBookingFormStore } from "../stores/useBookingFormStore";
 
 export const NewBookingPage = () => {
-    return <BookingSection />;
+    const fetchPrices = useBookingFormStore((state) => state.fetchPrices);
+
+    useEffect(() => {
+        fetchPrices();
+    }, [fetchPrices]);
+
+    return <BookingLayout />;
 };

@@ -196,13 +196,13 @@ export function hasBookingOverlap(startDate, endDate, allBookings, currentBookin
 
     return allBookings.some((booking) => {
         if (currentBookingId && booking.id === currentBookingId) return false;
-        // Vi bryr oss bara om bokningar som är "confirmed"
+
         if (booking.status !== "confirmed") return false;
 
         const existingStart = new Date(booking.startDate).getTime();
         const existingEnd = new Date(booking.endDate).getTime();
         if (isNaN(existingStart) || isNaN(existingEnd)) return false;
-        // Standard krock-logik: (StartA < EndB) && (EndA > StartB)
+
         return newStart < existingEnd && newEnd > existingStart;
     });
 }
