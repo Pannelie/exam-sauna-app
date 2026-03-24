@@ -11,11 +11,11 @@ import { useCalendar } from "../calendar/hooks/useCalendar";
 import { BookingFilters } from "./components/BookingFilters/BookingFilters";
 
 export default function AllBookings() {
-    const { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings, refreshData, setSelectedBooking } =
-        useBookings();
-    const { events, loading: calLoading, clickedId, setClickedId, hoveredBookingId, setHoveredBookingId } = useCalendar();
-    const [mobileTab, setMobileTab] = useState(0);
+    const { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings } = useBookings();
+    const { setClickedId, setHoveredBookingId } = useCalendar();
     const { id } = useParams();
+    const isSelectedVisible = filteredBookings.some((b) => String(b.id) === id);
+    const [mobileTab, setMobileTab] = useState(0);
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -25,12 +25,6 @@ export default function AllBookings() {
     useEffect(() => {
         setClickedId(id || null);
     }, [id, setClickedId]);
-
-    const handleGlobalUpdate = async () => {
-        // statusMap[tabIndex] ser till att vi håller oss till rätt flik
-        const currentStatus = ["pending", "confirmed", "declined", "cancelled", null][tabIndex];
-        await refreshData(currentStatus, true);
-    };
 
     return (
         <>
@@ -55,16 +49,15 @@ export default function AllBookings() {
                         />
 
                         <S.ScrollableList onMouseLeave={() => setHoveredBookingId(null)}>
-                            {loading
+                            {loading && filteredBookings.length === 0
                                 ? Array.from(new Array(5)).map((_, i) => <BookingCardSkeleton key={i} />)
                                 : filteredBookings.map((b) => (
                                       <BookingCard
                                           key={b.id}
                                           booking={b}
-                                          onStatusChange={handleGlobalUpdate}
+                                          selectedId={isSelectedVisible ? id : undefined}
                                           onMouseEnter={() => setHoveredBookingId(b.id)}
                                           onMouseLeave={() => setHoveredBookingId(null)}
-                                          onClick={() => setSelectedBooking(b)} // Spara i storen!
                                       />
                                   ))}
                         </S.ScrollableList>
@@ -75,18 +68,13 @@ export default function AllBookings() {
                 {!isMobile && (
                     <>
                         <S.ContentPaper sx={{ flex: 1 }}>
-                            <GoogleCalendar
-                                events={events}
-                                loading={calLoading}
-                                clickedId={clickedId}
-                                hoveredBookingId={hoveredBookingId}
-                            />
+                            <GoogleCalendar />
                         </S.ContentPaper>
 
                         <S.ContentPaper sx={{ flex: 1, maxWidth: "400px" }}>
                             <S.DetailViewBox $hasId={!!id}>
                                 {id ? (
-                                    <Outlet context={{ bookings, refreshData }} />
+                                    <Outlet context={{ bookings }} />
                                 ) : (
                                     <Typography variant="body1" color="text.secondary" sx={{ maxWidth: "250px", textAlign: "center" }}>
                                         Välj en bokning i listan till vänster för att se detaljer.
@@ -103,7 +91,7 @@ export default function AllBookings() {
                         <Typography variant="h6" p={2} fontWeight="bold">
                             Kalender
                         </Typography>
-                        <GoogleCalendar events={events} loading={calLoading} clickedId={clickedId} hoveredBookingId={hoveredBookingId} />
+                        <GoogleCalendar />
                     </S.ContentPaper>
                 )}
             </S.MainContainer>
@@ -119,7 +107,7 @@ export default function AllBookings() {
                 PaperProps={{ sx: { height: "85vh", borderTopLeftRadius: 32, borderTopRightRadius: 32 } }}
             >
                 <Box sx={{ p: 2 }}>
-                    <Outlet context={{ bookings, refreshData }} />
+                    <Outlet context={{ bookings }} />
                 </Box>
             </Drawer>
         </>

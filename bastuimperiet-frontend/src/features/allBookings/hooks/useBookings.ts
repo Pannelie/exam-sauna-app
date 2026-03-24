@@ -50,7 +50,7 @@ export function useBookings() {
         searchTerm,
         setSearchTerm,
         filteredBookings,
-        refreshData: fetchBookings,
+        // refreshData: fetchBookings, // tas bort, central store används
         selectedBooking,
         setSelectedBooking,
     };

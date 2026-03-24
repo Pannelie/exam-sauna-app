@@ -1,4 +1,4 @@
-import { useOutletContext, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Typography, Box, Stack, Divider, Paper } from "@mui/material";
 import { BookingStatus } from "../../types/bookingTypes";
 import { Today, Person, FmdGood } from "@mui/icons-material";
@@ -11,9 +11,6 @@ import { useEffect } from "react";
 export const BookingDetailsView = () => {
     const { id } = useParams<{ id: string }>();
     const { selectedBooking, fetchBookingById } = useBookingListStore();
-    const { refreshData } = useOutletContext<{
-        refreshData: () => Promise<void>;
-    }>();
 
     useEffect(() => {
         // Om vi har ett ID i URL:en men ingen bokning laddad i storen
@@ -22,15 +19,8 @@ export const BookingDetailsView = () => {
         }
     }, [id, selectedBooking, fetchBookingById]);
 
-    const handleSuccess = async () => {
-        try {
-            await refreshData();
-        } catch (error) {
-            console.error("Misslyckades att uppdatera vyerna:", error);
-        }
-    };
-
-    const { ConfirmBtn, DeclineBtn, CancelBtn, RestoreBtn, ConfirmDialog } = useBookingActions(handleSuccess);
+    // Använd central store för statusuppdatering
+    const { ConfirmBtn, DeclineBtn, CancelBtn, RestoreBtn, ConfirmDialog } = useBookingActions();
 
     const booking = selectedBooking;
 
@@ -145,22 +135,15 @@ export const BookingDetailsView = () => {
                     <>
                         <ConfirmBtn booking={booking} />
                         <DeclineBtn booking={booking} />
-                        <ConfirmDialog />
                     </>
                 )}
-                {booking.status === BookingStatus.Confirmed && (
-                    <>
-                        <CancelBtn booking={booking} />
-                        <ConfirmDialog />
-                    </>
-                )}
+                {booking.status === BookingStatus.Confirmed && <CancelBtn booking={booking} />}
                 {(booking.status === BookingStatus.Cancelled || booking.status === BookingStatus.Declined) && (
-                    <>
-                        <RestoreBtn booking={booking} showLabel={true} />
-                        <ConfirmDialog />
-                    </>
+                    <RestoreBtn booking={booking} showLabel={true} />
                 )}
             </Stack>
+            {/* ConfirmDialog alltid renderad */}
+            <ConfirmDialog />
         </Box>
     );
 };

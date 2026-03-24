@@ -1,15 +1,24 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useBookingListStore } from "../../../stores/useBookingListStore";
+import { useCalendarStore } from "../../../stores/useCalendarStore";
 import { getCalendarEvents } from "../services/calendarService";
 import type { EventType } from "../services/calendarService";
 
 export function useCalendar() {
-    const [events, setEvents] = useState<EventType[]>([]);
+    const events = useCalendarStore((state) => state.events);
+    const loading = useCalendarStore((state) => state.loading);
+    const setEvents = useCalendarStore((state) => state.setEvents);
+    const setLoading = useCalendarStore((state) => state.setLoading);
+    const lastFetched = useCalendarStore((state) => state.lastFetched);
+    const setLastFetched = useCalendarStore((state) => state.setLastFetched);
+    const clearEvents = useCalendarStore((state) => state.clearEvents);
+    const clickedId = useCalendarStore((state) => state.clickedId);
+    const setClickedId = useCalendarStore((state) => state.setClickedId);
+    const hoveredBookingId = useCalendarStore((state) => state.hoveredBookingId);
+    const setHoveredBookingId = useCalendarStore((state) => state.setHoveredBookingId);
     const prevEventsRef = useRef<EventType[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [clickedId, setClickedId] = useState<string | null>(null);
-    const [hoveredBookingId, setHoveredBookingId] = useState<string | null>(null);
 
+    // Jämförelsefunktion för events
     const areEventsEqual = (a: EventType[], b: EventType[]): boolean => {
         if (a.length !== b.length) return false;
         for (let i = 0; i < a.length; i++) {
@@ -18,30 +27,47 @@ export function useCalendar() {
         return true;
     };
 
-    const fetchEvents = async (showLoading = false) => {
-        if (showLoading) setLoading(true);
-        try {
-            const data = await getCalendarEvents();
-            // Endast uppdatera events om det faktiskt är skillnad
-            if (!areEventsEqual(data, prevEventsRef.current)) {
-                setEvents(data);
-                prevEventsRef.current = data;
-            }
-        } catch (err: any) {
-            console.error("Kunde inte hämta kalenderdata:", err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Alias för tydlighet när du anropar den utifrån
-    const refreshCalendar = () => fetchEvents(false);
-
-    // Kör första gången och när bokningslistan ändras (lastUpdated)
+    // Hämta events om de saknas eller om bokningslistan ändrats
     const lastUpdated = useBookingListStore((state) => state.lastUpdated);
     useEffect(() => {
-        fetchEvents(true);
-    }, [lastUpdated]);
+        const fetchEvents = async () => {
+            setLoading(true);
+            try {
+                console.log("[useCalendar] GET /calendar/events TRIGGERED", {
+                    eventsLength: events.length,
+                    lastFetched,
+                    lastUpdated,
+                    reason: !events.length
+                        ? "events saknas"
+                        : !lastFetched
+                          ? "lastFetched saknas"
+                          : lastUpdated > lastFetched
+                            ? "lastUpdated > lastFetched"
+                            : "okänd",
+                });
+                const data = await getCalendarEvents();
+                if (!areEventsEqual(data, prevEventsRef.current)) {
+                    setEvents(data);
+                    prevEventsRef.current = data;
+                }
+                setLastFetched(Date.now());
+            } catch (err: any) {
+                console.error("Kunde inte hämta kalenderdata:", err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        // Hämta bara om events saknas eller om bokningslistan ändrats
+        if (!events.length || !lastFetched || lastUpdated > lastFetched) {
+            fetchEvents();
+        }
+    }, [lastUpdated, events.length, lastFetched, setEvents, setLoading, setLastFetched]);
+
+    // Manuell refresh-funktion
+    const refreshCalendar = () => {
+        clearEvents();
+        setLastFetched(null);
+    };
 
     return {
         events,

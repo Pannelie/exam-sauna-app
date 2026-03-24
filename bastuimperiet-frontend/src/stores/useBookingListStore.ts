@@ -49,10 +49,10 @@ export const useBookingListStore = create<BookingListState>((set, get) => ({
         set({ loading: true, error: null });
         try {
             const data = await getBookingById(id);
-            set({ selectedBooking: data, loading: false, lastUpdated: Date.now() });
+            set({ selectedBooking: data, loading: false });
         } catch (error) {
             console.error("Kunde inte hämta specifik bokning:", error);
-            set({ error: "Bokningen hittades inte", loading: false, lastUpdated: Date.now() });
+            set({ error: "Bokningen hittades inte", loading: false });
         }
     },
     updateBookingStatusInList: (id, newStatus) => {
