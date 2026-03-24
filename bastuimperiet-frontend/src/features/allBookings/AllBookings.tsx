@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { BookingCard } from "./components/BookingCard/BookingCard";
 import { BookingCardSkeleton } from "./components/BookingCardSkeleton/BookingCardSkeleton";
-import { Typography, Drawer, useMediaQuery, useTheme, Box, Snackbar, Alert } from "@mui/material";
+import { Typography, Drawer, useMediaQuery, useTheme, Box } from "@mui/material";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 import * as S from "./AllBookings.styles";
 import { useBookings } from "./hooks/useBookings";
@@ -15,9 +15,6 @@ export default function AllBookings() {
         useBookings();
     const { events, loading: calLoading, clickedId, setClickedId, hoveredBookingId, setHoveredBookingId } = useCalendar();
     const [mobileTab, setMobileTab] = useState(0);
-    const [showSnackbar, setShowSnackbar] = useState(false);
-    const [lastCount, setLastCount] = useState(bookings.length);
-    const [notifiedIds, setNotifiedIds] = useState<string[]>([]);
     const { id } = useParams();
     const navigate = useNavigate();
     const theme = useTheme();
@@ -40,21 +37,6 @@ export default function AllBookings() {
         const diff = Date.now() - new Date(createdAt).getTime();
         return diff < 600000; // 10 minuter
     };
-
-    useEffect(() => {
-        // Hitta bokningar som är pending och nyskapade
-        const newPending = bookings.filter((b) => b.status === "pending" && isRecent(b.createdAt));
-
-        // Filtrera bort de vi redan visat notis för
-        const brandNew = newPending.filter((b) => !notifiedIds.includes(b.id));
-
-        if (tabIndex === 0 && brandNew.length > 0 && lastCount !== 0) {
-            setShowSnackbar(true);
-            // Markera som "sedda"
-            setNotifiedIds((prev) => [...prev, ...brandNew.map((b) => b.id)]);
-        }
-        setLastCount(bookings.length);
-    }, [bookings, tabIndex, lastCount, notifiedIds]);
 
     return (
         <>
@@ -147,28 +129,6 @@ export default function AllBookings() {
                     <Outlet context={{ bookings, refreshData }} />
                 </Box>
             </Drawer>
-            <Snackbar
-                open={showSnackbar}
-                onClose={(_event, reason) => {
-                    if (reason === "clickaway") return;
-                    setShowSnackbar(false);
-                }}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            >
-                <Alert
-                    onClose={() => setShowSnackbar(false)}
-                    severity="info"
-                    variant="filled"
-                    sx={{
-                        width: "100%",
-                        borderRadius: "12px",
-                        fontWeight: "bold",
-                        boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-                    }}
-                >
-                    Ny bokningsförfrågan inkommen!
-                </Alert>
-            </Snackbar>
         </>
     );
 }
