@@ -4,13 +4,17 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { toDateStr, getNextDay, calculateBlockedDates, hasOverlap } from "../../utils/calendarUtils";
 import "./clientCalendar.css";
+import { useCalendar } from "../../../calendar/hooks/useCalendar";
 
-export const ClientCalendarCustomer = ({ events, onDateSelect, startDate, endDate }: any) => {
+export const ClientCalendarCustomer = ({ onDateSelect, startDate, endDate }: any) => {
     const calendarRef = useRef<FullCalendar>(null);
+    const { events } = useCalendar();
 
     const blockedDates = useMemo(() => {
         return calculateBlockedDates(events);
     }, [events]);
+
+    const calendarKey = useMemo(() => `calendar-${events?.length || 0}`, [events]);
 
     const handleDateClick = (arg: any) => {
         const clickedDate = arg.dateStr;
@@ -58,6 +62,7 @@ export const ClientCalendarCustomer = ({ events, onDateSelect, startDate, endDat
 
     return (
         <FullCalendar
+            key={calendarKey}
             ref={calendarRef}
             plugins={[dayGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
@@ -86,7 +91,9 @@ export const ClientCalendarCustomer = ({ events, onDateSelect, startDate, endDat
             // SPÄRR: Hindra markering över blockerade datum
             selectAllow={(selectInfo) => !blockedDates.has(toDateStr(selectInfo.start))}
             dateClick={handleDateClick}
-            events={[]}
+            events={events}
+            eventContent={() => null} // Returnerar inget innehåll för eventsen = ingen vit text
+            displayEventTime={false} // Säkerställer att ingen tid visas
         />
     );
 };

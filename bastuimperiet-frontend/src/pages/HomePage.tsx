@@ -9,10 +9,11 @@ import { BookingSection } from "../components/HomeSections/BookingSection";
 import { scrollToSection } from "../utils/scrollToSection";
 import { BookNowButton } from "../components/BookNowButton/BookNowButton";
 import "./page.css";
+import { useCalendar } from "../features/calendar/hooks/useCalendar";
 
 export const HomePage = () => {
     const fetchPrices = useBookingFormStore((state) => state.fetchPrices);
-
+    useCalendar();
     useEffect(() => {
         fetchPrices();
     }, [fetchPrices]);
@@ -35,7 +36,7 @@ export const HomePage = () => {
 
     return (
         <main className="home_main">
-            <Hero />
+            <Hero handleBookClick={handleBookClick} />
             <MenuBar menuItems={publicItems} actionComponent={<BookNowButton onClick={handleBookClick} />} />
             <div className="page_container--center">
                 <InfoSection ref={infoRef} />
