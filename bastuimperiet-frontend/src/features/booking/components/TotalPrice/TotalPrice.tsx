@@ -1,5 +1,5 @@
 import { Stack, Typography, Paper, styled } from "@mui/material";
-import { useBookingStore } from "../../stores/useBookingStore";
+import { useBookingFormStore } from "../../../../stores/useBookingFormStore";
 
 const StyledPaper = styled(Paper)({
     padding: "1rem",
@@ -7,7 +7,7 @@ const StyledPaper = styled(Paper)({
 });
 
 export const TotalPrice = () => {
-    const { totalPrice } = useBookingStore();
+    const { totalPrice } = useBookingFormStore();
 
     return (
         <StyledPaper>

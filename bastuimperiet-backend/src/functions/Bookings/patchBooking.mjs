@@ -31,17 +31,29 @@ export const handler = middy(async (event) => {
 
         let warning = null;
 
-        // --- 1. SÄKERHETSKONTROLL FÖR CONFIRMED ---
-        if (normalizedStatus === "confirmed") {
+        // --- 1. SÄKERHETSKONTROLL FÖR CONFIRMED & RESTORE ---
+        if (normalizedStatus === "confirmed" || normalizedStatus === "pending") {
             const allBookings = await getAllBookings(process.env.TABLE_NAME);
             // Kolla krockar med ANDRA bekräftade bokningar
             const otherConfirmed = allBookings.filter((b) => b.id !== bookingId && b.status === "confirmed");
+            const isRestore =
+                (normalizedStatus === "pending" && fullBooking.status === "declined") ||
+                (normalizedStatus === "confirmed" && fullBooking.status === "cancelled");
             if (hasBookingOverlap(fullBooking.startDate, fullBooking.endDate, otherConfirmed)) {
                 if (!force) {
-                    return {
-                        statusCode: 409,
-                        body: JSON.stringify({ message: "Datumen är redan upptagna av en annan bekräftad bokning.", warning: true }),
-                    };
+                    // Om det är en restore (declined->pending eller cancelled->confirmed): STOPP (ingen warning)
+                    if (isRestore) {
+                        return {
+                            statusCode: 409,
+                            body: JSON.stringify({ message: "Datumen är redan upptagna av en annan bekräftad bokning." }),
+                        };
+                    } else {
+                        // Vanlig bekräftelse: force-läge
+                        return {
+                            statusCode: 409,
+                            body: JSON.stringify({ message: "Datumen är redan upptagna av en annan bekräftad bokning.", warning: true }),
+                        };
+                    }
                 }
                 warning = "Observera: Du bekräftar en bokning som krockar med en annan bekräftad bokning.";
             }

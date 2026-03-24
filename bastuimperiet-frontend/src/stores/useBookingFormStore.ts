@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { getPriceList } from "../services/priceService";
-import type { BookingState } from "../../../types/bookingTypes";
-import { calculatePrice } from "../utils/priceEngine";
+import { getPriceList } from "../features/booking/services/priceService";
+import type { BookingState } from "../types/bookingTypes";
+import { calculatePrice } from "../features/booking/utils/priceEngine";
 
-export const useBookingStore = create<BookingState>((set, get) => ({
+export const useBookingFormStore = create<BookingState>((set, get) => ({
     // State
     startDate: undefined,
     endDate: undefined,

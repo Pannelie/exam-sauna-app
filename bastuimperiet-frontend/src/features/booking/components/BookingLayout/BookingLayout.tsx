@@ -3,12 +3,12 @@ import { useState } from "react";
 import { BookingStepper } from "../BookingStepper/BookingStepper";
 import type { BookingFormData, BookingBase } from "../../../../types/bookingTypes";
 import { useCalendar } from "../../../calendar/hooks/useCalendar";
-import { useBookingStore } from "../../stores/useBookingStore";
+import { useBookingFormStore } from "../../../../stores/useBookingFormStore";
 import { ClientCalendarCustomer } from "../ClientCalendar/ClientCalendar";
 
 export const BookingLayout = () => {
     const { events, loading } = useCalendar();
-    const { setField, reset: resetStore } = useBookingStore();
+    const { setField, reset: resetStore } = useBookingFormStore();
 
     const initialFormData: BookingFormData = {
         firewood: 0,

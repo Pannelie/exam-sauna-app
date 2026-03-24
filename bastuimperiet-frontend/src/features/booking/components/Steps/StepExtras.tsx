@@ -7,7 +7,7 @@ import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { TransportType } from "../../../../types/bookingTypes";
 import type { BookingFormData } from "../../../../types/bookingTypes";
-import { useBookingStore } from "../../stores/useBookingStore";
+import { useBookingFormStore } from "../../../../stores/useBookingFormStore";
 
 const StyledPaper = styled(Paper)({
     padding: "1rem",
@@ -19,7 +19,7 @@ interface StepExtrasProps {
 }
 
 export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
-    const { prices } = useBookingStore();
+    const { prices } = useBookingFormStore();
     const priceVed = prices?.firewood || 40;
     const priceDoft = prices?.scent || 30;
     const priceCleaning = prices?.cleaning || 995;

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useBookingStore } from "../features/booking/stores/useBookingStore";
+import { useBookingFormStore } from "../stores/useBookingFormStore";
 import MenuBar from "../components/MenuBar/MenuBar";
 import Hero from "../components/Hero/Hero";
 import { InfoSection } from "../components/HomeSections/InfoSection/InfoSection";
@@ -11,7 +11,7 @@ import { BookNowButton } from "../components/BookNowButton/BookNowButton";
 import "./page.css";
 
 export const HomePage = () => {
-    const fetchPrices = useBookingStore((state) => state.fetchPrices);
+    const fetchPrices = useBookingFormStore((state) => state.fetchPrices);
 
     useEffect(() => {
         fetchPrices();
