@@ -145,6 +145,7 @@ export const BookingDetailsView = () => {
                     <>
                         <ConfirmBtn booking={booking} />
                         <DeclineBtn booking={booking} />
+                        <ConfirmDialog />
                     </>
                 )}
                 {booking.status === BookingStatus.Confirmed && (

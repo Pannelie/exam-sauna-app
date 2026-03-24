@@ -20,7 +20,7 @@ export const BookingCard = ({ booking, onHover, onStatusChange, onMouseEnter, on
     const { id } = useParams();
     const isActive = id === String(booking.id);
     const statusColor = getStatusColor({ booking });
-    const { ConfirmBtn, DeclineBtn } = useBookingActions(onStatusChange);
+    const { ConfirmBtn, DeclineBtn, ConfirmDialog } = useBookingActions(onStatusChange);
 
     const handleCardClick = () => {
         onClick?.();
@@ -61,6 +61,7 @@ export const BookingCard = ({ booking, onHover, onStatusChange, onMouseEnter, on
                     <Stack direction="row" spacing={1}>
                         <ConfirmBtn booking={booking} />
                         <DeclineBtn booking={booking} />
+                        <ConfirmDialog />
                     </Stack>
                 ) : (
                     <S.StatusLabel variant="caption" statusColor={statusColor}>

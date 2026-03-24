@@ -14,6 +14,7 @@ export const useBookingActions = (onSuccess?: () => void) => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [pendingBooking, setPendingBooking] = useState<ApiBookingData | null>(null);
     const [dialogMessage, setDialogMessage] = useState("");
+    const [isError, setIsError] = useState(false);
     const [forceMode, setForceMode] = useState(false);
 
     const executeStatusUpdate = async (id: string, status: BookingStatus, force: boolean = false) => {
@@ -22,13 +23,25 @@ export const useBookingActions = (onSuccess?: () => void) => {
             await updateBookingStatus(id, status, force);
             onSuccess ? onSuccess() : window.location.reload();
         } catch (error: any) {
-            if (error?.response?.status === 409 && error?.response?.data?.warning) {
-                setDialogMessage(error.response.data.message + " Vill du fortsätta ändå?");
+            const statusErr = error?.response?.status;
+            const errorMessage = error?.response?.data?.message;
+
+            // 409 Conflict med warning = Force-läge (Gult ljus)
+            if (statusErr === 409 && error?.response?.data?.warning) {
+                setDialogMessage(errorMessage + " Vill du fortsätta ändå?");
                 setForceMode(true);
+                setIsError(false); // Detta är en varning, inte ett stopp-fel
                 setDialogOpen(true);
                 return;
             }
-            console.error(`Kunde inte uppdatera status till ${status}:`, error);
+
+            // Övriga fel (t.ex. 400 Bad Request eller 409 utan warning) = Stopp-läge (Rött ljus)
+            setDialogMessage(errorMessage || "Ett oväntat fel uppstod.");
+            setIsError(true);
+            setForceMode(false);
+            setDialogOpen(true);
+
+            console.error(`Kunde inte uppdatera status:`, error);
         } finally {
             setIsUpdating(false);
         }
@@ -132,32 +145,40 @@ export const useBookingActions = (onSuccess?: () => void) => {
     // Dialog-komponent för bekräftelse och force
     const ConfirmDialog = () => (
         <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-            <DialogTitle>Bekräfta ändring</DialogTitle>
+            <DialogTitle>{isError ? "Gick inte att boka" : "Bekräfta ändring"}</DialogTitle>
             <DialogContent>
                 <Typography>{dialogMessage}</Typography>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => setDialogOpen(false)} color="inherit">
-                    Avbryt
-                </Button>
-                <Button
-                    onClick={async () => {
-                        setDialogOpen(false);
-                        if (pendingBooking) {
-                            if (pendingBooking.status === "cancelled" || pendingBooking.status === "declined") {
-                                await handleRestore(pendingBooking, true);
-                            } else {
-                                await handleConfirm(pendingBooking, true);
+                {!isError && (
+                    <Button onClick={() => setDialogOpen(false)} color="inherit">
+                        Avbryt
+                    </Button>
+                )}
+                {isError ? (
+                    <Button onClick={() => setDialogOpen(false)} color="primary" variant="contained">
+                        OK
+                    </Button>
+                ) : (
+                    <Button
+                        onClick={async () => {
+                            setDialogOpen(false);
+                            if (pendingBooking) {
+                                if (pendingBooking.status === "cancelled" || pendingBooking.status === "declined") {
+                                    await handleRestore(pendingBooking, true);
+                                } else {
+                                    await handleConfirm(pendingBooking, true);
+                                }
                             }
-                        }
-                    }}
-                    color="primary"
-                    variant="contained"
-                    autoFocus
-                    disabled={isUpdating}
-                >
-                    Verkställ
-                </Button>
+                        }}
+                        color="primary"
+                        variant="contained"
+                        autoFocus
+                        disabled={isUpdating}
+                    >
+                        Verkställ
+                    </Button>
+                )}
             </DialogActions>
         </Dialog>
     );
