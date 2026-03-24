@@ -10,8 +10,14 @@ export const GoogleCalendar = ({ events, loading, clickedId, hoveredBookingId }:
     const navigate = useNavigate();
     const calendarRef = useRef<any>(null);
     // Spara aktuell vy och datum
-    const lastViewRef = useRef<string | null>(null);
-    const lastDateRef = useRef<Date | null>(null);
+    const lastViewRef = useRef<string>("dayGridMonth");
+    const lastDateRef = useRef<Date>(new Date());
+
+    // Spara vy och datum vid varje vy- eller datumändring
+    const handleViewChange = useCallback((arg: any) => {
+        lastViewRef.current = arg.view.type;
+        lastDateRef.current = arg.view.currentStart;
+    }, []);
 
     const handleEventClick = useCallback(
         (info: any) => {
@@ -44,16 +50,6 @@ export const GoogleCalendar = ({ events, loading, clickedId, hoveredBookingId }:
 
     const memoEvents = useMemo(() => events, [events]);
 
-    // Spara vy och datum innan events ändras
-    useEffect(() => {
-        if (calendarRef.current) {
-            const api = calendarRef.current.getApi();
-            lastViewRef.current = api.view.type;
-            lastDateRef.current = api.getDate();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // Bara första gången
-
     // Återställ vy och datum efter events ändrats
     useEffect(() => {
         if (calendarRef.current && lastViewRef.current && lastDateRef.current) {
@@ -70,15 +66,17 @@ export const GoogleCalendar = ({ events, loading, clickedId, hoveredBookingId }:
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, interactionPlugin]}
-                    initialView="dayGridMonth"
+                    initialView={lastViewRef.current}
+                    initialDate={lastDateRef.current}
                     locale="sv"
                     events={memoEvents}
                     height="auto"
                     eventClick={handleEventClick}
                     eventContent={renderEventContent}
                     eventDisplay="block"
-                    // Viktigt: Vi håller klasserna tomma här för att undvika FullCalendar-diffar
                     eventClassNames={() => []}
+                    viewDidMount={handleViewChange}
+                    datesSet={handleViewChange}
                 />
             )}
         </div>
