@@ -33,18 +33,6 @@ export function useCalendar() {
         const fetchEvents = async () => {
             setLoading(true);
             try {
-                console.log("[useCalendar] GET /calendar/events TRIGGERED", {
-                    eventsLength: events.length,
-                    lastFetched,
-                    lastUpdated,
-                    reason: !events.length
-                        ? "events saknas"
-                        : !lastFetched
-                          ? "lastFetched saknas"
-                          : lastUpdated > lastFetched
-                            ? "lastUpdated > lastFetched"
-                            : "okänd",
-                });
                 const data = await getCalendarEvents();
                 if (!areEventsEqual(data, prevEventsRef.current)) {
                     setEvents(data);
