@@ -87,6 +87,13 @@ functions:
             - httpApi:
                   path: /admin
                   method: GET
+    getLoggedInAdmin:
+        handler: src/functions/Admin/getLoggedInAdmin.handler
+        events:
+            - httpApi:
+                  path: /admin/profile
+                  method: GET
+
     updateAdmin:
         handler: src/functions/Admin/patchAdmin.handler
         events:

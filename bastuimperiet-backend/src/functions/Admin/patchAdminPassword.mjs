@@ -7,6 +7,12 @@ import { errorHandler } from "../../middlewares/errorHandler.js";
 export const handler = middy(async (event) => {
     const body = event.body;
 
+    if (!body?.oldPassword || !body?.newPassword) {
+        const error = new Error("Både gammalt och nytt lösenord måste skickas");
+        error.statusCode = 400;
+        throw error;
+    }
+
     await changeAdminPassword(process.env.TABLE_NAME, event.admin.email, body.oldPassword, body.newPassword);
 
     return {
