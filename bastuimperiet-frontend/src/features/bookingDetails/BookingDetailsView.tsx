@@ -1,27 +1,28 @@
 import { useParams } from "react-router-dom";
 import { Typography, Box, Stack, Divider, Paper } from "@mui/material";
 import { BookingStatus } from "../../types/bookingTypes";
-import { Today, Person, FmdGood } from "@mui/icons-material";
+import { Today, FmdGood } from "@mui/icons-material";
+import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
+import EmailIcon from "@mui/icons-material/Email";
 import { getStatusChip, StatusIndicator, formatDateTime } from "./utils/bookingDetailHelpers";
 import { getBookingChips } from "./components/BookingChips/BookingChips";
 import { useBookingActions } from "../../hooks/useActionButtons";
 import { useBookingListStore } from "../../stores/useBookingListStore";
 import { useEffect } from "react";
+import theme from "../../theme";
 
 export const BookingDetailsView = () => {
     const { id } = useParams<{ id: string }>();
     const { selectedBooking, fetchBookingById } = useBookingListStore();
 
     useEffect(() => {
-        // Om vi har ett ID i URL:en men ingen bokning laddad i storen
+        // Om jag har ett ID i URL:en men ingen bokning laddad i storen
         if (id && (!selectedBooking || String(selectedBooking.id) !== id)) {
             fetchBookingById(id);
         }
     }, [id, selectedBooking, fetchBookingById]);
 
-    // Använd central store för statusuppdatering
     const { ConfirmBtn, DeclineBtn, CancelBtn, RestoreBtn, ConfirmDialog } = useBookingActions();
-
     const booking = selectedBooking;
 
     if (!booking) {
@@ -30,16 +31,44 @@ export const BookingDetailsView = () => {
     const statusChip = getStatusChip(booking.status);
     const bookingChips = getBookingChips(booking);
 
+    const firstName = booking.name.split(" ")[0];
+    const lastName = booking.name.split(" ")[1] || "";
+
+    const getDynamicFontSize = (text: string) => {
+        if (text.length > 15) return "1.1rem";
+        if (text.length > 10) return "1.3rem";
+        return "1.5rem";
+    };
+
     return (
-        <Box sx={{ width: "100%", minHeight: "100%", display: "flex", flexDirection: "column", gap: 2 }}>
+        <>
             {/*----------------------------Header: ID, Pris och Status--------------------------------------*/}
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <Box>
                     <Typography variant="caption" color="text.secondary" sx={{ textTransform: "uppercase" }}>
-                        BOKNINGS-ID
+                        KUND #{booking.id}
                     </Typography>
-                    <Typography variant="h5" fontWeight="bold">
-                        {booking.id}
+                    <Typography
+                        fontWeight="bold"
+                        sx={{
+                            fontSize: getDynamicFontSize(firstName),
+                            lineHeight: 1.1,
+                            wordBreak: "break-all",
+                        }}
+                    >
+                        {firstName}
+                    </Typography>
+
+                    <Typography
+                        fontWeight="bold"
+                        sx={{
+                            fontSize: getDynamicFontSize(lastName),
+                            lineHeight: 1.1,
+                            color: "text.primary",
+                            opacity: 0.9,
+                        }}
+                    >
+                        {lastName}
                     </Typography>
                 </Box>
                 <Stack spacing={1} alignItems="flex-end">
@@ -62,32 +91,26 @@ export const BookingDetailsView = () => {
             </Stack>
 
             <Divider />
+
             <Box>
                 <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-                    <Person fontSize="small" color="disabled" />
-                    <Typography variant="body2" fontSize={16} fontWeight="600">
-                        {booking.name}
+                    <LocalPhoneIcon fontSize="small" color="disabled" />
+                    <Typography variant="body2" fontWeight="500" color={theme.palette.text.primary}>
+                        {booking.phone}
                     </Typography>
                 </Stack>
-
-                <Typography variant="body2" color="text.secondary">
-                    {booking.email}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    {booking.phone}
-                </Typography>
-            </Box>
-            <Divider />
-            <Box>
+                <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+                    <EmailIcon fontSize="small" color="disabled" />
+                    <Typography variant="body2" fontWeight="500" color={theme.palette.text.primary}>
+                        {booking.email}
+                    </Typography>
+                </Stack>
                 <Stack direction="row" spacing={1} alignItems="center" mb={1}>
                     <FmdGood fontSize="small" color="disabled" />
-                    <Typography variant="body2" fontSize={16} fontWeight="600">
-                        Adress
+                    <Typography variant="body2" fontWeight="500" color={theme.palette.text.primary}>
+                        {booking.address}, {booking.postalCode} {booking.city}
                     </Typography>
                 </Stack>
-                <Typography variant="body2" fontWeight="500">
-                    {booking.address}, {booking.postalCode} {booking.city}
-                </Typography>
             </Box>
 
             {/* -------------------------------------Tillval -------------------------------------- */}
@@ -111,10 +134,7 @@ export const BookingDetailsView = () => {
             {booking.status !== BookingStatus.Pending && (
                 <>
                     <Divider />
-                    <Paper variant="outlined" sx={{ p: 2, bgcolor: "background.default", borderRadius: 1 }}>
-                        <Typography variant="body2" gutterBottom textAlign={"left"}>
-                            Systemstatus
-                        </Typography>
+                    <Paper variant="outlined" sx={{ p: 1.5, bgcolor: "background.default", borderRadius: 1 }}>
                         <Stack direction="row" spacing={3}>
                             <StatusIndicator label="Kalender synkad" active={booking.integrations?.calendarUpdated} />
                             <StatusIndicator label="Gäst-email skickat" active={booking.integrations?.guestEmailSent} />
@@ -144,6 +164,6 @@ export const BookingDetailsView = () => {
             </Stack>
             {/* ConfirmDialog alltid renderad */}
             <ConfirmDialog />
-        </Box>
+        </>
     );
 };
