@@ -41,3 +41,32 @@ export async function loginAdmin(tableName, email, password) {
         },
     };
 }
+
+export const getAllAdmins = async (tableName) => {
+    const params = {
+        TableName: tableName,
+        IndexName: "GSI1",
+        KeyConditionExpression: "GSI1PK = :pk",
+        ExpressionAttributeValues: {
+            ":pk": "ADMIN",
+        },
+    };
+
+    const result = await dynamoClient.send(new QueryCommand(params));
+    return result.Items;
+};
+
+export const getAdminByEmail = async (tableName, email) => {
+    const params = {
+        TableName: tableName,
+        IndexName: "GSI1",
+        KeyConditionExpression: "GSI1PK = :pk AND GSI1SK = :sk",
+        ExpressionAttributeValues: {
+            ":pk": "ADMIN",
+            ":sk": email,
+        },
+    };
+
+    const result = await dynamoClient.send(new QueryCommand(params));
+    return result.Items[0];
+};
