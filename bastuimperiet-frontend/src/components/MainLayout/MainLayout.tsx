@@ -21,7 +21,7 @@ export const MainLayout = () => {
         { label: "Ny bokning", onClick: () => navigate("/admin/new-booking") },
     ];
 
-    // Bestäm vilken knapp som ska synas till höger
+    // ----------- hämta inloggad admin info från global store/service istället för att hårdkoda -----------
     const actionComponent = <ProfileMenuCard user={{ name: "Jacob", email: "jacob@exempel.se" }} />;
 
     return (

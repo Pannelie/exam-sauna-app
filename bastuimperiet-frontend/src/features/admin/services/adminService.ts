@@ -1,10 +1,11 @@
 import axios from "axios";
-import type { adminUser, adminUpdate } from "../types/adminTypes";
+import type { AdminUser, AdminUpdate } from "../types/adminTypes";
 
 const baseUrl = import.meta.env.VITE_API_URL;
+console.log("[adminService] baseUrl:", baseUrl);
 
 export const adminService = {
-    login: async (credentials: adminUser) => {
+    login: async (credentials: AdminUser) => {
         try {
             const response = await axios.post(`${baseUrl}/admin/login`, credentials, {
                 headers: {
@@ -21,30 +22,33 @@ export const adminService = {
         const response = await axios.get(`${baseUrl}/admin/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         });
+        console.log("Profile fetched:", response.data);
         return response.data;
     },
     getAll: async (token: string) => {
+        console.log("[adminService] getAll called. Token:", token);
         try {
             const response = await axios.get(`${baseUrl}/admin`, {
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
             });
+            console.log("Admins fetched:", response.data);
             return response.data;
         } catch (error) {
             console.error("Error fetching admins:", error);
             throw error;
         }
     },
-    update: async (token: string, updates: adminUpdate) => {
+    update: async (token: string, updates: AdminUpdate) => {
         try {
-            const response = await axios.put(`${baseUrl}/admin`, updates, {
+            const response = await axios.patch(`${baseUrl}/admin`, updates, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
             });
+            console.log("Admin updated:", response.data);
             return response.data;
         } catch (error) {
             console.error("Error updating admin:", error);
