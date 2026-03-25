@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { BookingCard } from "./components/BookingCard/BookingCard";
 import { BookingCardSkeleton } from "./components/BookingCardSkeleton/BookingCardSkeleton";
-import { Typography, Drawer, useMediaQuery, useTheme, Box } from "@mui/material";
+import { Typography, useMediaQuery, useTheme, Box } from "@mui/material";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 import * as S from "./AllBookings.styles";
 import { useBookings } from "./hooks/useBookings";
@@ -9,6 +9,7 @@ import { ViewSwitcher } from "./components/ViewSwitcher/ViewSwitcher";
 import { GoogleCalendar } from "../calendar/GoogleCalendar";
 import { useCalendar } from "../calendar/hooks/useCalendar";
 import { BookingFilters } from "./components/BookingFilters/BookingFilters";
+import { MobileBottomSheet } from "../../components/MobileBottomSheet/MobileBottomSheet";
 
 export default function AllBookings() {
     const { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings } = useBookings();
@@ -67,17 +68,15 @@ export default function AllBookings() {
                 {/* DESKTOP VYER */}
                 {!isMobile && (
                     <>
-                        <S.ContentPaper sx={{ flex: 1 }}>
-                            <GoogleCalendar />
-                        </S.ContentPaper>
+                        <GoogleCalendar xs={{ flex: 1 }} />
 
                         <S.ContentPaper sx={{ flex: 1, maxWidth: "400px" }}>
                             <S.DetailViewBox $hasId={!!id}>
                                 {id ? (
                                     <Outlet context={{ bookings }} />
                                 ) : (
-                                    <Typography variant="body1" color="text.secondary" sx={{ maxWidth: "250px", textAlign: "center" }}>
-                                        Välj en bokning i listan till vänster för att se detaljer.
+                                    <Typography variant="body1" color="text.secondary" sx={{ textAlign: "center" }}>
+                                        Välj en bokning i listan eller kalendern för att se detaljer.
                                     </Typography>
                                 )}
                             </S.DetailViewBox>
@@ -95,21 +94,9 @@ export default function AllBookings() {
                     </S.ContentPaper>
                 )}
             </S.MainContainer>
-
-            <Drawer
-                anchor="bottom"
-                open={!!id && isMobile}
-                onClose={() => navigate("/admin/bookings")}
-                disableEnforceFocus
-                ModalProps={{
-                    keepMounted: true,
-                }}
-                PaperProps={{ sx: { height: "85vh", borderTopLeftRadius: 32, borderTopRightRadius: 32 } }}
-            >
-                <Box sx={{ p: 2 }}>
-                    <Outlet context={{ bookings }} />
-                </Box>
-            </Drawer>
+            <MobileBottomSheet open={!!id && isMobile} onClose={() => navigate("/admin/bookings")}>
+                <Outlet context={{ bookings }} />
+            </MobileBottomSheet>
         </>
     );
 }

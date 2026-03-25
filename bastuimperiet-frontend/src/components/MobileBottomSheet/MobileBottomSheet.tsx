@@ -55,7 +55,7 @@ export const MobileBottomSheet = ({ open, onClose, onOpen = () => {}, children, 
             </Box>
 
             {/* Innehållet som skickas in */}
-            <Box sx={{ p: 2, pt: 0, pb: 4 }}>{children}</Box>
+            <Box sx={{ p: 4, pt: 0, pb: 4 }}>{children}</Box>
         </SwipeableDrawer>
     );
 };

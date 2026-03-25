@@ -69,6 +69,7 @@ export const DetailViewBox = styled(
     justifyContent: $hasId ? "flex-start" : "center",
     alignItems: $hasId ? "stretch" : "center",
     padding: "32px", // 4 * 8px
+    gap: "1rem",
     height: "100%",
     overflowY: "auto",
 }));
