@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import MenuBar from "../MenuBar/MenuBar";
 import { ProfileMenuCard } from "../../features/admin/components/ProfileMenuCard/ProfileMenuCard";
 import { useAdminsStore } from "../../features/admin/stores/useAdminsStore";
@@ -11,10 +11,16 @@ export const MainLayout = () => {
     const isLoginPage = pathname === "/admin/login";
 
     const fetchMyProfile = useAdminsStore((state) => state.fetchMyProfile);
+    const fetchAdmins = useAdminsStore((state) => state.fetchAdmins);
+
+    const loadAdminData = useCallback(async () => {
+        await fetchMyProfile();
+        await fetchAdmins();
+    }, [fetchMyProfile, fetchAdmins]);
 
     useEffect(() => {
-        fetchMyProfile();
-    }, [fetchMyProfile]);
+        loadAdminData();
+    }, [loadAdminData]);
 
     if (isLoginPage) {
         return (
