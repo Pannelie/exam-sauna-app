@@ -81,6 +81,24 @@ provider:
 #---------------------------------------------------------------------
 functions:
     #----------------admin----------------
+    getAdmins:
+        handler: src/functions/Admin/getAdmins.handler
+        events:
+            - httpApi:
+                  path: /admin
+                  method: GET
+    updateAdmin:
+        handler: src/functions/Admin/patchAdmin.handler
+        events:
+            - httpApi:
+                  path: /admin
+                  method: PATCH
+    changeAdminPassword:
+        handler: src/functions/Admin/patchAdminPassword.handler
+        events:
+            - httpApi:
+                  path: /admin/password
+                  method: PATCH
     adminLogin:
         handler: src/functions/Admin/login.handler
         events:
