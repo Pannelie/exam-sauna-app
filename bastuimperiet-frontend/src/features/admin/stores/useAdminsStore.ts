@@ -38,6 +38,7 @@ export const useAdminsStore = create<AdminsStore>((set) => ({
         set({ loading: true });
         try {
             const token = localStorage.getItem("adminToken");
+            console.log("[useAdminsStore] fetchMyProfile called. Token:", token);
             if (!token) throw new Error("Ingen token hittad");
             const data = await adminService.getProfile(token);
             set({ myProfile: data, error: null });

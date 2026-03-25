@@ -16,7 +16,7 @@ export const AdminList = () => {
     const loadAdmins = useCallback(async () => {
         await fetchAdmins();
         await fetchMyProfile();
-    }, []);
+    }, [fetchAdmins, fetchMyProfile]);
 
     useEffect(() => {
         loadAdmins();
