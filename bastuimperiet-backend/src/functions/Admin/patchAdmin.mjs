@@ -1,7 +1,7 @@
 import middy from "@middy/core";
 import { verifyAdminToken } from "../../middlewares/verifyAdminToken.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-import { updateAdmin } from "../..adminService.mjs";
+import { updateAdmin } from "../../services/adminService.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.js";
 
 export const handler = middy(async (event) => {

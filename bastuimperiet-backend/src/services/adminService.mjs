@@ -1,7 +1,7 @@
 import { dynamoClient } from "../clients/dynamodbClient.mjs";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
 export async function loginAdmin(tableName, email, password) {
     const params = {
@@ -118,9 +118,6 @@ export async function updateAdmin(tableName, email, updates) {
     const { passwordHash, ...admin } = result.Attributes;
     return admin;
 }
-
-import bcrypt from "bcryptjs";
-import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
 // Funktion för att uppdatera admin-lösenord
 export async function updateAdminPassword(tableName, email, newPassword) {

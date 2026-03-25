@@ -1,5 +1,5 @@
 import middy from "@middy/core";
-import { verifyAdminToken } from "../../verifyAdminToken.js";
+import { verifyAdminToken } from "../../middlewares/verifyAdminToken.js";
 import { getAllAdmins } from "../../services/adminService.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.js";
 
