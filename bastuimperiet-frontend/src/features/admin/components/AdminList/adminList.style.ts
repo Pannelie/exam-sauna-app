@@ -7,4 +7,5 @@ export const StyledList = styled(Box, {
     gridTemplateColumns: isMobile ? "repeat(1, 1fr)" : "repeat(4, 1fr)",
     gap: "2rem",
     overflowY: "auto",
+    marginTop: "1.5rem",
 }));
