@@ -1,12 +1,20 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import MenuBar from "../MenuBar/MenuBar";
 import { ProfileMenuCard } from "../../features/admin/components/ProfileMenuCard/ProfileMenuCard";
+import { useAdminsStore } from "../../features/admin/stores/useAdminsStore";
 
 export const MainLayout = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const isAdmin = pathname.startsWith("/admin");
     const isLoginPage = pathname === "/admin/login";
+
+    const fetchMyProfile = useAdminsStore((state) => state.fetchMyProfile);
+
+    useEffect(() => {
+        fetchMyProfile();
+    }, [fetchMyProfile]);
 
     if (isLoginPage) {
         return (
@@ -22,7 +30,7 @@ export const MainLayout = () => {
     ];
 
     // ----------- hämta inloggad admin info från global store/service istället för att hårdkoda -----------
-    const actionComponent = <ProfileMenuCard user={{ name: "Jacob", email: "jacob@exempel.se" }} />;
+    const actionComponent = <ProfileMenuCard />;
 
     return (
         <>
