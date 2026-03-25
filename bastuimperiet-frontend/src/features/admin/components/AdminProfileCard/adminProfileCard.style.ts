@@ -1,6 +1,6 @@
 import { Paper, styled } from "@mui/material";
 
-export const AdminBaseCard = styled(Paper)<{ active?: boolean }>(({ active }) => ({
+export const StyledProfileCard = styled(Paper)<{ active?: boolean }>(({ active }) => ({
     backgroundColor: active ? "rgba(240, 192, 90, 0.6)" : "rgba(255, 255, 255, 0.4)",
     backdropFilter: "blur(6px)",
     padding: "30px",
