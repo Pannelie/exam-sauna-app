@@ -23,3 +23,26 @@ export function formatBookingForFrontend(item) {
         status: item.status,
     };
 }
+
+export function formathDate(dateString) {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date
+        .toLocaleString("sv-SE", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        })
+        .replace(",", " kl.");
+}
+
+export function escapeHtml(value = "") {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
