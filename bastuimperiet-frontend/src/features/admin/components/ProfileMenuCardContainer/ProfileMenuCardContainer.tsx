@@ -1,9 +1,9 @@
-import { IconButton, Typography } from "@mui/material";
+import { IconButton } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
-import { LogoutBtn } from "../LogoutBtn/LogoutBtn";
 import * as S from "./profileMenuCardContainer.style";
 import { useAdminsStore } from "../../stores/useAdminsStore";
+import { ProfileMenuCard } from "../ProfileMenuCard/ProfileMenuCard";
 
 export function ProfileMenuCardContainer() {
     const navigate = useNavigate();
@@ -17,20 +17,7 @@ export function ProfileMenuCardContainer() {
             </IconButton>
 
             {/* Hover-kortet */}
-            <S.DropdownCard className="dropdown-card" elevation={4} sx={{ gap: 0.5 }}>
-                <AccountCircleIcon sx={{ fontSize: 60, mb: 1 }} />
-                <Typography variant="h6" sx={{ textTransform: "uppercase", fontWeight: "bold" }}>
-                    {myProfile?.username || "namn saknas"}
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                    {myProfile?.email || "email saknas"}
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, mb: 2 }}>
-                    {myProfile?.phone || "telefon saknas"}
-                </Typography>
-
-                <LogoutBtn />
-            </S.DropdownCard>
+            {myProfile && <ProfileMenuCard myProfile={myProfile} />}
         </S.UserWrapper>
     );
 }
