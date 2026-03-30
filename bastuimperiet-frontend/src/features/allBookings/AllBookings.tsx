@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { BookingCard } from "./components/BookingCard/BookingCard";
-import { Typography, useMediaQuery, useTheme, Box, CircularProgress } from "@mui/material";
+import { Typography, useMediaQuery, useTheme, CircularProgress } from "@mui/material";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 import * as S from "./AllBookings.styles";
 import { useBookings } from "./hooks/useBookings";
@@ -16,6 +16,7 @@ export default function AllBookings() {
     const { id } = useParams();
     const isSelectedVisible = filteredBookings.some((b) => String(b.id) === id);
     const [mobileTab, setMobileTab] = useState(0);
+    const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -26,18 +27,32 @@ export default function AllBookings() {
         setClickedId(id || null);
     }, [id, setClickedId]);
 
+    useEffect(() => {
+        if (mobileTab !== 0) {
+            setIsMobileSearchOpen(false);
+        }
+    }, [mobileTab]);
+
     return (
         <>
             {isMobile && (
-                <Box sx={{ display: "flex", justifyContent: "center", flexShrink: 0 }}>
-                    <ViewSwitcher value={mobileTab} onChange={setMobileTab} />
-                </Box>
-            )}
-
-            <S.MainContainer $isMobile={isMobile}>
-                {/* VÄNSTER: LISTA */}
-                {(!isMobile || mobileTab === 0) && (
-                    <S.ListWrapper $isMobile={isMobile}>
+                <S.MobileTopPanel>
+                    <ViewSwitcher
+                        value={mobileTab}
+                        onChange={setMobileTab}
+                        showSearchToggle={mobileTab === 0}
+                        isSearchActive={isMobileSearchOpen || searchTerm.length > 0}
+                        onSearchToggle={() => {
+                            const isActive = isMobileSearchOpen || searchTerm.length > 0;
+                            if (isActive) {
+                                setIsMobileSearchOpen(false);
+                                setSearchTerm("");
+                            } else {
+                                setIsMobileSearchOpen(true);
+                            }
+                        }}
+                    />
+                    {mobileTab === 0 && (
                         <BookingFilters
                             searchTerm={searchTerm}
                             setSearchTerm={setSearchTerm}
@@ -45,7 +60,26 @@ export default function AllBookings() {
                             setTabIndex={setTabIndex}
                             categories={categories}
                             isMobile={isMobile}
+                            isMobileSearchOpen={isMobileSearchOpen}
                         />
+                    )}
+                </S.MobileTopPanel>
+            )}
+
+            <S.MainContainer $isMobile={isMobile}>
+                {/* VÄNSTER: LISTA */}
+                {(!isMobile || mobileTab === 0) && (
+                    <S.ListWrapper $isMobile={isMobile}>
+                        {!isMobile && (
+                            <BookingFilters
+                                searchTerm={searchTerm}
+                                setSearchTerm={setSearchTerm}
+                                tabIndex={tabIndex}
+                                setTabIndex={setTabIndex}
+                                categories={categories}
+                                isMobile={isMobile}
+                            />
+                        )}
 
                         <S.ScrollableList onMouseLeave={() => setHoveredBookingId(null)}>
                             {loading && filteredBookings.length === 0 ? (

@@ -1,5 +1,5 @@
 import { Box, Paper, styled, TextField, Select } from "@mui/material";
-import type { PillProps, MainContainerProps, ListWrapperProps, DetailViewBoxProps } from "./types/types";
+import type { MainContainerProps, ListWrapperProps, DetailViewBoxProps } from "./types/types";
 
 const transientProps = ["$isMobile", "$hasId", "$active"];
 
@@ -16,6 +16,16 @@ export const MainContainer = styled(
     flexDirection: $isMobile ? "column" : "row",
     gap: $isMobile ? theme.spacing(2) : theme.spacing(4),
     overflow: "hidden",
+}));
+
+export const MobileTopPanel = styled(Box)(({ theme }) => ({
+    position: "sticky",
+    top: 0,
+    zIndex: 35,
+
+    [theme.breakpoints.up("md")]: {
+        display: "none",
+    },
 }));
 
 export const ListWrapper = styled(
@@ -56,6 +66,7 @@ export const ScrollableList = styled(Box)({
     flex: 1,
     overflowY: "auto",
     paddingRight: "8px",
+    touchAction: "pan-y",
     "&::-webkit-scrollbar": { display: "none" },
 });
 
@@ -87,25 +98,6 @@ export const CategoryScrollContainer = styled(Box)(({ theme }) => ({
     },
     padding: "4px 0 12px 0",
     "&::-webkit-scrollbar": { display: "none" },
-}));
-
-export const Pill = styled(
-    "div",
-    styledOptions,
-)<PillProps>(({ active }) => ({
-    padding: "8px 22px",
-    borderRadius: "20px",
-    whiteSpace: "nowrap",
-    cursor: "pointer",
-    fontSize: "0.85rem",
-    fontWeight: 700,
-    letterSpacing: "0.5px",
-    transition: "all 0.2s ease",
-    backgroundColor: active ? "white" : "rgba(0, 0, 0, 0.4)",
-    color: active ? "black" : "white",
-    backdropFilter: "blur(4px)",
-    border: `1px solid ${active ? "white" : "rgba(255, 255, 255, 0.2)"}`,
-    "&:active": { transform: "scale(0.95)" },
 }));
 
 export const ContentPaper = styled(Paper)({

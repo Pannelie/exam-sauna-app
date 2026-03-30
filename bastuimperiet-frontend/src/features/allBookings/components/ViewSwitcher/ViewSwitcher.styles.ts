@@ -11,6 +11,7 @@ export const StyledSwitchContainer = styled(Box)({
     position: "relative",
     padding: "1rem 0",
     zIndex: 10,
+    marginBottom: ".3rem",
 });
 
 export const MobileSearchToggle = styled(
@@ -21,7 +22,6 @@ export const MobileSearchToggle = styled(
     left: "max(12px, calc(50% - 100px))",
     width: 34,
     height: 34,
-
     backgroundColor: $active ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.35)",
     color: $active ? theme.palette.text.primary : theme.palette.common.white,
     backdropFilter: "blur(4px)",
@@ -38,7 +38,6 @@ export const StyledTabs = styled(Tabs)({
     borderRadius: "20px",
     padding: "4px",
     boxShadow: "inset 0px 2px 4px rgba(0,0,0,0.2)",
-
     "& .MuiTabs-flexContainer": {
         gap: "4px",
     },
