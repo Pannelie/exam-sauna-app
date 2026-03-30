@@ -10,7 +10,7 @@ export const StyledBookingLayout = styled(Box)(({ theme }) => ({
     width: "100%",
     [theme.breakpoints.down("md")]: {
         flexDirection: "column",
-        padding: theme.spacing(2),
+        padding: 0,
     },
 }));
 
