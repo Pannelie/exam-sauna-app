@@ -70,7 +70,7 @@ export const GoogleCalendar = () => {
     }, [memoEvents]);
 
     return (
-        <div>
+        <div className="calendar-wrapper">
             {loading ? (
                 <CircularProgress />
             ) : (
@@ -84,6 +84,11 @@ export const GoogleCalendar = () => {
                     firstDay={1}
                     events={memoEvents}
                     height="auto"
+                    // Tvingar kalendern att lyssna på förälderns höjd
+                    // Tar bort intern scroll i tabellen
+                    // Justera detta värde för att göra rutorna lägre/högre
+                    expandRows={true} // Gör att raderna fyller ut hela höjden jämnt
+                    handleWindowResize={true}
                     eventClick={handleEventClick}
                     eventContent={renderEventContent}
                     eventDisplay="block"

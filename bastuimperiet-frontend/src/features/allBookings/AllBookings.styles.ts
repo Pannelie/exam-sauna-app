@@ -14,8 +14,10 @@ export const MainContainer = styled(
     flex: 1,
     display: "flex",
     flexDirection: $isMobile ? "column" : "row",
-    gap: $isMobile ? theme.spacing(2) : theme.spacing(4),
+    gap: $isMobile ? theme.spacing(2) : theme.spacing(2), // Något mindre gap för att få plats
     overflow: "hidden",
+    height: "100vh", // Säkerställ att containern tar hela höjden
+    padding: theme.spacing(2),
 }));
 
 export const MobileTopPanel = styled(Box)(({ theme }) => ({
@@ -34,13 +36,23 @@ export const ListWrapper = styled(
 )<ListWrapperProps>(({ theme, $isMobile }) => ({
     display: "flex",
     flexDirection: "column",
-    flex: 1,
-    maxWidth: $isMobile ? "none" : "400px",
+    // Fixerad bredd på desktop, flexibel på mobil
+    flex: $isMobile ? 1 : "0 0 350px",
+    maxWidth: $isMobile ? "none" : "350px",
+    minWidth: $isMobile ? "none" : "300px",
     gap: theme.spacing(2),
-    width: "100%",
-    minHeight: 0,
     height: "100%",
+    overflow: "hidden",
 }));
+
+export const CalendarWrapper = styled(Box)({
+    flex: 1, // Denna gör att kalendern "äter" allt utrymme mellan listan och detaljvyn
+    minWidth: 0, // Viktigt för att flex-barn inte ska overflowa
+    overflowY: "auto",
+    "& .fc": {
+        height: "100% !important", // Tvingar FullCalendar att fylla containern
+    },
+});
 
 export const SearchContainer = styled(Box)(({ theme }) => ({
     display: "flex",
@@ -79,7 +91,7 @@ export const DetailViewBox = styled(
     flexDirection: "column",
     justifyContent: $hasId ? "flex-start" : "center",
     alignItems: $hasId ? "stretch" : "center",
-    padding: "3rem", // 4 * 8px
+    padding: "2rem", // 4 * 8px
     gap: "1rem",
     height: "100%",
     overflowY: "auto",
@@ -109,7 +121,7 @@ export const CategoryScrollContainer = styled(Box)(({ theme }) => ({
     "&::-webkit-scrollbar": { display: "none" },
 }));
 
-export const ContentPaper = styled(Paper)({
+export const ContentPaper = styled(Paper)(({ theme }) => ({
     backgroundColor: "white",
     borderRadius: "24px",
     display: "flex",
@@ -117,8 +129,10 @@ export const ContentPaper = styled(Paper)({
     overflow: "hidden",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
     height: "100%",
+    // Fixerad bredd så att detaljvyn inte hoppar i storlek
+    flex: "0 0 400px",
     minWidth: 0,
-});
+}));
 
 export const DefaultBox = styled(Box)({
     display: "flex",

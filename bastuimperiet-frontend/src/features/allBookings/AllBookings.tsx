@@ -123,9 +123,10 @@ export default function AllBookings() {
                 {/* DESKTOP VYER */}
                 {!isMobile && (
                     <>
-                        <GoogleCalendar />
-
-                        <S.ContentPaper sx={{ flex: 1, maxWidth: "400px" }}>
+                        <S.CalendarWrapper>
+                            <GoogleCalendar />
+                        </S.CalendarWrapper>
+                        <S.ContentPaper sx={{ flexShrink: 0, width: "400px" }}>
                             <S.DetailViewBox $hasId={!!id}>
                                 {id ? (
                                     <Outlet context={{ bookings }} />

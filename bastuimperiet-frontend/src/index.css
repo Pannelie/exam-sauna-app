@@ -58,7 +58,7 @@ html {
     height: calc(100vh - var(--menubar-height));
     background-image: url(../src/assets/wood2.webp);
     overflow: hidden; /* Förhindra att main i sig scrollar */
-    padding: 2rem 4rem 4rem;
+    padding: 0rem 4rem 4rem;
     position: relative;
 }
 
