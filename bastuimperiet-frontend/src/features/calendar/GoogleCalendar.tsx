@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useNavigate } from "react-router-dom";
 import { renderEventContent } from "./components/RenderEventContent/RenderEventContent";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, useMediaQuery, useTheme } from "@mui/material";
 import "./googleCalendar.css";
 import { useCalendar } from "./hooks/useCalendar";
 
@@ -14,11 +14,13 @@ type ViewChangeArg = { view: { type: string; currentStart: Date } };
 
 export const GoogleCalendar = () => {
     const navigate = useNavigate();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
     const calendarRef = useRef<FullCalendar | null>(null);
     const lastViewRef = useRef<string>("dayGridMonth");
     const lastDateRef = useRef<Date>(new Date());
 
-    // Hämta events, loading, clickedId, hoveredBookingId från global store/hook
     const { events, loading, clickedId, setClickedId, hoveredBookingId } = useCalendar();
 
     const handleViewChange = useCallback((arg: ViewChangeArg) => {
@@ -36,6 +38,7 @@ export const GoogleCalendar = () => {
         [navigate, setClickedId],
     );
 
+    // Hantera highlighting av valda/hoverade events
     useEffect(() => {
         document.querySelectorAll(".custom-event__card").forEach((el) => {
             el.classList.remove("is-hovered", "is-selected");
@@ -52,16 +55,9 @@ export const GoogleCalendar = () => {
         }
     }, [hoveredBookingId, clickedId]);
 
-    useEffect(() => {
-        if (hoveredBookingId === null) {
-            document.querySelectorAll(".custom-event__card.is-hovered").forEach((el) => {
-                el.classList.remove("is-hovered");
-            });
-        }
-    }, [hoveredBookingId]);
-
     const memoEvents = useMemo(() => events, [events]);
 
+    // Force update av vyn vid event-ändringar
     useEffect(() => {
         if (calendarRef.current && lastViewRef.current && lastDateRef.current) {
             const api = calendarRef.current.getApi();
@@ -70,25 +66,42 @@ export const GoogleCalendar = () => {
     }, [memoEvents]);
 
     return (
-        <div>
+        <div className="calendar-container">
             {loading ? (
-                <CircularProgress />
+                <div className="calendar-loader">
+                    <CircularProgress />
+                </div>
             ) : (
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, interactionPlugin]}
-                    headerToolbar={{ left: "prev,next", center: "title", right: "today" }}
+                    // --- RESPONSIV TOOLBAR ---
+                    headerToolbar={
+                        isMobile
+                            ? { left: "prev,next", center: "title", right: "" }
+                            : { left: "prev,next", center: "title", right: "today" }
+                    }
+                    // --- RESPONSIVA TEXTER ---
+                    dayHeaderFormat={{ weekday: isMobile ? "narrow" : "short" }}
+                    titleFormat={isMobile ? { year: "numeric", month: "short" } : { year: "numeric", month: "long" }}
+                    // --- LAYOUT & SCROLL FIX ---
+                    height="100%"
+                    contentHeight="100%"
+                    aspectRatio={isMobile ? 0.8 : 1.35}
+                    expandRows={true}
+                    handleWindowResize={true}
+                    stickyHeaderDates={true}
+                    // --- FULLCALENDAR STANDARD ---
                     initialView={lastViewRef.current}
                     initialDate={lastDateRef.current}
                     locale="sv"
                     firstDay={1}
                     events={memoEvents}
-                    height="auto"
                     eventClick={handleEventClick}
                     eventContent={renderEventContent}
                     eventDisplay="block"
-                    eventClassNames={() => []}
                     viewDidMount={handleViewChange}
+                    datesSet={handleViewChange}
                     buttonText={{
                         today: "Idag",
                         month: "Månad",
@@ -96,7 +109,6 @@ export const GoogleCalendar = () => {
                         day: "Dag",
                         list: "Lista",
                     }}
-                    datesSet={handleViewChange}
                 />
             )}
         </div>

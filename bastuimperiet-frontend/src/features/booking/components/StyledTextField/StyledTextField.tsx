@@ -15,6 +15,14 @@ const CustomTextField = styled(TextField, {
         backgroundColor: "#fff",
         height: 44,
     },
+
+    "& .MuiFormHelperText-root": {
+        marginTop: 4,
+        marginLeft: 2,
+        marginRight: 2,
+        fontSize: "0.72rem",
+        lineHeight: 1.25,
+    },
 }));
 
 export const StyledTextField = (props: Props) => {

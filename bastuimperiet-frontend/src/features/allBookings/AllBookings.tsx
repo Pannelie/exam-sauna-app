@@ -9,6 +9,7 @@ import { GoogleCalendar } from "../calendar/GoogleCalendar";
 import { useCalendar } from "../calendar/hooks/useCalendar";
 import { BookingFilters } from "./components/BookingFilters/BookingFilters";
 import { MobileBottomSheet } from "../../components/MobileBottomSheet/MobileBottomSheet";
+import { BasicDialog } from "../../components/BasicDialog/BasicDialog";
 
 export default function AllBookings() {
     const { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings } = useBookings();
@@ -122,21 +123,9 @@ export default function AllBookings() {
 
                 {/* DESKTOP VYER */}
                 {!isMobile && (
-                    <>
+                    <S.CalendarWrapper>
                         <GoogleCalendar />
-
-                        <S.ContentPaper sx={{ flex: 1, maxWidth: "400px" }}>
-                            <S.DetailViewBox $hasId={!!id}>
-                                {id ? (
-                                    <Outlet context={{ bookings }} />
-                                ) : (
-                                    <Typography variant="body1" color="text.secondary" sx={{ textAlign: "center" }}>
-                                        Välj en bokning i listan eller kalendern för att se detaljer.
-                                    </Typography>
-                                )}
-                            </S.DetailViewBox>
-                        </S.ContentPaper>
-                    </>
+                    </S.CalendarWrapper>
                 )}
 
                 {/* MOBIL KALENDER */}
@@ -147,6 +136,9 @@ export default function AllBookings() {
                     <Outlet context={{ bookings }} />
                 </S.MobileDetailViewBox>
             </MobileBottomSheet>
+            <BasicDialog open={!!id && !isMobile} onClose={() => navigate("/admin/bookings")}>
+                <Outlet context={{ bookings }} />
+            </BasicDialog>
         </>
     );
 }

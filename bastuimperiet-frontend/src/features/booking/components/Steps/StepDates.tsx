@@ -82,7 +82,7 @@ export const StepDates = ({ data, updateField, next, errors, isMobile }: StepDat
             </Stack>
             {/* Extras & Pris (syns alltid) */}
 
-            <Stack spacing={isMobile ? 2 : 4} sx={{ mt: isMobile ? 1 : 2 }}>
+            <Stack spacing={isMobile ? 1 : 2} sx={{ mt: isMobile ? 1 : 1 }}>
                 <StepExtras data={data} updateField={updateField} />
                 <TotalPrice />
                 <FormButton type="next" variant="contained" onClick={next} text="Nästa steg" isMobile={isMobile} />

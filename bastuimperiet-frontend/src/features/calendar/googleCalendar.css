@@ -1,19 +1,33 @@
-/* -------------------  KALENDER LAYOUT & RAMVERK (Neutral bas) ------------------- */
+/* -------------------  LAYOUT & RAMVERK ------------------- */
+.calendar-container {
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
 .fc {
     background: #ffffff;
     padding: 1.5rem;
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     border: 1px solid #eee !important;
+    /* height: 100% !important; */
 }
 
-/* Rutnät & Kantlinjer */
+.fc-scroller {
+    overflow: hidden !important;
+}
+
 .fc-theme-standard td,
 .fc-theme-standard th {
     border-color: #f0f0f0 !important;
 }
 
-/* Container-nivå för händelser (Gör FullCalendars standard-divar osynliga) */
+/* Event-containers */
 .fc-daygrid-event,
 .fc-v-event,
 .fc-h-event {
@@ -22,25 +36,12 @@
     display: block !important;
 }
 
-.calendar-container {
-    flex: 1;
-}
-
-.calendar-container,
-.fc-event {
-    cursor: pointer !important;
-}
-
-.fc-event:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-/* -------------------  TYPOGRAFI & DATUM ------------------- */
+/* -------------------  TYPOGRAFI  ------------------- */
 .fc .fc-toolbar-title {
     font-family: var(--font-secondary);
     color: var(--dark);
     font-size: 1.4rem !important;
+    font-weight: 800;
 }
 
 /* Veckodagar */
@@ -58,21 +59,62 @@
     font-family: var(--font-primary);
     color: #999;
     font-size: 0.9rem;
+    padding: 8px !important;
 }
 
-/* -------------------- NAVIGATION & KNAPPAR---------------------*/
+/* -------------------- KNAPPAR & NAVIGATION ---------------------*/
 .fc .fc-button {
     background-color: transparent !important;
     border: 1px solid #e5e7eb !important;
     color: #374151 !important;
     font-family: var(--font-accent) !important;
     font-size: 0.8rem !important;
+    border-radius: 8px !important;
+    text-transform: uppercase;
+    font-weight: 600;
 }
 
-/* Aktiva knappar & Tryck-state */
+/* Aktiva knappar */
 .fc .fc-button-primary:not(:disabled).fc-button-active,
 .fc .fc-button-primary:not(:disabled):active {
     background-color: var(--yellow) !important;
     color: white !important;
     border-color: var(--yellow) !important;
+}
+
+/* -------------------  MOBIL TYPSNITT ------------------- */
+@media (max-width: 600px) {
+    .fc {
+        padding: 0.5rem !important;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.1rem !important;
+    }
+
+    .fc th {
+        font-size: 0.7rem !important;
+        padding: 8px 0 !important;
+    }
+
+    .fc .fc-daygrid-day-number {
+        font-size: 0.75rem !important;
+    }
+
+    .fc .fc-button {
+        font-size: 0.7rem !important;
+        padding: 4px 6px !important;
+    }
+
+    .calendar-loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+}
+
+/* Dagens datum */
+.fc .fc-day-today {
+    background-color: rgba(255, 248, 225, 0.4) !important;
 }

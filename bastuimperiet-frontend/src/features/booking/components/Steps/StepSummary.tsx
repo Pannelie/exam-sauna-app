@@ -96,7 +96,7 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted, isMobile
     return (
         <section className="step_container">
             <Typography variant="h3" fontSize={24} gutterBottom>
-                Kontrollera dina uppgifter
+                Kontrollera din förfrågan
             </Typography>
 
             {/* Innehåll */}
@@ -115,7 +115,7 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted, isMobile
                 <FormButton
                     variant="contained"
                     onClick={handleSubmit}
-                    text={isSubmitting ? "Skickar..." : "Skicka förfrågan"}
+                    text={isSubmitting ? "Skickar..." : "Skicka"}
                     disabled={isSubmitting}
                     type="send"
                 />
