@@ -9,6 +9,7 @@ import { useCalendar } from "../../../calendar/hooks/useCalendar";
 export const ClientCalendarCustomer = ({ onDateSelect, startDate, endDate }: any) => {
     const calendarRef = useRef<FullCalendar>(null);
     const { events } = useCalendar();
+    const todayStr = toDateStr(new Date());
 
     const blockedDates = useMemo(() => {
         return calculateBlockedDates(events);
@@ -19,6 +20,7 @@ export const ClientCalendarCustomer = ({ onDateSelect, startDate, endDate }: any
     const handleDateClick = (arg: any) => {
         const clickedDate = arg.dateStr;
 
+        if (clickedDate < todayStr) return;
         if (blockedDates.has(clickedDate)) return;
 
         // Om inget startdatum finns ELLER om vi börjar om en ny bokning
@@ -75,7 +77,10 @@ export const ClientCalendarCustomer = ({ onDateSelect, startDate, endDate }: any
             // RÖDA DAGAR + TOOLTIP
             dayCellDidMount={(arg) => {
                 const dateStr = toDateStr(arg.date);
-                if (blockedDates.has(dateStr)) {
+                if (dateStr < todayStr) {
+                    arg.el.style.cursor = "not-allowed";
+                    arg.el.setAttribute("title", "Datum har passerat");
+                } else if (blockedDates.has(dateStr)) {
                     arg.el.style.backgroundColor = "#ffcccc";
                     arg.el.style.cursor = "not-allowed";
                     arg.el.setAttribute("title", "Bokad");
@@ -88,8 +93,11 @@ export const ClientCalendarCustomer = ({ onDateSelect, startDate, endDate }: any
                 day: "Dag",
                 list: "Lista",
             }}
-            // SPÄRR: Hindra markering över blockerade datum
-            selectAllow={(selectInfo) => !blockedDates.has(toDateStr(selectInfo.start))}
+            // SPÄRR: Hindra markering över blockerade datum och passerade datum
+            selectAllow={(selectInfo) => {
+                const selectedStart = toDateStr(selectInfo.start);
+                return selectedStart >= todayStr && !blockedDates.has(selectedStart);
+            }}
             dateClick={handleDateClick}
             events={events}
             eventContent={() => null} // Returnerar inget innehåll för eventsen = ingen vit text
