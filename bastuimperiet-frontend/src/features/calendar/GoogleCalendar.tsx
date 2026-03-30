@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useMemo, useRef } from "react";
+import type { ComponentProps } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -7,23 +8,27 @@ import { renderEventContent } from "./components/RenderEventContent/RenderEventC
 import "./googleCalendar.css";
 import { useCalendar } from "./hooks/useCalendar";
 
-export const GoogleCalendar = ({ xs }: { xs?: any }) => {
+type FullCalendarProps = ComponentProps<typeof FullCalendar>;
+type ViewChangeArg = { view: { type: string; currentStart: Date } };
+
+export const GoogleCalendar = () => {
     const navigate = useNavigate();
-    const calendarRef = useRef<any>(null);
+    const calendarRef = useRef<FullCalendar | null>(null);
     const lastViewRef = useRef<string>("dayGridMonth");
     const lastDateRef = useRef<Date>(new Date());
 
     // Hämta events, loading, clickedId, hoveredBookingId från global store/hook
     const { events, loading, clickedId, setClickedId, hoveredBookingId } = useCalendar();
 
-    const handleViewChange = useCallback((arg: any) => {
+    const handleViewChange = useCallback((arg: ViewChangeArg) => {
         lastViewRef.current = arg.view.type;
         lastDateRef.current = arg.view.currentStart;
     }, []);
 
     const handleEventClick = useCallback(
-        (info: any) => {
-            const bId = info.event.extendedProps?.bookingId;
+        (info: Parameters<NonNullable<FullCalendarProps["eventClick"]>>[0]) => {
+            const bookingId = info.event.extendedProps?.bookingId;
+            const bId = typeof bookingId === "string" ? bookingId : null;
             if (bId) navigate(`/admin/bookings/${bId}`);
             setClickedId(bId || null);
         },
@@ -64,7 +69,7 @@ export const GoogleCalendar = ({ xs }: { xs?: any }) => {
     }, [memoEvents]);
 
     return (
-        <div className="calendar-container" style={xs}>
+        <div className="calendar-container">
             {loading ? (
                 <div className="loader">Laddar...</div>
             ) : (

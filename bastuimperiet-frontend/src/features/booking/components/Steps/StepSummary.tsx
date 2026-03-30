@@ -1,4 +1,5 @@
 import { Stack, Typography } from "@mui/material";
+import axios from "axios";
 import type { ApiBookingData, BookingFormData } from "../../../../types/bookingTypes";
 import { FormButton } from "../FormButton/FormButton";
 import { TotalPrice } from "../TotalPrice/TotalPrice";
@@ -16,6 +17,16 @@ interface StepSummaryProps {
     isMobile: boolean;
 }
 
+type ValidationDetail = {
+    path: Array<string | number>;
+    message: string;
+};
+
+type StepSummaryErrorPayload = {
+    details?: ValidationDetail[];
+    message?: string;
+};
+
 export const StepSummary = ({ data, back, complete, reset, isCompleted, isMobile }: StepSummaryProps) => {
     const [bookingResult, setBookingResult] = useState<ApiBookingData | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -31,17 +42,19 @@ export const StepSummary = ({ data, back, complete, reset, isCompleted, isMobile
             setBookingResult(result);
             setError(null);
             complete();
-        } catch (error: any) {
+        } catch (error: unknown) {
             // Hantera specifika fältfel från backend
-            if (error.response && error.response.data && error.response.data.details) {
+            if (axios.isAxiosError<StepSummaryErrorPayload>(error) && error.response?.data?.details) {
                 // details är en array av Joi errors
                 const errors: Record<string, string> = {};
-                error.response.data.details.forEach((err: any) => {
+                error.response.data.details.forEach((err) => {
                     // err.path[0] är fältnamnet, err.message är felmeddelandet
-                    errors[err.path[0]] = err.message;
+                    if (typeof err.path[0] === "string") {
+                        errors[err.path[0]] = err.message;
+                    }
                 });
                 setFieldErrors(errors);
-            } else if (error.response && error.response.data && error.response.data.message) {
+            } else if (axios.isAxiosError<StepSummaryErrorPayload>(error) && error.response?.data?.message) {
                 setError(error.response.data.message);
             } else {
                 setError(error instanceof Error ? error.message : "Något gick fel vid bokning");

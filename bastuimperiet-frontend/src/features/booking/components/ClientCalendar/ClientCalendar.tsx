@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
+import type { ComponentProps } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -6,7 +7,15 @@ import { toDateStr, getNextDay, calculateBlockedDates, hasOverlap } from "../../
 import "./clientCalendar.css";
 import { useCalendar } from "../../../calendar/hooks/useCalendar";
 
-export const ClientCalendarCustomer = ({ onDateSelect, startDate, endDate }: any) => {
+type ClientCalendarCustomerProps = {
+    onDateSelect: (startDate: string, endDate: string) => void;
+    startDate?: string;
+    endDate?: string;
+};
+
+type FullCalendarProps = ComponentProps<typeof FullCalendar>;
+
+export const ClientCalendarCustomer = ({ onDateSelect, startDate, endDate }: ClientCalendarCustomerProps) => {
     const calendarRef = useRef<FullCalendar>(null);
     const { events } = useCalendar();
     const todayStr = toDateStr(new Date());
@@ -17,22 +26,21 @@ export const ClientCalendarCustomer = ({ onDateSelect, startDate, endDate }: any
 
     const calendarKey = useMemo(() => `calendar-${events?.length || 0}`, [events]);
 
-    const handleDateClick = (arg: any) => {
+    const handleDateClick: NonNullable<FullCalendarProps["dateClick"]> = (arg) => {
         const clickedDate = arg.dateStr;
 
         if (clickedDate < todayStr) return;
         if (blockedDates.has(clickedDate)) return;
 
-        // Om inget startdatum finns ELLER om vi börjar om en ny bokning
+        // Om inget startdatum finns ELLER om jag börjar om en ny bokning
         if (!startDate || (startDate && endDate)) {
             onDateSelect(`${clickedDate} 15:00`, "");
         }
-        // Om vi har ett startdatum och väntar på slutdatum
+        // Om jag har ett startdatum och väntar på slutdatum
         else if (startDate && !endDate) {
             const startDayStr = toDateStr(startDate);
 
             if (clickedDate > startDayStr) {
-                // Använd helper för att kolla krockar i intervallet
                 if (hasOverlap(startDayStr, clickedDate, blockedDates)) {
                     onDateSelect(`${clickedDate} 15:00`, "");
                 } else {

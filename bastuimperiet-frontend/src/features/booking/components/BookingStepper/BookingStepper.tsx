@@ -11,21 +11,12 @@ interface BookingStepperProps {
     onReset?: () => void;
     // Nya props för responsivitet och kalenderdata
     isMobile: boolean;
-    calendarEvents: any[];
     // Props för att kontrollera steget utifrån
     activeStep: number;
     setActiveStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export const BookingStepper = ({
-    formData,
-    updateField,
-    onReset,
-    isMobile,
-    calendarEvents,
-    activeStep,
-    setActiveStep,
-}: BookingStepperProps) => {
+export const BookingStepper = ({ formData, updateField, onReset, isMobile, activeStep, setActiveStep }: BookingStepperProps) => {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const steps = ["Bokning", "Kontakt", "Skicka"];
     const [isCompleted, setIsCompleted] = useState<boolean>(false);
@@ -39,7 +30,7 @@ export const BookingStepper = ({
                 setErrors({});
                 setActiveStep((prev) => prev + 1);
             } else {
-                setErrors(result.errors);
+                setErrors(result.errors ?? {});
             }
         },
 
@@ -54,7 +45,7 @@ export const BookingStepper = ({
         isCompleted,
     };
     // Använd hooken för att få innehållet för aktuellt steg
-    const stepContent = useStepContent(activeStep, formData, updateField, handlers, errors, { isMobile, calendarEvents });
+    const stepContent = useStepContent(activeStep, formData, updateField, handlers, errors, { isMobile });
 
     return (
         <S.StyledBox isMobile={isMobile}>

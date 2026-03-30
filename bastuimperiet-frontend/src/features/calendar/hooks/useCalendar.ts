@@ -42,8 +42,12 @@ export function useCalendar() {
                     prevEventsRef.current = data;
                 }
                 setLastFetched(Date.now());
-            } catch (err: any) {
-                console.error("Kunde inte hämta kalenderdata:", err.message);
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    console.error("Kunde inte hämta kalenderdata:", err.message);
+                } else {
+                    console.error("Kunde inte hämta kalenderdata");
+                }
             } finally {
                 isFetchingRef.current = false;
                 setLoading(false);

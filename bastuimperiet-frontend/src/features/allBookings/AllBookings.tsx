@@ -123,7 +123,7 @@ export default function AllBookings() {
                 {/* DESKTOP VYER */}
                 {!isMobile && (
                     <>
-                        <GoogleCalendar xs={{ flex: 1 }} />
+                        <GoogleCalendar />
 
                         <S.ContentPaper sx={{ flex: 1, maxWidth: "400px" }}>
                             <S.DetailViewBox $hasId={!!id}>

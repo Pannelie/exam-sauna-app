@@ -8,7 +8,7 @@ import { ClientCalendarCustomer } from "./components/ClientCalendar/ClientCalend
 import { useMediaQuery, useTheme, Box } from "@mui/material";
 
 export const BookingLayout = () => {
-    const { events, loading } = useCalendar();
+    const { loading } = useCalendar();
     const { setField, reset: resetStore } = useBookingFormStore();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -35,8 +35,8 @@ export const BookingLayout = () => {
         setFormData((prev) => ({ ...prev, [field]: value }));
 
         const priceFields: (keyof BookingBase)[] = ["startDate", "endDate", "cleaning", "firewood", "scent", "delivery"];
-        if (priceFields.includes(field as any)) {
-            setField(field as any, value);
+        if (priceFields.includes(field as keyof BookingBase)) {
+            setField(field, value);
         }
     };
 
@@ -63,12 +63,7 @@ export const BookingLayout = () => {
             {/* Kalender */}
             {!loading && !isMobile && (
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <ClientCalendarCustomer
-                        events={events}
-                        onDateSelect={handleCalendarSelect}
-                        startDate={formData.startDate}
-                        endDate={formData.endDate}
-                    />
+                    <ClientCalendarCustomer onDateSelect={handleCalendarSelect} startDate={formData.startDate} endDate={formData.endDate} />
                 </Box>
             )}
             {/* Formulär */}
@@ -79,7 +74,6 @@ export const BookingLayout = () => {
                     onReset={resetForm}
                     // Skicka ner nödvändig data för mobil-modalen
                     isMobile={isMobile}
-                    calendarEvents={events}
                     // Kontrollera steget utifrån
                     activeStep={activeStep}
                     setActiveStep={setActiveStep}
