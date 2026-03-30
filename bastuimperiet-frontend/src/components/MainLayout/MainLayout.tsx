@@ -33,6 +33,7 @@ export const MainLayout = () => {
     const menuItems = [
         { label: "Bokningar", onClick: () => navigate("/admin/bookings") },
         { label: "Ny bokning", onClick: () => navigate("/admin/new-booking") },
+        { label: "Admins", onClick: () => navigate("/admin/profiles") },
     ];
     const actionComponent = <ProfileMenuCardContainer />;
 

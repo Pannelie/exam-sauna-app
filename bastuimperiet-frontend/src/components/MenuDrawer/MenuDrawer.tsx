@@ -10,6 +10,18 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
 
 const StyledBox = styled(Box)(() => ({
     width: 250,
+    minHeight: "100%",
+    display: "flex",
+    flexDirection: "column",
+}));
+
+const MenuList = styled(List)(() => ({
+    flexGrow: 1,
+}));
+
+const BottomActionArea = styled(Box)(({ theme }) => ({
+    marginTop: "auto",
+    padding: theme.spacing(1.5),
 }));
 
 interface MenuDrawerProps {
@@ -22,17 +34,22 @@ interface MenuDrawerProps {
 export const MenuDrawer = ({ open, onClose, menuItems, actionComponent }: MenuDrawerProps) => {
     return (
         <StyledDrawer anchor="right" open={open} onClose={onClose}>
-            <StyledBox onClick={onClose}>
-                <List>
+            <StyledBox>
+                <MenuList>
                     {menuItems.map((item) => (
                         <ListItem key={item.label} disablePadding>
-                            <ListItemButton onClick={item.onClick}>
+                            <ListItemButton
+                                onClick={() => {
+                                    item.onClick();
+                                    onClose();
+                                }}
+                            >
                                 <ListItemText primary={item.label} />
                             </ListItemButton>
                         </ListItem>
                     ))}
-                    {actionComponent && <ListItem disablePadding>{actionComponent}</ListItem>}
-                </List>
+                </MenuList>
+                {actionComponent && <BottomActionArea>{actionComponent}</BottomActionArea>}
             </StyledBox>
         </StyledDrawer>
     );
