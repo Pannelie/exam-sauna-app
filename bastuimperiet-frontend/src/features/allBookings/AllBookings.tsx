@@ -49,7 +49,7 @@ export default function AllBookings() {
 
                         <S.ScrollableList onMouseLeave={() => setHoveredBookingId(null)}>
                             {loading && filteredBookings.length === 0 ? (
-                                <S.DefaultBox sx={{ display: "flex", justifyContent: "center", py: 8, width: "100%" }}>
+                                <S.DefaultBox>
                                     <CircularProgress color="primary" />
                                 </S.DefaultBox>
                             ) : filteredBookings.length === 0 ? (
@@ -65,7 +65,7 @@ export default function AllBookings() {
                                             <Typography variant="body1" color="common.white">
                                                 Inga bokningar matchar din sökning.
                                             </Typography>
-                                            <Typography variant="body1" color="common.white">
+                                            <Typography variant="body2" color="common.white">
                                                 Titta i en annan kategori eller ändra sökordet för att hitta bokningar.
                                             </Typography>
                                         </>
