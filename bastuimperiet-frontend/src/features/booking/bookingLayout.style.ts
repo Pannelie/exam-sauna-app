@@ -2,16 +2,15 @@ import { Box, styled } from "@mui/material";
 
 export const StyledBookingLayout = styled(Box)(({ theme }) => ({
     display: "flex",
-    flexDirection: "row",
-    gap: theme.spacing(4),
-    padding: theme.spacing(4),
-    minHeight: "500px",
-    margin: "auto",
+    gap: theme.spacing(3),
+
+    maxWidth: "1200px", // 🔥 begränsa bredd
+    margin: "0 auto", // 🔥 centrera
+
     width: "100%",
-    [theme.breakpoints.down("md")]: {
-        flexDirection: "column",
-        padding: 0,
-    },
+    padding: theme.spacing(2),
+    overflow: "hidden",
+    marginBottom: theme.spacing(4),
 }));
 
 export const ColumnWrapper = styled(Box)({
