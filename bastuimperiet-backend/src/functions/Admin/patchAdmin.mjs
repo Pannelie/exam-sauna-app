@@ -2,7 +2,9 @@ import middy from "@middy/core";
 import { verifyAdminToken } from "../../middlewares/verifyAdminToken.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { updateAdmin } from "../../services/adminService.mjs";
+import { updateProfileSchema } from "../../schemas/adminSchema.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.js";
+import { validateAdmin } from "../../middlewares/validateAdmin.mjs";
 
 export const handler = middy(async (event) => {
     const body = event.body;
@@ -27,4 +29,5 @@ export const handler = middy(async (event) => {
 })
     .use(httpJsonBodyParser())
     .use(verifyAdminToken())
+    .use(validateAdmin(updateProfileSchema))
     .use(errorHandler());

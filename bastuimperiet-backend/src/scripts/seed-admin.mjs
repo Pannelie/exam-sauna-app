@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import * as bcrypt from "bcryptjs"; // <-- ändrad import
+import * as bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 
 dotenv.config();
