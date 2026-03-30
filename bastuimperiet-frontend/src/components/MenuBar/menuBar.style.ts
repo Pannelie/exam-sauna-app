@@ -25,8 +25,10 @@ export const MenuLink = styled("a")(({ theme }) => ({
     justifyContent: "center",
     padding: theme.spacing(1, 5),
     borderRadius: theme.shape.borderRadius,
-    fontSize: theme.typography.h6.fontSize,
-    fontWeight: theme.typography.h6.fontWeight,
+    fontSize: "1.4rem",
+    fontWeight: 700,
+    fontFamily: theme.typography.h3.fontFamily,
+    textTransform: "uppercase",
     "&:hover": {
         backgroundColor: theme.palette.secondary.main,
         transform: "scale(1.03)",

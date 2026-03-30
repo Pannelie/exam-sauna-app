@@ -126,7 +126,6 @@ export const BookingDetailsView = () => {
                     <RestoreBtn booking={booking} showLabel={true} />
                 )}
             </S.ActionFooter>
-            {/* ConfirmDialog alltid renderad */}
             <ConfirmDialog />
         </>
     );

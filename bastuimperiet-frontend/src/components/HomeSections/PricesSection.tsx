@@ -1,5 +1,5 @@
 import React from "react";
-import { MenuTitle } from "../MenuTitle";
+import { MenuTitle } from "../MenuTitle/MenuTitle";
 import { PriceContainer } from "../PriceContainer/PriceContainer";
 import { HomeSection } from "./HomeSection/HomeSection";
 import { TextBox } from "../TextBox/TextBox";

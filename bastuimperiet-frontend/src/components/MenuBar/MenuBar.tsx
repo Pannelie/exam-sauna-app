@@ -1,6 +1,5 @@
 import { useState, type JSX } from "react";
-
-import { useMediaQuery, Typography, Box } from "@mui/material";
+import { useMediaQuery, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
@@ -36,7 +35,7 @@ export default function MenuBar({ menuItems, actionComponent, showActionOnMobile
                                 {item.label}
                             </S.MenuLink>
                         ))}
-                        <Box>{actionComponent}</Box>
+                        {actionComponent}
                     </S.StyledToolbar>
                 </S.StyledAppBar>
             )}
