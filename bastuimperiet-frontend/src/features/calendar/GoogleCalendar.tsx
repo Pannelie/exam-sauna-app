@@ -5,6 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useNavigate } from "react-router-dom";
 import { renderEventContent } from "./components/RenderEventContent/RenderEventContent";
+import { CircularProgress } from "@mui/material";
 import "./googleCalendar.css";
 import { useCalendar } from "./hooks/useCalendar";
 
@@ -69,9 +70,9 @@ export const GoogleCalendar = () => {
     }, [memoEvents]);
 
     return (
-        <div className="calendar-container">
+        <div>
             {loading ? (
-                <div className="loader">Laddar...</div>
+                <CircularProgress />
             ) : (
                 <FullCalendar
                     ref={calendarRef}
