@@ -118,3 +118,13 @@ export const ContentPaper = styled(Paper)({
     height: "100%",
     minWidth: 0,
 });
+
+export const DefaultBox = styled(Box)({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    padding: "3rem",
+    gap: "2rem",
+});

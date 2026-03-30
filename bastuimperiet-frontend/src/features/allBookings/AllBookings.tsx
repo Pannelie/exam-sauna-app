@@ -49,15 +49,28 @@ export default function AllBookings() {
 
                         <S.ScrollableList onMouseLeave={() => setHoveredBookingId(null)}>
                             {loading && filteredBookings.length === 0 ? (
-                                <Box sx={{ display: "flex", justifyContent: "center", py: 8, width: "100%" }}>
+                                <S.DefaultBox sx={{ display: "flex", justifyContent: "center", py: 8, width: "100%" }}>
                                     <CircularProgress color="primary" />
-                                </Box>
+                                </S.DefaultBox>
                             ) : filteredBookings.length === 0 ? (
-                                <Box sx={{ display: "flex", justifyContent: "center", py: 8, width: "100%" }}>
-                                    <Typography variant="body1" color="common.white">
-                                        Inga bokningar hittades i denna vy.
-                                    </Typography>
-                                </Box>
+                                <S.DefaultBox>
+                                    {bookings.length === 0 ? (
+                                        <>
+                                            <Typography variant="body1" color="common.white">
+                                                {`Inga ${categories[tabIndex].toLocaleLowerCase()} bokningar just nu.`}
+                                            </Typography>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Typography variant="body1" color="common.white">
+                                                Inga bokningar matchar din sökning.
+                                            </Typography>
+                                            <Typography variant="body1" color="common.white">
+                                                Titta i en annan kategori eller ändra sökordet för att hitta bokningar.
+                                            </Typography>
+                                        </>
+                                    )}
+                                </S.DefaultBox>
                             ) : (
                                 filteredBookings.map((b) => (
                                     <BookingCard
