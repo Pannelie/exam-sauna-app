@@ -90,6 +90,9 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
             key: "firewood",
             title: "Ved",
             subtitle: `${priceVed} kr/st`,
+            icon: <LocalFireDepartmentIcon sx={{ color: "#d35400", fontSize: 18 }} />,
+            accent: "#f4b183",
+            bg: "linear-gradient(180deg, #fff8f1 0%, #ffffff 100%)",
             action: (
                 <Counter
                     value={data.firewood}
@@ -102,6 +105,9 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
             key: "scent",
             title: "Doftpaket",
             subtitle: `${priceDoft} kr/st`,
+            icon: <SpaIcon sx={{ color: "#1d7f4e", fontSize: 18 }} />,
+            accent: "#9bd3b0",
+            bg: "linear-gradient(180deg, #f4fcf7 0%, #ffffff 100%)",
             action: (
                 <Counter
                     value={data.scent}
@@ -114,12 +120,18 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
             key: "cleaning",
             title: "Städning",
             subtitle: `${priceCleaning} kr`,
+            icon: <CleaningServicesIcon sx={{ color: "#2878b5", fontSize: 18 }} />,
+            accent: "#a8d2ef",
+            bg: "linear-gradient(180deg, #f3f9fe 0%, #ffffff 100%)",
             action: <Switch size="small" checked={data.cleaning} onChange={() => updateField("cleaning", !data.cleaning)} />,
         },
         {
             key: "delivery",
             title: "Utkörning",
             subtitle: `Startavgift ${deliveryStartFee} kr + milersättning`,
+            icon: <LocalShippingIcon sx={{ color: "#2f4152", fontSize: 18 }} />,
+            accent: "#b7c4d1",
+            bg: "linear-gradient(180deg, #f7f9fb 0%, #ffffff 100%)",
             action: <Switch size="small" checked={data.delivery} onChange={() => updateField("delivery", !data.delivery)} />,
         },
     ];
@@ -227,7 +239,7 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                             <Box
                                 sx={{
                                     mt: { xs: 2, md: 1 },
-                                    p: { xs: 1, md: 0.75 },
+                                    p: { xs: 0.75, md: 0.5 },
                                     bgcolor: "#f9f9f9",
                                     borderRadius: "8px",
                                     display: "flex",
@@ -239,23 +251,36 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                                     value={data.transportType || TransportType.OneWay}
                                     onChange={(e) => updateField("transportType", e.target.value as TransportType)}
                                     sx={{
-                                        gap: { xs: 2, md: 1 },
+                                        gap: { xs: 1, md: 0.5 },
                                     }}
                                 >
                                     <FormControlLabel
                                         value={TransportType.OneWay}
                                         control={<Radio size="small" />}
-                                        label={<Typography variant="caption">Enkel resa</Typography>}
+                                        label={
+                                            <Typography variant="caption" sx={{ fontSize: "0.72rem", lineHeight: 1.1 }}>
+                                                Enkel resa
+                                            </Typography>
+                                        }
                                         sx={{
                                             m: 0,
+                                            mr: { xs: 1, md: 0.75 },
+                                            "& .MuiRadio-root": { p: 0.25 },
+                                            "& .MuiSvgIcon-root": { fontSize: 17 },
                                         }}
                                     />
                                     <FormControlLabel
                                         value={TransportType.Return}
                                         control={<Radio size="small" />}
-                                        label={<Typography variant="caption">Tur & Retur</Typography>}
+                                        label={
+                                            <Typography variant="caption" sx={{ fontSize: "0.72rem", lineHeight: 1.1 }}>
+                                                Tur & Retur
+                                            </Typography>
+                                        }
                                         sx={{
                                             m: 0,
+                                            "& .MuiRadio-root": { p: 0.25 },
+                                            "& .MuiSvgIcon-root": { fontSize: 17 },
                                         }}
                                     />
                                 </RadioGroup>
@@ -271,15 +296,52 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                                 key={item.key}
                                 sx={{
                                     gridColumn: item.key === "firewood" || item.key === "scent" ? "auto" : "1 / -1",
+                                    borderColor: "rgba(0,0,0,0.1)",
+                                    background: item.bg,
+                                    position: "relative",
+                                    overflow: "hidden",
                                 }}
                             >
-                                <Stack spacing={0.25}>
-                                    <Typography variant="body2" fontWeight="bold" lineHeight={1.2}>
-                                        {item.title}
-                                    </Typography>
-                                    <Typography variant="caption" color="text.secondary" lineHeight={1.2}>
-                                        {item.subtitle}
-                                    </Typography>
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                    {item.icon && (
+                                        <Box
+                                            sx={{
+                                                width: 28,
+                                                height: 28,
+                                                borderRadius: "8px",
+                                                bgcolor: "#fff",
+                                                border: `1px solid ${item.accent}`,
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
+                                            }}
+                                        >
+                                            {item.icon}
+                                        </Box>
+                                    )}
+
+                                    <Stack spacing={0.25}>
+                                        <Typography variant="body2" fontWeight="bold" lineHeight={1.2}>
+                                            {item.title}
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            color="text.secondary"
+                                            lineHeight={1.2}
+                                            sx={{
+                                                display: "inline-flex",
+                                                width: "fit-content",
+                                                px: 0.75,
+                                                py: 0.125,
+                                                borderRadius: "999px",
+                                                bgcolor: "rgba(255,255,255,0.8)",
+                                                border: `1px solid ${item.accent}`,
+                                            }}
+                                        >
+                                            {item.subtitle}
+                                        </Typography>
+                                    </Stack>
                                 </Stack>
                                 {item.action}
                             </S.DesktopExtraCard>
@@ -289,7 +351,7 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                     {data.delivery && (
                         <Box
                             sx={{
-                                p: 0.75,
+                                p: 0.5,
                                 bgcolor: "#f9f9f9",
                                 borderRadius: "8px",
                                 display: "flex",
@@ -300,19 +362,36 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
                                 row
                                 value={data.transportType || TransportType.OneWay}
                                 onChange={(e) => updateField("transportType", e.target.value as TransportType)}
-                                sx={{ gap: 1 }}
+                                sx={{ gap: 0.5 }}
                             >
                                 <FormControlLabel
                                     value={TransportType.OneWay}
                                     control={<Radio size="small" />}
-                                    label={<Typography variant="caption">Enkel resa</Typography>}
-                                    sx={{ m: 0 }}
+                                    label={
+                                        <Typography variant="caption" sx={{ fontSize: "0.72rem", lineHeight: 1.1 }}>
+                                            Enkel resa
+                                        </Typography>
+                                    }
+                                    sx={{
+                                        m: 0,
+                                        mr: 0.75,
+                                        "& .MuiRadio-root": { p: 0.25 },
+                                        "& .MuiSvgIcon-root": { fontSize: 17 },
+                                    }}
                                 />
                                 <FormControlLabel
                                     value={TransportType.Return}
                                     control={<Radio size="small" />}
-                                    label={<Typography variant="caption">Tur & Retur</Typography>}
-                                    sx={{ m: 0 }}
+                                    label={
+                                        <Typography variant="caption" sx={{ fontSize: "0.72rem", lineHeight: 1.1 }}>
+                                            Tur & Retur
+                                        </Typography>
+                                    }
+                                    sx={{
+                                        m: 0,
+                                        "& .MuiRadio-root": { p: 0.25 },
+                                        "& .MuiSvgIcon-root": { fontSize: 17 },
+                                    }}
                                 />
                             </RadioGroup>
                         </Box>
