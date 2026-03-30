@@ -14,7 +14,7 @@ export const MainContainer = styled(
     flex: 1,
     display: "flex",
     flexDirection: $isMobile ? "column" : "row",
-    gap: $isMobile ? theme.spacing(2) : theme.spacing(2), // Något mindre gap för att få plats
+    gap: $isMobile ? theme.spacing(2) : theme.spacing(5), // Något mindre gap för att få plats
     overflow: "hidden",
     height: "100vh", // Säkerställ att containern tar hela höjden
     padding: theme.spacing(2),
@@ -36,10 +36,9 @@ export const ListWrapper = styled(
 )<ListWrapperProps>(({ theme, $isMobile }) => ({
     display: "flex",
     flexDirection: "column",
-    // Fixerad bredd på desktop, flexibel på mobil
-    flex: $isMobile ? 1 : "0 0 350px",
-    maxWidth: $isMobile ? "none" : "350px",
-    minWidth: $isMobile ? "none" : "300px",
+    flex: $isMobile ? 1 : "0 0 280px",
+    maxWidth: $isMobile ? "none" : "280px",
+    minWidth: $isMobile ? "none" : "240px",
     gap: theme.spacing(2),
     height: "100%",
     overflow: "hidden",
@@ -121,7 +120,7 @@ export const CategoryScrollContainer = styled(Box)(({ theme }) => ({
     "&::-webkit-scrollbar": { display: "none" },
 }));
 
-export const ContentPaper = styled(Paper)(({ theme }) => ({
+export const ContentPaper = styled(Paper)(() => ({
     backgroundColor: "white",
     borderRadius: "24px",
     display: "flex",
