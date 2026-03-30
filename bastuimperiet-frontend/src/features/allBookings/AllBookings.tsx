@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { BookingCard } from "./components/BookingCard/BookingCard";
-import { BookingCardSkeleton } from "./components/BookingCardSkeleton/BookingCardSkeleton";
-import { Typography, useMediaQuery, useTheme, Box } from "@mui/material";
+import { Typography, useMediaQuery, useTheme, Box, CircularProgress } from "@mui/material";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 import * as S from "./AllBookings.styles";
 import { useBookings } from "./hooks/useBookings";
@@ -39,7 +38,6 @@ export default function AllBookings() {
                 {/* VÄNSTER: LISTA */}
                 {(!isMobile || mobileTab === 0) && (
                     <S.ListWrapper $isMobile={isMobile}>
-                        {/* HÄR ÄR DEN NYA KOMPONENTEN */}
                         <BookingFilters
                             searchTerm={searchTerm}
                             setSearchTerm={setSearchTerm}
@@ -50,17 +48,27 @@ export default function AllBookings() {
                         />
 
                         <S.ScrollableList onMouseLeave={() => setHoveredBookingId(null)}>
-                            {loading && filteredBookings.length === 0
-                                ? Array.from(new Array(5)).map((_, i) => <BookingCardSkeleton key={i} />)
-                                : filteredBookings.map((b) => (
-                                      <BookingCard
-                                          key={b.id}
-                                          booking={b}
-                                          selectedId={isSelectedVisible ? id : undefined}
-                                          onMouseEnter={() => setHoveredBookingId(b.id)}
-                                          onMouseLeave={() => setHoveredBookingId(null)}
-                                      />
-                                  ))}
+                            {loading && filteredBookings.length === 0 ? (
+                                <Box sx={{ display: "flex", justifyContent: "center", py: 8, width: "100%" }}>
+                                    <CircularProgress color="primary" />
+                                </Box>
+                            ) : filteredBookings.length === 0 ? (
+                                <Box sx={{ display: "flex", justifyContent: "center", py: 8, width: "100%" }}>
+                                    <Typography variant="body1" color="common.white">
+                                        Inga bokningar hittades i denna vy.
+                                    </Typography>
+                                </Box>
+                            ) : (
+                                filteredBookings.map((b) => (
+                                    <BookingCard
+                                        key={b.id}
+                                        booking={b}
+                                        selectedId={isSelectedVisible ? id : undefined}
+                                        onMouseEnter={() => setHoveredBookingId(b.id)}
+                                        onMouseLeave={() => setHoveredBookingId(null)}
+                                    />
+                                ))
+                            )}
                         </S.ScrollableList>
                     </S.ListWrapper>
                 )}
@@ -85,14 +93,7 @@ export default function AllBookings() {
                 )}
 
                 {/* MOBIL KALENDER */}
-                {isMobile && mobileTab === 1 && (
-                    <S.ContentPaper sx={{ flex: 1 }}>
-                        <Typography variant="h6" p={2} fontWeight="bold">
-                            Kalender
-                        </Typography>
-                        <GoogleCalendar />
-                    </S.ContentPaper>
-                )}
+                {isMobile && mobileTab === 1 && <GoogleCalendar />}
             </S.MainContainer>
             <MobileBottomSheet open={!!id && isMobile} onClose={() => navigate("/admin/bookings")}>
                 <Outlet context={{ bookings }} />
