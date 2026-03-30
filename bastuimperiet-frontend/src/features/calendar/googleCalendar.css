@@ -36,7 +36,7 @@
     display: block !important;
 }
 
-/* -------------------  TYPOGRAFI (Dina Fonter) ------------------- */
+/* -------------------  TYPOGRAFI  ------------------- */
 .fc .fc-toolbar-title {
     font-family: var(--font-secondary);
     color: var(--dark);
@@ -82,7 +82,7 @@
     border-color: var(--yellow) !important;
 }
 
-/* -------------------  MOBILOPTIMERADE TYPSNITT ------------------- */
+/* -------------------  MOBIL TYPSNITT ------------------- */
 @media (max-width: 600px) {
     .fc {
         padding: 0.5rem !important;
