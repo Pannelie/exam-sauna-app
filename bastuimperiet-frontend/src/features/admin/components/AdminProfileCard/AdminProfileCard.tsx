@@ -7,6 +7,7 @@ import { useTheme } from "@mui/material/styles";
 import { MobileBottomSheet } from "../../../../components/MobileBottomSheet/MobileBottomSheet";
 import * as S from "./adminProfileCard.style";
 import { AdminForm } from "../AdminForm/AdminForm";
+import { BasicDialog } from "../../../../components/BasicDialog/BasicDialog";
 
 export const AdminProfileCard = ({ admin, isMe }: { admin: any; isMe: boolean }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -39,11 +40,16 @@ export const AdminProfileCard = ({ admin, isMe }: { admin: any; isMe: boolean })
 
                 <Typography sx={{ fontSize: "0.8rem", color: "#4a1a1a", mt: 2 }}>{admin.phone}</Typography>
             </S.StyledProfileCard>
-            {isMobile && (
+            {isMobile ? (
                 <MobileBottomSheet open={open} onClose={() => setOpen(false)}>
                     {/* Här kan du lägga in formuläret för att redigera profilen */}
                     <AdminForm />
                 </MobileBottomSheet>
+            ) : (
+                <BasicDialog open={open} onClose={() => setOpen(false)}>
+                    {/* Här kan du lägga in formuläret för att redigera profilen */}
+                    <AdminForm />
+                </BasicDialog>
             )}
         </>
     );
