@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { BookingCard } from "./components/BookingCard/BookingCard";
-import { BookingCardSkeleton } from "./components/BookingCardSkeleton/BookingCardSkeleton";
-import { Typography, Drawer, useMediaQuery, useTheme, Box } from "@mui/material";
+import { Typography, useMediaQuery, useTheme, CircularProgress } from "@mui/material";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 import * as S from "./AllBookings.styles";
 import { useBookings } from "./hooks/useBookings";
@@ -9,6 +8,7 @@ import { ViewSwitcher } from "./components/ViewSwitcher/ViewSwitcher";
 import { GoogleCalendar } from "../calendar/GoogleCalendar";
 import { useCalendar } from "../calendar/hooks/useCalendar";
 import { BookingFilters } from "./components/BookingFilters/BookingFilters";
+import { MobileBottomSheet } from "../../components/MobileBottomSheet/MobileBottomSheet";
 
 export default function AllBookings() {
     const { bookings, loading, tabIndex, setTabIndex, searchTerm, setSearchTerm, filteredBookings } = useBookings();
@@ -16,6 +16,7 @@ export default function AllBookings() {
     const { id } = useParams();
     const isSelectedVisible = filteredBookings.some((b) => String(b.id) === id);
     const [mobileTab, setMobileTab] = useState(0);
+    const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -26,19 +27,32 @@ export default function AllBookings() {
         setClickedId(id || null);
     }, [id, setClickedId]);
 
+    useEffect(() => {
+        if (mobileTab !== 0) {
+            setIsMobileSearchOpen(false);
+        }
+    }, [mobileTab]);
+
     return (
         <>
             {isMobile && (
-                <Box sx={{ display: "flex", justifyContent: "center", flexShrink: 0 }}>
-                    <ViewSwitcher value={mobileTab} onChange={setMobileTab} />
-                </Box>
-            )}
-
-            <S.MainContainer $isMobile={isMobile}>
-                {/* VÄNSTER: LISTA */}
-                {(!isMobile || mobileTab === 0) && (
-                    <S.ListWrapper $isMobile={isMobile}>
-                        {/* HÄR ÄR DEN NYA KOMPONENTEN */}
+                <S.MobileTopPanel>
+                    <ViewSwitcher
+                        value={mobileTab}
+                        onChange={setMobileTab}
+                        showSearchToggle={mobileTab === 0}
+                        isSearchActive={isMobileSearchOpen || searchTerm.length > 0}
+                        onSearchToggle={() => {
+                            const isActive = isMobileSearchOpen || searchTerm.length > 0;
+                            if (isActive) {
+                                setIsMobileSearchOpen(false);
+                                setSearchTerm("");
+                            } else {
+                                setIsMobileSearchOpen(true);
+                            }
+                        }}
+                    />
+                    {mobileTab === 0 && (
                         <BookingFilters
                             searchTerm={searchTerm}
                             setSearchTerm={setSearchTerm}
@@ -46,20 +60,62 @@ export default function AllBookings() {
                             setTabIndex={setTabIndex}
                             categories={categories}
                             isMobile={isMobile}
+                            isMobileSearchOpen={isMobileSearchOpen}
                         />
+                    )}
+                </S.MobileTopPanel>
+            )}
+
+            <S.MainContainer $isMobile={isMobile}>
+                {/* VÄNSTER: LISTA */}
+                {(!isMobile || mobileTab === 0) && (
+                    <S.ListWrapper $isMobile={isMobile}>
+                        {!isMobile && (
+                            <BookingFilters
+                                searchTerm={searchTerm}
+                                setSearchTerm={setSearchTerm}
+                                tabIndex={tabIndex}
+                                setTabIndex={setTabIndex}
+                                categories={categories}
+                                isMobile={isMobile}
+                            />
+                        )}
 
                         <S.ScrollableList onMouseLeave={() => setHoveredBookingId(null)}>
-                            {loading && filteredBookings.length === 0
-                                ? Array.from(new Array(5)).map((_, i) => <BookingCardSkeleton key={i} />)
-                                : filteredBookings.map((b) => (
-                                      <BookingCard
-                                          key={b.id}
-                                          booking={b}
-                                          selectedId={isSelectedVisible ? id : undefined}
-                                          onMouseEnter={() => setHoveredBookingId(b.id)}
-                                          onMouseLeave={() => setHoveredBookingId(null)}
-                                      />
-                                  ))}
+                            {loading && filteredBookings.length === 0 ? (
+                                <S.DefaultBox>
+                                    <CircularProgress color="primary" />
+                                </S.DefaultBox>
+                            ) : filteredBookings.length === 0 ? (
+                                <S.DefaultBox>
+                                    {bookings.length === 0 ? (
+                                        <>
+                                            <Typography variant="body1" color="common.white">
+                                                {`Inga ${categories[tabIndex].toLocaleLowerCase()} bokningar just nu.`}
+                                            </Typography>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Typography variant="body1" color="common.white">
+                                                Inga bokningar matchar din sökning.
+                                            </Typography>
+                                            <Typography variant="body2" color="common.white">
+                                                Titta i en annan kategori eller ändra sökordet för att hitta bokningar.
+                                            </Typography>
+                                        </>
+                                    )}
+                                </S.DefaultBox>
+                            ) : (
+                                filteredBookings.map((b) => (
+                                    <BookingCard
+                                        key={b.id}
+                                        booking={b}
+                                        selectedId={isSelectedVisible ? id : undefined}
+                                        onMouseEnter={() => setHoveredBookingId(b.id)}
+                                        onMouseLeave={() => setHoveredBookingId(null)}
+                                    />
+                                ))
+                            )}
                         </S.ScrollableList>
                     </S.ListWrapper>
                 )}
@@ -67,17 +123,15 @@ export default function AllBookings() {
                 {/* DESKTOP VYER */}
                 {!isMobile && (
                     <>
-                        <S.ContentPaper sx={{ flex: 1 }}>
-                            <GoogleCalendar />
-                        </S.ContentPaper>
+                        <GoogleCalendar xs={{ flex: 1 }} />
 
                         <S.ContentPaper sx={{ flex: 1, maxWidth: "400px" }}>
                             <S.DetailViewBox $hasId={!!id}>
                                 {id ? (
                                     <Outlet context={{ bookings }} />
                                 ) : (
-                                    <Typography variant="body1" color="text.secondary" sx={{ maxWidth: "250px", textAlign: "center" }}>
-                                        Välj en bokning i listan till vänster för att se detaljer.
+                                    <Typography variant="body1" color="text.secondary" sx={{ textAlign: "center" }}>
+                                        Välj en bokning i listan eller kalendern för att se detaljer.
                                     </Typography>
                                 )}
                             </S.DetailViewBox>
@@ -86,30 +140,13 @@ export default function AllBookings() {
                 )}
 
                 {/* MOBIL KALENDER */}
-                {isMobile && mobileTab === 1 && (
-                    <S.ContentPaper sx={{ flex: 1 }}>
-                        <Typography variant="h6" p={2} fontWeight="bold">
-                            Kalender
-                        </Typography>
-                        <GoogleCalendar />
-                    </S.ContentPaper>
-                )}
+                {isMobile && mobileTab === 1 && <GoogleCalendar />}
             </S.MainContainer>
-
-            <Drawer
-                anchor="bottom"
-                open={!!id && isMobile}
-                onClose={() => navigate("/admin/bookings")}
-                disableEnforceFocus
-                ModalProps={{
-                    keepMounted: true,
-                }}
-                PaperProps={{ sx: { height: "85vh", borderTopLeftRadius: 32, borderTopRightRadius: 32 } }}
-            >
-                <Box sx={{ p: 2 }}>
+            <MobileBottomSheet open={!!id && isMobile} onClose={() => navigate("/admin/bookings")}>
+                <S.MobileDetailViewBox>
                     <Outlet context={{ bookings }} />
-                </Box>
-            </Drawer>
+                </S.MobileDetailViewBox>
+            </MobileBottomSheet>
         </>
     );
 }

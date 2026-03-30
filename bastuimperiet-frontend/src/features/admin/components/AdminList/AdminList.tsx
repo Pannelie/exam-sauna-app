@@ -1,41 +1,34 @@
-// features/admins/components/AdminList.tsx
-import { AdminProfileCard } from "../AdminProfileCard/AdminProfileCard";
-import { Box } from "@mui/material";
+import { useCallback, useEffect } from "react";
+import { useAdminsStore } from "../../stores/useAdminsStore";
+import { AdminListCard } from "../AdminListCard/AdminListCard";
+import * as S from "./adminList.style";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
-const MOCK_ADMINS = [
-    { id: "1", username: "BASTUJAKE", fullName: "JACOB ÖSTELID", phone: "070 -123 45 67", email: "jacob@bastu.se" },
-    { id: "2", username: "BASTUJOHANNES", fullName: "JOHANNES LARSSON", phone: "070 -123 45 67", email: "johannes@bastu.se" },
-    { id: "3", username: "BASTUANNELIE", fullName: "Annelie Östelid", phone: "070 -987 65 43", email: "annelie.ostelid@outlook.com" },
-];
+export const AdminList = () => {
+    const admins = useAdminsStore((state) => state.admins);
+    const myProfile = useAdminsStore((state) => state.myProfile);
+    const fetchAdmins = useAdminsStore((state) => state.fetchAdmins);
+    const fetchMyProfile = useAdminsStore((state) => state.fetchMyProfile);
 
-const sortedAdmins = (myEmail: string) =>
-    [...MOCK_ADMINS].sort((a, b) => {
-        if (a.email === myEmail) return -1; // a är jag, flytta till början
-        if (b.email === myEmail) return 1; // b är jag, flytta a bakåt
-        return 0; // Ingen av dem är jag, behåll ordning
-    });
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-export const AdminList = ({ myEmail }: { myEmail: string }) => {
+    const loadAdmins = useCallback(async () => {
+        await fetchAdmins();
+        await fetchMyProfile();
+    }, [fetchAdmins, fetchMyProfile]);
+
+    useEffect(() => {
+        loadAdmins();
+    }, [loadAdmins]);
+
     return (
-        <Box
-            sx={{
-                display: "flex",
-                gap: 3,
-                flexWrap: "wrap",
-                justifyContent: "center",
-            }}
-        >
-            {sortedAdmins(myEmail).map((admin) => {
-                // Här inne definierar vi isMe för varje enskild admin i loopen
-                const isMe = admin.email === myEmail;
-
-                return (
-                    <Box key={admin.id} sx={{ width: 300 }}>
-                        {/* AdminProfileCard använder AdminBaseCard internt */}
-                        <AdminProfileCard admin={admin} isMe={isMe} />
-                    </Box>
-                );
+        <S.StyledList isMobile={isMobile}>
+            {admins.map((admin) => {
+                const isMe = admin.email === myProfile?.email;
+                return <AdminListCard key={admin.email} admin={admin} isMe={isMe} />;
             })}
-        </Box>
+        </S.StyledList>
     );
 };

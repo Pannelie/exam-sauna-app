@@ -7,7 +7,7 @@ import { renderEventContent } from "./components/RenderEventContent/RenderEventC
 import "./googleCalendar.css";
 import { useCalendar } from "./hooks/useCalendar";
 
-export const GoogleCalendar = () => {
+export const GoogleCalendar = ({ xs }: { xs?: any }) => {
     const navigate = useNavigate();
     const calendarRef = useRef<any>(null);
     const lastViewRef = useRef<string>("dayGridMonth");
@@ -64,7 +64,7 @@ export const GoogleCalendar = () => {
     }, [memoEvents]);
 
     return (
-        <div className="calendar-container">
+        <div className="calendar-container" style={xs}>
             {loading ? (
                 <div className="loader">Laddar...</div>
             ) : (

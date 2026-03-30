@@ -21,6 +21,8 @@ const priceConfig = {
         firewood: 40,
         scent: 30,
         delivery: 1000,
+        oneWay: 40,
+        return: 80,
     },
     // Nu kan du enkelt lägga till specialdagar här!
     specialDays: [

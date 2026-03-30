@@ -1,12 +1,26 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useCallback } from "react";
 import MenuBar from "../MenuBar/MenuBar";
-import { ProfileMenuCard } from "../../features/admin/components/ProfileMenuCard/ProfileMenuCard";
+import { ProfileMenuCardContainer } from "../../features/admin/components/ProfileMenuCardContainer/ProfileMenuCardContainer";
+import { useAdminsStore } from "../../features/admin/stores/useAdminsStore";
 
 export const MainLayout = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const isAdmin = pathname.startsWith("/admin");
     const isLoginPage = pathname === "/admin/login";
+
+    const fetchMyProfile = useAdminsStore((state) => state.fetchMyProfile);
+    const fetchAdmins = useAdminsStore((state) => state.fetchAdmins);
+
+    const loadAdminData = useCallback(async () => {
+        await fetchMyProfile();
+        await fetchAdmins();
+    }, [fetchMyProfile, fetchAdmins]);
+
+    useEffect(() => {
+        loadAdminData();
+    }, [loadAdminData]);
 
     if (isLoginPage) {
         return (
@@ -15,14 +29,13 @@ export const MainLayout = () => {
             </main>
         );
     }
-    // Definiera meny-val baserat på URL
+
     const menuItems = [
         { label: "Bokningar", onClick: () => navigate("/admin/bookings") },
         { label: "Ny bokning", onClick: () => navigate("/admin/new-booking") },
+        { label: "Admins", onClick: () => navigate("/admin/profiles") },
     ];
-
-    // Bestäm vilken knapp som ska synas till höger
-    const actionComponent = <ProfileMenuCard user={{ name: "Jacob", email: "jacob@exempel.se" }} />;
+    const actionComponent = <ProfileMenuCardContainer />;
 
     return (
         <>

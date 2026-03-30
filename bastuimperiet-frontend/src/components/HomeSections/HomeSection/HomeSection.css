@@ -12,14 +12,11 @@
 
 .home_prices--grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 1rem;
     align-content: start;
 }
 
-.home_prices--grid-extra {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 200px));
-}
 .home_prices--center {
     display: flex;
     flex-direction: column;

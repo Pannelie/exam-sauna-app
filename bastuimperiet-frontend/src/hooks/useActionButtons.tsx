@@ -3,12 +3,13 @@ import { updateBookingStatus } from "../features/allBookings/services/allBooking
 import { useBookingListStore } from "../stores/useBookingListStore";
 import { BookingStatus } from "../types/bookingTypes";
 import type { ApiBookingData } from "../types/bookingTypes";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Stack, CircularProgress } from "@mui/material";
+import { DialogTitle, DialogContent, DialogActions, Button, Typography, Stack, CircularProgress } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import * as S from "../components/ActionButtons/ActionButtons.styles";
 import { TooltipComponent } from "../components/Tooltip/Tooltip";
+import { BasicDialog } from "../components/BasicDialog/BasicDialog";
 
 export const useBookingActions = () => {
     const [isUpdating, setIsUpdating] = useState(false);
@@ -152,7 +153,7 @@ export const useBookingActions = () => {
 
     // Dialog-komponent för bekräftelse och force
     const ConfirmDialog = () => (
-        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <BasicDialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
             <DialogTitle>{isError ? "Gick inte att boka" : isWarning ? "Varning" : "Bekräfta ändring"}</DialogTitle>
             <DialogContent>
                 <Typography>{dialogMessage}</Typography>
@@ -189,7 +190,7 @@ export const useBookingActions = () => {
                     </>
                 )}
             </DialogActions>
-        </Dialog>
+        </BasicDialog>
     );
 
     return { ConfirmBtn, DeclineBtn, CancelBtn, RestoreBtn, isUpdating, ConfirmDialog };
