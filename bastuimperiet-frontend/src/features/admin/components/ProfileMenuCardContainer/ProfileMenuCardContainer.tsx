@@ -2,10 +2,10 @@ import { IconButton, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
 import { LogoutBtn } from "../LogoutBtn/LogoutBtn";
-import * as S from "./profileMenuCard.style";
+import * as S from "./profileMenuCardContainer.style";
 import { useAdminsStore } from "../../stores/useAdminsStore";
 
-export function ProfileMenuCard() {
+export function ProfileMenuCardContainer() {
     const navigate = useNavigate();
     const myProfile = useAdminsStore((state) => state.myProfile);
 

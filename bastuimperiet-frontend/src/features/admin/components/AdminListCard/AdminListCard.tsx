@@ -5,11 +5,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { MobileBottomSheet } from "../../../../components/MobileBottomSheet/MobileBottomSheet";
-import * as S from "./adminProfileCard.style";
+import * as S from "./AdminListCard.style";
 import { AdminForm } from "../AdminForm/AdminForm";
 import { BasicDialog } from "../../../../components/BasicDialog/BasicDialog";
 
-export const AdminProfileCard = ({ admin, isMe }: { admin: any; isMe: boolean }) => {
+export const AdminListCard = ({ admin, isMe }: { admin: any; isMe: boolean }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [open, setOpen] = useState(false);
     const theme = useTheme();

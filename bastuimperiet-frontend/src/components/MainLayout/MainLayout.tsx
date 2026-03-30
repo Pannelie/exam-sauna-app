@@ -1,7 +1,7 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useCallback } from "react";
 import MenuBar from "../MenuBar/MenuBar";
-import { ProfileMenuCard } from "../../features/admin/components/ProfileMenuCard/ProfileMenuCard";
+import { ProfileMenuCardContainer } from "../../features/admin/components/ProfileMenuCardContainer/ProfileMenuCardContainer";
 import { useAdminsStore } from "../../features/admin/stores/useAdminsStore";
 
 export const MainLayout = () => {
@@ -29,14 +29,12 @@ export const MainLayout = () => {
             </main>
         );
     }
-    // Definiera meny-val baserat på URL
+
     const menuItems = [
         { label: "Bokningar", onClick: () => navigate("/admin/bookings") },
         { label: "Ny bokning", onClick: () => navigate("/admin/new-booking") },
     ];
-
-    // ----------- hämta inloggad admin info från global store/service istället för att hårdkoda -----------
-    const actionComponent = <ProfileMenuCard />;
+    const actionComponent = <ProfileMenuCardContainer />;
 
     return (
         <>

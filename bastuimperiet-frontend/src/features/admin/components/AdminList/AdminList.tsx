@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useAdminsStore } from "../../stores/useAdminsStore";
-import { AdminProfileCard } from "../AdminProfileCard/AdminProfileCard";
+import { AdminListCard } from "../AdminListCard/AdminListCard";
 import * as S from "./adminList.style";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
@@ -27,7 +27,7 @@ export const AdminList = () => {
         <S.StyledList isMobile={isMobile}>
             {admins.map((admin) => {
                 const isMe = admin.email === myProfile?.email;
-                return <AdminProfileCard key={admin.email} admin={admin} isMe={isMe} />;
+                return <AdminListCard key={admin.email} admin={admin} isMe={isMe} />;
             })}
         </S.StyledList>
     );
