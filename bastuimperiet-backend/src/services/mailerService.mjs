@@ -1,6 +1,6 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-import { formatDate, escapeHtml } from "./emailUtils.mjs";
-import { emailStyle, wrapEmail } from "../utils/emailTemplates.mjs";
+import { formatDate, escapeHtml } from "../utils/formatters.js";
+import { emailStyle, wrapEmail } from "../utils/emailTemplates.js";
 
 async function sendMail({ to, subject, html, text }) {
     const region = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "eu-north-1";
