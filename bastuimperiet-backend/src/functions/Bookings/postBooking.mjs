@@ -31,10 +31,7 @@ export const handler = middy(async (event) => {
             };
         }
 
-        // 2. Spara i DB (Detta är vår "Single Source of Truth")
         const booking = await postBooking(process.env.TABLE_NAME, data);
-
-        // 3. Integrationer (Mjuka kontroller - vi loggar fel men fortsätter)
 
         // Skapa Kalender-event (Förfrågan)
         const calendarEvent = await runIntegration(

@@ -91,7 +91,7 @@ export default function AllBookings() {
                                     {bookings.length === 0 ? (
                                         <>
                                             <Typography variant="body1" color="common.white">
-                                                {`Inga ${categories[tabIndex].toLocaleLowerCase()} bokningar just nu.`}
+                                                {`Inga ${categories[tabIndex] === "Alla" ? "" : categories[tabIndex].toLocaleLowerCase()} bokningar just nu.`}
                                             </Typography>
                                         </>
                                     ) : (

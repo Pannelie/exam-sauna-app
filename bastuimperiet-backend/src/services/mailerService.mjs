@@ -1,13 +1,6 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-
-function escapeHtml(value = "") {
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/\"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
+import { formatDate, escapeHtml } from "./emailUtils.mjs";
+import { emailStyle, wrapEmail } from "../utils/emailTemplates.mjs";
 
 async function sendMail({ to, subject, html, text }) {
     const region = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "eu-north-1";
@@ -77,26 +70,25 @@ export async function sendNewBookingRequestToAdmin({
         throw new Error("Missing ADMIN_EMAIL configuration");
     }
 
-    const subject = "Ny bokningsförfrågan";
-    const html = `
-        <h2>Ny bokningsförfrågan</h2>
-        <p><strong>Boknings-id:</strong> ${escapeHtml(bookingId)}</p>
-        <p><strong>Namn:</strong> ${escapeHtml(name)}</p>
-        <p><strong>E-post:</strong> ${escapeHtml(email)}</p>
-        <p><strong>Telefon:</strong> ${escapeHtml(phone)}</p>
-        <p><strong>Från:</strong> ${escapeHtml(startDate)}</p>
-        <p><strong>Till:</strong> ${escapeHtml(endDate)}</p>
-        <p><strong>Doft:</strong> ${escapeHtml(scent)}</p>
-        <p><strong>Städ:</strong> ${cleaning ? "Ja" : "Nej"}</p>
-        <p><strong>Utkörning:</strong> ${delivery ? "Ja" : "Nej"}</p>
-        ${delivery ? `<p><strong>Transporttyp:</strong> ${escapeHtml(transportType)}</p>` : ""}
-        <p><strong>Vedpåsar:</strong> ${escapeHtml(firewood)}</p>
-        <p><strong>Pris:</strong> ${escapeHtml(totalPrice)} kr</p>
+    const subject = "Ny bokningsförfrågan!";
+    const content = `
+        <p>En ny bokningsförfrågan har kommit in via webbplatsen.</p>
+        <div style="${emailStyle.detailsBox}">
+            <p><strong>ID:</strong> ${escapeHtml(bookingId)}</p>
+            <p><strong>Kund:</strong> ${escapeHtml(name)}</p>
+            <p><strong>E-post:</strong> ${escapeHtml(email)}</p>
+            <p><strong>Telefon:</strong> ${escapeHtml(phone)}</p>
+            <p><strong>Start:</strong> ${formatDate(startDate)}</p>
+            <p><strong>Slut:</strong> ${formatDate(endDate)}</p>
+            <p><strong>Doft:</strong> ${escapeHtml(scent)}</p>
+            <p><strong>Tillval:</strong> Städ: ${cleaning ? "Ja" : "Nej"}, Ved: ${firewood}st, Utkörning: ${delivery ? "Ja" : "Nej"} ${delivery ? `(${escapeHtml(transportType)})` : ""}</p>
+            <p style="font-size:18px;margin-top:10px;"><strong>Pris: ${escapeHtml(totalPrice)} kr</strong></p>
+        </div>
+        <a href="http://bastuimperiet-bucket.s3-website.eu-north-1.amazonaws.com/admin/bookings/${bookingId}" style="${emailStyle.button}">Hantera i Admin</a>
     `;
 
-    const text = `Ny bokningsförfrågan\nID: ${bookingId}\nNamn: ${name}\nE-post: ${email}\nTelefon: ${phone}\nFrån: ${startDate}\nTill: ${endDate}\nDoft: ${scent}\nStäd: ${cleaning ? "Ja" : "Nej"}\nUtkörning: ${delivery ? "Ja" : "Nej"}\n${delivery ? `Transporttyp: ${transportType}\n` : ""}Vedpåsar: ${firewood}\nPris: ${totalPrice} kr`;
-
-    await sendMail({ to: adminEmail, subject, html, text });
+    const text = `Ny bokning från ${name}. ID: ${bookingId}. Period: ${startDate} - ${endDate}.`;
+    await sendMail({ to: adminEmail, subject, html: wrapEmail(content, "Ny förfrågan"), text });
 }
 
 export async function sendBookingConfirmedToGuest({
@@ -111,53 +103,53 @@ export async function sendBookingConfirmedToGuest({
     transportType,
     firewood,
 }) {
-    const subject = "Din bokning hos Bastuimperiet är bekräftad";
-    const html = `
-        <h2>Bokning bekräftad</h2>
-        <p>Hej ${escapeHtml(name)}!</p>
-        <p>Din bokning är nu bekräftad.</p>
-        <p><strong>Från:</strong> ${escapeHtml(startDate)}</p>
-        <p><strong>Till:</strong> ${escapeHtml(endDate)}</p>
-         <p><strong>Doft:</strong> ${escapeHtml(scent)}</p>
-        <p><strong>Städ:</strong> ${cleaning ? "Ja" : "Nej"}</p>
-        <p><strong>Utkörning:</strong> ${delivery ? "Ja" : "Nej"}</p>
-        ${delivery ? `<p><strong>Transporttyp:</strong> ${escapeHtml(transportType)}</p>` : ""}
-        <p><strong>Vedpåsar:</strong> ${escapeHtml(firewood)}</p>
-        <p><strong>Totalpris:</strong> ${escapeHtml(totalPrice)} kr</p>
+    const subject = "Bokningsbekräftelse från Bastuimperiet";
+    const content = `
+        <p>Hej <strong>${escapeHtml(name)}</strong>!</p>
+        <p>Vi har nu bekräftat din bokning. Vi ser fram emot att leverera en härlig bastuupplevelse!</p>
+        
+        <div style="${emailStyle.detailsBox}">
+            <p><strong>Start:</strong> ${formatDate(startDate)}</p>
+            <p><strong>Slut:</strong> ${formatDate(endDate)}</p>
+            <div style="${emailStyle.divider}"></div>
+            <p><strong>Doft:</strong> ${escapeHtml(scent)}</p>
+            <p><strong>Städning:</strong> ${cleaning ? "Ja" : "Nej"}</p>
+            <p><strong>Utkörning:</strong> ${delivery ? `Ja (${escapeHtml(transportType)})` : "Nej"}</p>
+            <p><strong>Vedpåsar:</strong> ${escapeHtml(firewood)} st</p>
+            <p style="font-size:18px;margin-top:10px;"><strong>Totalpris: ${escapeHtml(totalPrice)} kr</strong></p>
+        </div>
+        
+        <p>Information om uthämtning och praktiska detaljer kommer skickas till dig inom kort. Har du frågor är det bara att svara på detta mejl.</p>
         <p>Varmt välkommen!</p>
     `;
 
-    const text = `Hej ${name}! Din bokning är bekräftad. Från: ${startDate}. Till: ${endDate}. Dina tillval:  doft: ${scent}, Städ: ${cleaning ? "Ja" : "Nej"}, Utkörning: ${delivery ? `Ja, Transporttyp: ${transportType}` : "Nej"}, Vedpåsar: ${firewood}. Totalpris: ${totalPrice} kr.`;
+    const text = `Hej ${name}! Din bokning är bekräftad. Från: ${startDate} kl 15:00. Till: ${endDate} kl 11:00. Dina tillval:  doft: ${scent}, Städ: ${cleaning ? "Ja" : "Nej"}, Utkörning: ${delivery ? `Ja, Transporttyp: ${transportType}` : "Nej"}, Vedpåsar: ${firewood}. Totalpris: ${totalPrice} kr.`;
 
-    await sendMail({ to: email, subject, html, text });
+    await sendMail({ to: email, subject, html: wrapEmail(content, "Bokning Bekräftad"), text });
 }
 
 export async function sendBookingDeclinedToGuest({ name, email, startDate, endDate }) {
     const subject = "Uppdatering om din bokningsförfrågan";
-    const html = `
-        <h2>Bokningsförfrågan kunde inte bekräftas</h2>
+    const content = `
         <p>Hej ${escapeHtml(name)}!</p>
-        <p>Vi kan tyvärr inte bekräfta din bokning för dessa datum just nu.</p>
-        <p><strong>Från:</strong> ${escapeHtml(startDate)}</p>
-        <p><strong>Till:</strong> ${escapeHtml(endDate)}</p>
-        <p>Kontakta oss gärna om du vill ha hjälp att hitta ett alternativt datum.</p>
+        <p>Tack för din förfrågan gällande perioden <strong>${formatDate(startDate)}</strong> till <strong>${formatDate(endDate)}</strong>.</p>
+        <p>Vi kan tyvärr inte bekräfta din bokning just dessa datum då bastun är fullbokad eller under underhåll.</p>
+        <p>Kontakta oss gärna via telefon eller genom att svara på detta mejl så kikar vi på ett annat datum som passar!</p>
     `;
-
-    const text = `Hej ${name}! Vi kan tyvärr inte bekräfta din bokning för perioden ${startDate} till ${endDate}. Kontakta oss gärna för alternativa datum.`;
-
-    await sendMail({ to: email, subject, html, text });
+    await sendMail({
+        to: email,
+        subject,
+        html: wrapEmail(content, "Bokningsförfrågan"),
+        text: `Tyvärr kunde vi inte bekräfta din bokning.`,
+    });
 }
 
 export async function sendBookingCancelledToGuest({ name, email, startDate, endDate }) {
-    const subject = "Din bokning hos Bastuimperiet har avbokats";
-    const html = `
-        <h2>Bokning avbokad</h2>
+    const subject = "Din bokning har blivit avbokad";
+    const content = `
         <p>Hej ${escapeHtml(name)}!</p>
-        <p>Din bokning för perioden ${escapeHtml(startDate)} till ${escapeHtml(endDate)} har avbokats.</p>
-        <p>Kontakta oss gärna om du har några frågor.</p>
+        <p>Din bokning för perioden <strong>${formatDate(startDate)}</strong> till <strong>${formatDate(endDate)}</strong> har blivit avbokad.</p>
+        <p>Kontakta oss om du har några frågor gällande din avbokning.</p>
     `;
-
-    const text = `Hej ${name}! Din bokning för perioden ${startDate} till ${endDate} har avbokats. Kontakta oss gärna om du har några frågor.`;
-
-    await sendMail({ to: email, subject, html, text });
+    await sendMail({ to: email, subject, html: wrapEmail(content, "Avbokningsbekräftelse"), text: `Din bokning är nu avbokad.` });
 }

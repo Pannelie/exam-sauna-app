@@ -17,6 +17,7 @@ export function useCalendar() {
     const hoveredBookingId = useCalendarStore((state) => state.hoveredBookingId);
     const setHoveredBookingId = useCalendarStore((state) => state.setHoveredBookingId);
     const prevEventsRef = useRef<EventType[]>([]);
+    const isFetchingRef = useRef(false);
 
     // Jämförelsefunktion för events
     const areEventsEqual = (a: EventType[], b: EventType[]): boolean => {
@@ -31,6 +32,8 @@ export function useCalendar() {
     const lastUpdated = useBookingListStore((state) => state.lastUpdated);
     useEffect(() => {
         const fetchEvents = async () => {
+            if (isFetchingRef.current) return;
+            isFetchingRef.current = true;
             setLoading(true);
             try {
                 const data = await getCalendarEvents();
@@ -42,14 +45,16 @@ export function useCalendar() {
             } catch (err: any) {
                 console.error("Kunde inte hämta kalenderdata:", err.message);
             } finally {
+                isFetchingRef.current = false;
                 setLoading(false);
             }
         };
-        // Hämta bara om events saknas eller om bokningslistan ändrats
-        if (!events.length || !lastFetched || lastUpdated > lastFetched) {
+        // Hämta första gången och vid uppdaterad bokningslista.
+        // En tom array (inga events) ska inte trigga ny hämtning i loop.
+        if (!lastFetched || lastUpdated > lastFetched) {
             fetchEvents();
         }
-    }, [lastUpdated, events.length, lastFetched, setEvents, setLoading, setLastFetched]);
+    }, [lastUpdated, lastFetched, setEvents, setLoading, setLastFetched]);
 
     // Manuell refresh-funktion
     const refreshCalendar = () => {
