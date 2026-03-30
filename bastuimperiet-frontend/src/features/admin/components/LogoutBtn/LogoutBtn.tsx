@@ -1,11 +1,9 @@
-import { Button, IconButton, useMediaQuery, useTheme } from "@mui/material";
+import { Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 
 export const LogoutBtn = () => {
     const navigate = useNavigate();
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const handleLogout = () => {
         // Rensa data
@@ -14,14 +12,6 @@ export const LogoutBtn = () => {
 
         navigate("/admin/login", { replace: true });
     };
-    if (isMobile) {
-        return (
-            <IconButton onClick={handleLogout} color="inherit" title="Logga ut">
-                <LogoutIcon />
-            </IconButton>
-        );
-    }
-
     return (
         <Button
             variant="contained"
