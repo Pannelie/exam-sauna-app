@@ -4,6 +4,12 @@ export const toDateStr = (date: Date | string): string => {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
+type CalendarEventLike = {
+    title?: string;
+    start: Date | string;
+    end?: Date | string;
+};
+
 /** Lägger till en dag på ett datum-sträng */
 export const getNextDay = (dateStr: string): string => {
     const d = new Date(dateStr);
@@ -12,10 +18,10 @@ export const getNextDay = (dateStr: string): string => {
 };
 
 /** Skapar ett Set av blockerade datumsträngar baserat på bokningar */
-export const calculateBlockedDates = (events: any[]): Set<string> => {
+export const calculateBlockedDates = (events: CalendarEventLike[]): Set<string> => {
     const blocked = new Set<string>();
     events?.forEach((e) => {
-        if (typeof e.title === "string" && e.title.startsWith("Bokning:")) {
+        if (typeof e.title === "string" && e.title.startsWith("Bokning:") && e.end) {
             let curr = new Date(toDateStr(e.start));
             const endStr = toDateStr(e.end);
 

@@ -10,10 +10,10 @@ export const useStepContent = (
     handlers: { next: () => void; back: () => void; complete: () => void; reset: () => void; isCompleted: boolean },
     errors: Record<string, string>,
     // Ny parameter för extra data
-    mobileData: { isMobile: boolean; calendarEvents: any[] },
+    mobileData: { isMobile: boolean },
 ) => {
     const { next, back, complete, reset, isCompleted } = handlers;
-    const { isMobile, calendarEvents } = mobileData;
+    const { isMobile } = mobileData;
 
     const stepMap = [
         <StepDates
@@ -24,7 +24,6 @@ export const useStepContent = (
             errors={errors}
             // Skicka ner datan till StepDates
             isMobile={isMobile}
-            events={calendarEvents}
         />,
         <StepContact key="contact" data={formData} updateField={updateField} next={next} back={back} errors={errors} isMobile={isMobile} />,
         <StepSummary

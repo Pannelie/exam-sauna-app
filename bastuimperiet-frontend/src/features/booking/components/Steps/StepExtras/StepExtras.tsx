@@ -27,6 +27,12 @@ interface StepExtrasProps {
     updateField: <K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) => void;
 }
 
+type CounterProps = {
+    value: number;
+    onAdd: () => void;
+    onRemove: () => void;
+};
+
 export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -38,7 +44,7 @@ export const StepExtras = ({ data, updateField }: StepExtrasProps) => {
     const deliveryStartFee = prices?.deliveryStartFee || 1000;
 
     // Kompakt väljare för mobil
-    const Counter = ({ value, onAdd, onRemove }: any) => (
+    const Counter = ({ value, onAdd, onRemove }: CounterProps) => (
         <Stack direction="row" spacing={1} alignItems="center" sx={{ bgcolor: "#f5f5f5", borderRadius: "20px", p: 0.5 }}>
             <IconButton
                 size="small"

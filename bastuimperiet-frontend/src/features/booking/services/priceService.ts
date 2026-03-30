@@ -7,8 +7,12 @@ export const getPriceList = async () => {
         const response = await axios.get(`${baseUrl}/prices`);
         console.log("Prislista hämtad:", response.data);
         return response.data;
-    } catch (err: any) {
-        console.error("Kunde inte hämta prislistan:", err.message);
+    } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+            console.error("Kunde inte hämta prislistan:", err.message);
+        } else {
+            console.error("Kunde inte hämta prislistan");
+        }
         throw err;
     }
 };

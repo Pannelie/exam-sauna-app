@@ -24,7 +24,7 @@ export function formatBookingForFrontend(item) {
     };
 }
 
-export function formathDate(dateString) {
+export function formatDate(dateString) {
     if (!dateString) return "";
     const date = new Date(dateString);
     return date

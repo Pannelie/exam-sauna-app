@@ -22,6 +22,10 @@
     display: block !important;
 }
 
+.calendar-container {
+    flex: 1;
+}
+
 .calendar-container,
 .fc-event {
     cursor: pointer !important;

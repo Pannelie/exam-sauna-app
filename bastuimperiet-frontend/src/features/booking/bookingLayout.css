@@ -1,8 +1,0 @@
-.booking_layout {
-    display: flex;
-    flex-direction: row;
-    gap: 2rem;
-    min-height: 500px;
-    margin: auto;
-    width: 100%;
-}

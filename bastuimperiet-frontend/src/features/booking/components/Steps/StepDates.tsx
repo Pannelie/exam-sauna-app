@@ -14,10 +14,9 @@ interface StepDatesProps {
     next: () => void;
     errors: Record<string, string>;
     isMobile: boolean;
-    events: any[];
 }
 
-export const StepDates = ({ data, updateField, next, errors, isMobile, events }: StepDatesProps) => {
+export const StepDates = ({ data, updateField, next, errors, isMobile }: StepDatesProps) => {
     const [calendarOpen, setCalendarOpen] = useState(false);
 
     const formatFullDateTime = (dateStr: string) => {
@@ -93,7 +92,6 @@ export const StepDates = ({ data, updateField, next, errors, isMobile, events }:
                 {/* En wrapper för att ge lite luft åt sidorna men inte skapa en "box i box" */}
                 <Box sx={{ p: 2 }}>
                     <ClientCalendarCustomer
-                        events={events}
                         startDate={data.startDate}
                         endDate={data.endDate}
                         onDateSelect={(start: string, end: string) => {
