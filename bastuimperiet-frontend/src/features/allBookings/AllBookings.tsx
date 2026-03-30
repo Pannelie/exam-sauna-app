@@ -143,7 +143,9 @@ export default function AllBookings() {
                 {isMobile && mobileTab === 1 && <GoogleCalendar />}
             </S.MainContainer>
             <MobileBottomSheet open={!!id && isMobile} onClose={() => navigate("/admin/bookings")}>
-                <Outlet context={{ bookings }} />
+                <S.MobileDetailViewBox>
+                    <Outlet context={{ bookings }} />
+                </S.MobileDetailViewBox>
             </MobileBottomSheet>
         </>
     );

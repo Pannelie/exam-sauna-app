@@ -79,7 +79,16 @@ export const DetailViewBox = styled(
     flexDirection: "column",
     justifyContent: $hasId ? "flex-start" : "center",
     alignItems: $hasId ? "stretch" : "center",
-    padding: "32px", // 4 * 8px
+    padding: "3rem", // 4 * 8px
+    gap: "1rem",
+    height: "100%",
+    overflowY: "auto",
+}));
+
+export const MobileDetailViewBox = styled(Box)(({}) => ({
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
     gap: "1rem",
     height: "100%",
     overflowY: "auto",
