@@ -1,11 +1,11 @@
-import "./bookingLayout.css";
 import { useState } from "react";
 import { BookingStepper } from "./components/BookingStepper/BookingStepper";
 import type { BookingFormData, BookingBase } from "../../types/bookingTypes";
 import { useCalendar } from "../calendar/hooks/useCalendar";
 import { useBookingFormStore } from "../../stores/useBookingFormStore";
 import { ClientCalendarCustomer } from "./components/ClientCalendar/ClientCalendar";
-import { useMediaQuery, useTheme, Box } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
+import * as S from "./bookingLayout.style";
 
 export const BookingLayout = () => {
     const { loading } = useCalendar();
@@ -51,34 +51,25 @@ export const BookingLayout = () => {
         setActiveStep(0);
     };
     return (
-        <Box
-            className="booking_layout"
-            sx={{
-                display: "flex",
-                flexDirection: isMobile ? "column" : "row", // Stacka vertikalt på mobil
-                gap: theme.spacing(4),
-                padding: theme.spacing(isMobile ? 2 : 4),
-            }}
-        >
+        <S.StyledBookingLayout>
             {/* Kalender */}
             {!loading && !isMobile && (
-                <Box sx={{ flex: 1, minWidth: 0 }}>
+                <S.ColumnWrapper>
                     <ClientCalendarCustomer onDateSelect={handleCalendarSelect} startDate={formData.startDate} endDate={formData.endDate} />
-                </Box>
+                </S.ColumnWrapper>
             )}
+
             {/* Formulär */}
-            <Box sx={{ flex: 1, minWidth: 0 }}>
+            <S.ColumnWrapper>
                 <BookingStepper
                     formData={formData}
                     updateField={updateField}
                     onReset={resetForm}
-                    // Skicka ner nödvändig data för mobil-modalen
                     isMobile={isMobile}
-                    // Kontrollera steget utifrån
                     activeStep={activeStep}
                     setActiveStep={setActiveStep}
                 />
-            </Box>
-        </Box>
+            </S.ColumnWrapper>
+        </S.StyledBookingLayout>
     );
 };
