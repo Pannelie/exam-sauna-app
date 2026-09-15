@@ -1,14 +1,15 @@
 # Bastuimperiet – Exam Sauna App
 
-Det här är ett examensprojekt för bokning av mobil bastu.
+Bastuimperiet är ett komplett bokningssystem utvecklat som examensarbete för ett företag med mobil bastuuthyrning. Systemet omfattar både kundens bokningsflöde och ett administrationsgränssnitt för att hantera bokningar.
 
 Projektet innehåller:
 
-- Frontend: React + TypeScript (Vite)
-- Backend: Serverless Node.js
-- Databas: DynamoDB
-- Integrationer: Google Calendar och e-post
-
+- Frontend: React + TypeScript (Vite) + Zustand
+- Backend: Serverless Node.js med AWS Lambda och API Gateway
+- Databas: Amazon DynamoDB
+- Integrationer: Google Calendar API och AWS SES för e-postutskick
+- Funktionalitet: Bokningsflöde, prisberäkning, validering, bokningsstatus och administrationsgränssnitt
+- 
 ## Snabb överblick
 
 En kund kan skapa en bokningsförfrågan.
