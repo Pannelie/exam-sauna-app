@@ -26,7 +26,7 @@ http://bastuimperiet-bucket.s3-website.eu-north-1.amazonaws.com/admin/login
 Testinloggning admin:
 
 - E-post: no-reply-bastuimperiet@outlook.com
-- Lösenord: admin 123
+- Lösenord: admin123
 
 ## Kör lokalt
 
